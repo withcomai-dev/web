@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() { return request.auth != null; }
+
+    function userRole(uid) {
+      return firestore.get(/databases/(default)/documents/users/$(uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userRole(request.auth.uid) in ['admin', 'superadmin'];
+    }
+
+    // 일반 자산 (배너, 콘텐츠 이미지, 페이지 이미지) — 공개 읽기, 관리자만 쓰기
+    match /assets/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin()
+                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // 버그 신고 화면 캡처 — 누구나 업로드 가능, 관리자만 조회
+    match /feedback/{userOrAnon}/{fileName} {
+      allow create: if request.resource.size < 5 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow read: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // 문의 첨부파일 — 누구나 업로드, 관리자만 조회
+    match /inquiries/{anonymous}/{fileName} {
+      allow create: if request.resource.size < 10 * 1024 * 1024;
+      allow read, delete: if isAdmin();
+    }
+  }
+}

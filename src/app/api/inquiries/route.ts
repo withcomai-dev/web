@@ -1,0 +1,95 @@
+import { NextRequest, NextResponse } from "next/server";
+import { adminDb, FieldValue } from "@/lib/firebase-admin";
+import { appendInquiryRow } from "@/lib/sheets";
+import { COLLECTIONS } from "@/lib/firestore";
+import type { InquiryDoc } from "@/types/cms";
+
+export const runtime = "nodejs";
+
+interface InquiryBody {
+  type?: string;
+  name?: string;
+  company?: string;
+  phone?: string;
+  email?: string;
+  message?: string;
+}
+
+export async function POST(req: NextRequest) {
+  let body: InquiryBody;
+  try {
+    body = (await req.json()) as InquiryBody;
+  } catch {
+    return NextResponse.json({ error: "잘못된 요청 본문" }, { status: 400 });
+  }
+
+  const type = (body.type ?? "").trim();
+  const name = (body.name ?? "").trim();
+  const email = (body.email ?? "").trim();
+  const message = (body.message ?? "").trim();
+
+  if (!name || !email || !message) {
+    return NextResponse.json(
+      { error: "성함·이메일·문의 내용은 필수입니다." },
+      { status: 400 },
+    );
+  }
+  if (message.length > 9999) {
+    return NextResponse.json({ error: "문의 내용이 너무 깁니다." }, { status: 400 });
+  }
+  if (!/.+@.+\..+/.test(email)) {
+    return NextResponse.json({ error: "유효한 이메일이 필요합니다." }, { status: 400 });
+  }
+
+  const createdAt = new Date().toISOString();
+  const company = (body.company ?? "").trim();
+  const phone = (body.phone ?? "").trim();
+
+  const inquiry: Omit<InquiryDoc, "id"> = {
+    type: type || "기타",
+    name,
+    company: company || undefined,
+    phone: phone || undefined,
+    email,
+    message,
+    status: "new",
+    createdAt,
+  };
+
+  let docId = "";
+  try {
+    const ref = await adminDb()
+      .collection(COLLECTIONS.INQUIRIES)
+      .add({ ...inquiry, createdAt: FieldValue.serverTimestamp() });
+    docId = ref.id;
+  } catch (e) {
+    console.error("Firestore 쓰기 실패:", e);
+    return NextResponse.json(
+      { error: "서버 저장에 실패했습니다. 잠시 후 다시 시도해주세요." },
+      { status: 500 },
+    );
+  }
+
+  let sheetSyncedAt: string | null = null;
+  try {
+    await appendInquiryRow({
+      createdAt,
+      type: inquiry.type,
+      name: inquiry.name,
+      company: inquiry.company,
+      phone: inquiry.phone,
+      email: inquiry.email,
+      message: inquiry.message,
+    });
+    sheetSyncedAt = new Date().toISOString();
+    await adminDb()
+      .collection(COLLECTIONS.INQUIRIES)
+      .doc(docId)
+      .update({ sheetSyncedAt });
+  } catch (e) {
+    console.error("Google Sheets 동기화 실패:", e);
+    // Firestore 저장은 성공했으므로 사용자에겐 성공 응답.
+  }
+
+  return NextResponse.json({ id: docId, sheetSyncedAt });
+}

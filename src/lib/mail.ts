@@ -1,14 +1,21 @@
 import nodemailer from "nodemailer";
+import { getIntegration } from "@/lib/integrations";
 
 let _transporter: nodemailer.Transporter | null = null;
+let _user = "";
+let _pass = "";
 
-function getTransporter(): nodemailer.Transporter {
-  if (_transporter) return _transporter;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_APP_PASSWORD;
+async function getTransporter(): Promise<nodemailer.Transporter> {
+  const user = await getIntegration("smtpUser");
+  const pass = await getIntegration("smtpAppPassword");
   if (!user || !pass) {
-    throw new Error("SMTP_USER, SMTP_APP_PASSWORD 환경변수가 필요합니다.");
+    throw new Error(
+      "SMTP 계정·비밀번호가 설정되지 않았습니다. 어드민 → 외부 서비스 키에서 입력하세요.",
+    );
   }
+  if (_transporter && _user === user && _pass === pass) return _transporter;
+  _user = user;
+  _pass = pass;
   _transporter = nodemailer.createTransport({
     service: "gmail",
     auth: { user, pass },
@@ -25,11 +32,13 @@ export interface MailMessage {
 }
 
 export async function sendMail(msg: MailMessage): Promise<void> {
-  const transporter = getTransporter();
+  const transporter = await getTransporter();
+  const fromUser = await getIntegration("smtpUser");
+  const adminMail = await getIntegration("adminNotifyEmail");
   await transporter.sendMail({
-    from: `"위드컴정보" <${process.env.SMTP_USER}>`,
+    from: `"위드컴정보" <${fromUser}>`,
     to: msg.to,
-    replyTo: msg.replyTo ?? process.env.ADMIN_NOTIFY_EMAIL ?? process.env.SMTP_USER,
+    replyTo: msg.replyTo ?? adminMail ?? fromUser,
     subject: msg.subject,
     text: msg.text,
     html: msg.html ?? (msg.text ? msg.text.replace(/\n/g, "<br>") : undefined),

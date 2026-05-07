@@ -16,6 +16,7 @@ import {
   Settings,
   LogOut,
   Activity,
+  KeyRound,
 } from "lucide-react";
 import { ADMIN_NAV_ITEMS } from "@/lib/constants";
 import { useAuth } from "@/contexts/AuthContext";
@@ -34,6 +35,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   bug: Bug,
   activity: Activity,
   settings: Settings,
+  key: KeyRound,
 };
 
 export default function AdminSidebar() {

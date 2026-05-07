@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb, FieldValue } from "@/lib/firebase-admin";
+import { getIntegration } from "@/lib/integrations";
 
 export const runtime = "nodejs";
 
@@ -7,10 +8,10 @@ export const runtime = "nodejs";
  * 매시간 호출되어 publishedAt이 과거이고 status가 draft인 콘텐츠를 published로 전환.
  * 외부 cron(Cloud Scheduler/Vercel Cron)이 호출하는 엔드포인트.
  *
- * 보안: CRON_SECRET 헤더 또는 ?token= 검증.
+ * 보안: cronSecret 헤더 또는 ?token= 검증 (어드민 통합 설정에서 입력).
  */
 export async function GET(req: NextRequest) {
-  const expected = process.env.CRON_SECRET;
+  const expected = await getIntegration("cronSecret");
   if (expected) {
     const token =
       req.headers.get("x-cron-secret") ?? new URL(req.url).searchParams.get("token");

@@ -31,6 +31,13 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ── 외부 서비스 키 (서버 전용) ──
+    // 클라이언트 SDK 접근 완전 차단 — Admin SDK(서버)에서만 읽기/쓰기.
+    // 어드민 UI는 /api/admin/integrations 라우트로 우회 호출.
+    match /siteSettings/integrations {
+      allow read, write: if false;
+    }
+
     // ── 사이트 설정 (페이지 섹션, 전역 설정) ──
     match /siteSettings/{docId} {
       allow read: if true;

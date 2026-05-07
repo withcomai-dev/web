@@ -39,6 +39,7 @@ export const ADMIN_NAV_ITEMS = [
   { label: "버그 신고", href: "/admin/feedback", icon: "bug" },
   { label: "활동 로그", href: "/admin/audit", icon: "activity" },
   { label: "사이트 설정", href: "/admin/settings", icon: "settings" },
+  { label: "외부 서비스 키", href: "/admin/integrations", icon: "key" },
 ];
 
 export const RUNMOA_CONTENT_TYPE_LABELS: Record<string, string> = {

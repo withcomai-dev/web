@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Octokit } from "@octokit/rest";
 import { requireAdmin } from "@/lib/api-auth";
+import { getIntegration } from "@/lib/integrations";
 
 export const runtime = "nodejs";
 
@@ -14,11 +15,11 @@ export async function POST(req: NextRequest) {
   const { errorResponse } = await requireAdmin(req);
   if (errorResponse) return errorResponse;
 
-  const token = process.env.GITHUB_TOKEN;
-  const repoFull = process.env.GITHUB_REPO;
+  const token = await getIntegration("githubToken");
+  const repoFull = await getIntegration("githubRepo");
   if (!token || !repoFull) {
     return NextResponse.json(
-      { error: "GITHUB_TOKEN, GITHUB_REPO 환경변수가 필요합니다." },
+      { error: "GitHub Token·저장소가 설정되지 않았습니다. 어드민 → 외부 서비스 키에서 입력하세요." },
       { status: 500 },
     );
   }

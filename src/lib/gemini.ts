@@ -1,17 +1,20 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { adminDb, FieldValue } from "@/lib/firebase-admin";
+import { getIntegration } from "@/lib/integrations";
 
 type Schema = unknown;
 
-const API_KEY = process.env.GEMINI_API_KEY ?? "";
-
 let _client: GoogleGenerativeAI | null = null;
-function getClient(): GoogleGenerativeAI {
-  if (!API_KEY) {
-    throw new Error("GEMINI_API_KEY 환경변수가 설정되지 않았습니다.");
+let _clientKey: string = "";
+
+async function getClient(): Promise<GoogleGenerativeAI> {
+  const apiKey = await getIntegration("geminiApiKey");
+  if (!apiKey) {
+    throw new Error("Gemini API 키가 설정되지 않았습니다. 어드민 → 외부 서비스 키에서 입력하세요.");
   }
-  if (_client) return _client;
-  _client = new GoogleGenerativeAI(API_KEY);
+  if (_client && _clientKey === apiKey) return _client;
+  _client = new GoogleGenerativeAI(apiKey);
+  _clientKey = apiKey;
   return _client;
 }
 
@@ -63,7 +66,7 @@ export async function generate(prompt: string, opts: GenerateOpts = {}): Promise
   const model = opts.model ?? "gemini-2.5-flash";
   const start = Date.now();
 
-  const client = getClient();
+  const client = await getClient();
   const generativeModel = client.getGenerativeModel({
     model,
     systemInstruction: opts.systemInstruction,
@@ -97,7 +100,7 @@ export async function generateJSON<T>(prompt: string, opts: GenerateJSONOpts<T>)
   const model = opts.model ?? "gemini-2.5-flash";
   const start = Date.now();
 
-  const client = getClient();
+  const client = await getClient();
   const generativeModel = client.getGenerativeModel({
     model,
     systemInstruction: opts.systemInstruction,
@@ -134,7 +137,7 @@ export async function analyzeImage(
   const model = opts.model ?? "gemini-2.5-flash";
   const start = Date.now();
 
-  const client = getClient();
+  const client = await getClient();
   const generativeModel = client.getGenerativeModel({
     model,
     systemInstruction: opts.systemInstruction,

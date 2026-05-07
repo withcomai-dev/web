@@ -1,7 +1,7 @@
 "use client";
 
 import { ref as storageRef, uploadString, getDownloadURL } from "firebase/storage";
-import { auth, storage } from "@/lib/firebase";
+import { auth, storage, isFirebaseConfigured } from "@/lib/firebase";
 import { COLLECTIONS, createDoc } from "@/lib/firestore";
 import type {
   ConsoleErrorEntry,
@@ -149,6 +149,7 @@ export function captureDomSnapshot(): string {
 
 async function uploadScreenshotToStorage(dataUrl: string, uid: string): Promise<string> {
   if (!dataUrl) return "";
+  if (!isFirebaseConfigured()) return "";
   const folder = uid || "anonymous";
   const fileName = `${Date.now()}.jpg`;
   const ref = storageRef(storage, `feedback/${folder}/${fileName}`);

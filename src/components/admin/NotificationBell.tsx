@@ -9,7 +9,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { cn } from "@/lib/utils";
 
 interface Counts {
@@ -24,6 +24,7 @@ export default function NotificationBell() {
   const total = counts.inquiries + counts.feedback + counts.helpQ;
 
   useEffect(() => {
+    if (!isFirebaseConfigured()) return;
     const unsubs: Array<() => void> = [];
     try {
       unsubs.push(

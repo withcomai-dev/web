@@ -23,6 +23,21 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+/**
+ * Firebase가 실제 키로 설정되어 있는지 판단.
+ * dummy/빈값이면 false → Firestore·Storage 호출을 단락(short-circuit)해
+ * timeout 대기를 피하고 즉시 빈 결과로 폴백한다.
+ */
+export function isFirebaseConfigured(): boolean {
+  const k = firebaseConfig.apiKey ?? "";
+  const p = firebaseConfig.projectId ?? "";
+  if (!k || !p) return false;
+  if (k.toLowerCase() === "dummy" || p.toLowerCase() === "dummy") return false;
+  // Firebase API 키는 보통 "AIza"로 시작하는 39자 — 그렇지 않으면 의심
+  if (k.length < 20) return false;
+  return true;
+}
+
 let _app: FirebaseApp | null = null;
 let _auth: Auth | null = null;
 let _db: Firestore | null = null;

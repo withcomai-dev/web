@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/lib/firebase";
+import { auth, isFirebaseConfigured } from "@/lib/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -30,6 +30,7 @@ const SKIP_COLLECTIONS = new Set([
  */
 export async function recordAudit(entry: Omit<AuditEntry, "actorUid" | "actorEmail" | "createdAt">) {
   if (SKIP_COLLECTIONS.has(entry.collection)) return;
+  if (!isFirebaseConfigured()) return;
   try {
     const user = auth.currentUser;
     await addDoc(collection(db, "auditLogs"), {

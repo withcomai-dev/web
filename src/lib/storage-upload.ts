@@ -10,7 +10,7 @@ import {
 } from "firebase/storage";
 import imageCompression from "browser-image-compression";
 import { v4 as uuid } from "uuid";
-import { storage } from "@/lib/firebase";
+import { storage, isFirebaseConfigured } from "@/lib/firebase";
 
 export interface UploadResult {
   url: string;
@@ -37,6 +37,9 @@ export async function uploadAsset(
   folder = "general",
   options: Partial<Parameters<typeof imageCompression>[1]> = {},
 ): Promise<UploadResult> {
+  if (!isFirebaseConfigured()) {
+    throw new Error("Firebase가 설정되지 않아 업로드할 수 없습니다 (DEV 모드).");
+  }
   let working: File = file;
 
   if (file.type.startsWith("image/") && !file.type.includes("svg")) {

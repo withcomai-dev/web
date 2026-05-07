@@ -10,7 +10,7 @@ import {
   limit as fbLimit,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { AdminPageHeader } from "@/components/admin/AdminTableShell";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +39,11 @@ export default function AuditPage() {
   const load = async () => {
     setLoading(true);
     setError(null);
+    if (!isFirebaseConfigured()) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
     try {
       const q = query(
         collection(db, "auditLogs"),

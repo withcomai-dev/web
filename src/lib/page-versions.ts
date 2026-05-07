@@ -10,7 +10,7 @@ import {
   limit as fbLimit,
   serverTimestamp,
 } from "firebase/firestore";
-import { db, auth } from "@/lib/firebase";
+import { db, auth, isFirebaseConfigured } from "@/lib/firebase";
 import { COLLECTIONS, PAGE_DOC_ID, setSingletonDoc } from "@/lib/firestore";
 import type { PageDoc } from "@/types/cms";
 
@@ -28,6 +28,7 @@ export interface PageVersion {
  * 현재 페이지를 버전으로 스냅샷한다 (저장 직전에 호출).
  */
 export async function snapshotPageVersion(page: PageDoc): Promise<void> {
+  if (!isFirebaseConfigured()) return;
   try {
     const versionsRef = collection(
       doc(db, COLLECTIONS.SETTINGS, PAGE_DOC_ID(page.key)),
@@ -48,6 +49,7 @@ export async function snapshotPageVersion(page: PageDoc): Promise<void> {
  * 최근 버전 목록을 가져온다 (최신순).
  */
 export async function listPageVersions(key: string): Promise<PageVersion[]> {
+  if (!isFirebaseConfigured()) return [];
   try {
     const q = query(
       collection(doc(db, COLLECTIONS.SETTINGS, PAGE_DOC_ID(key)), "versions"),

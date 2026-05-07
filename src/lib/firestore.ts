@@ -16,7 +16,7 @@ import {
   WithFieldValue,
   QueryConstraint,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, isFirebaseConfigured } from "./firebase";
 import { recordAudit } from "./audit";
 
 const CACHE_TTL = 30_000;
@@ -38,9 +38,19 @@ function logSafeFail(op: string, e: unknown): void {
   }
 }
 
+/**
+ * Firebase 미설정 시 즉시 단락(short-circuit)해 SDK timeout 대기를 피한다.
+ */
+function shortCircuit<T>(empty: T): T | null {
+  if (!isFirebaseConfigured()) return empty;
+  return null;
+}
+
 export async function getCollection<T>(col: string): Promise<T[]> {
   const cached = _cache.get(col);
   if (cached && Date.now() - cached.ts < CACHE_TTL) return cached.data as T[];
+  const sc = shortCircuit<T[]>([]);
+  if (sc !== null) return sc;
   try {
     const snap = await getDocs(collection(db, col));
     const result = snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
@@ -60,6 +70,8 @@ export async function getOrderedCollection<T>(
   const cacheKey = `${col}__${field}__${dir}`;
   const cached = _cache.get(cacheKey);
   if (cached && Date.now() - cached.ts < CACHE_TTL) return cached.data as T[];
+  const sc = shortCircuit<T[]>([]);
+  if (sc !== null) return sc;
   try {
     const q = query(collection(db, col), orderBy(field, dir));
     const snap = await getDocs(q);
@@ -76,6 +88,8 @@ export async function getQueriedCollection<T>(
   col: string,
   constraints: QueryConstraint[],
 ): Promise<T[]> {
+  const sc = shortCircuit<T[]>([]);
+  if (sc !== null) return sc;
   try {
     const q = query(collection(db, col), ...constraints);
     const snap = await getDocs(q);
@@ -130,6 +144,7 @@ export async function removeDoc(col: string, id: string): Promise<void> {
 }
 
 export async function getDocById<T>(col: string, id: string): Promise<T | null> {
+  if (!isFirebaseConfigured()) return null;
   try {
     const snap = await getDoc(doc(db, col, id));
     if (!snap.exists()) return null;

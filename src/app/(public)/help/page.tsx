@@ -50,9 +50,18 @@ export default async function HelpIndex() {
                       <li key={doc.id}>
                         <Link
                           href={`/help/${doc.slug}`}
-                          className="block p-4 bg-white rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all"
+                          className="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all"
                         >
-                          <p className="font-semibold text-gray-900">{doc.title}</p>
+                          {doc.thumbnail ? (
+                            <img
+                              src={doc.thumbnail}
+                              alt=""
+                              className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-14 h-14 rounded-lg bg-blue-50 flex-shrink-0" />
+                          )}
+                          <p className="font-semibold text-gray-900 line-clamp-2">{doc.title}</p>
                         </Link>
                       </li>
                     ))}

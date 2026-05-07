@@ -67,7 +67,7 @@ export function inquiryReplyTemplate(args: {
 
         <div style="margin:24px 0;padding:16px;background:#eff6ff;border-radius:8px;border-left:4px solid #2563eb">
           <p style="font-size:12px;color:#1e40af;margin:0 0 8px">답변</p>
-          <div style="white-space:pre-wrap">${safe(args.reply).replace(/\n/g, "<br>")}</div>
+          <div class="reply-body">${args.reply}</div>
         </div>
 
         <p style="margin-top:32px;font-size:13px;color:#6b7280">
@@ -97,7 +97,7 @@ export function helpAnswerTemplate(args: {
         </div>
         <div style="margin:16px 0;padding:16px;background:#eff6ff;border-radius:8px">
           <p style="font-size:12px;color:#1e40af;margin:0 0 8px">답변</p>
-          <div style="white-space:pre-wrap">${safe(args.answer).replace(/\n/g, "<br>")}</div>
+          <div class="answer-body">${args.answer.replace(/\n/g, "<br>")}</div>
         </div>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0" />
         <p style="font-size:11px;color:#9ca3af">© 위드컴정보</p>

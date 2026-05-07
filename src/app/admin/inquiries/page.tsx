@@ -14,6 +14,7 @@ import {
   AdminLoading,
   AdminPageHeader,
 } from "@/components/admin/AdminTableShell";
+import RichEditor from "@/components/admin/RichEditor";
 import type { InquiryDoc, InquiryStatus } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
@@ -159,6 +160,26 @@ export default function AdminInquiriesPage() {
                 </div>
               </div>
 
+              {selected.attachments && selected.attachments.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 mb-2">첨부파일</p>
+                  <ul className="space-y-1">
+                    {selected.attachments.map((url, i) => (
+                      <li key={i}>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded text-sm text-blue-700 hover:bg-blue-100"
+                        >
+                          📎 {url.split("/").pop()?.split("?")[0] ?? `첨부 ${i + 1}`}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div>
                 <p className="text-xs font-semibold text-gray-500 mb-2">상태 변경</p>
                 <div className="flex gap-2">
@@ -226,7 +247,14 @@ function ReplyComposer({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "AI 호출 실패");
-      setReply(data.result);
+      // 평문 → 단순 HTML
+      const html = `<p>${(data.result as string)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\n\n+/g, "</p><p>")
+        .replace(/\n/g, "<br>")}</p>`;
+      setReply(html);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "AI 실패");
     } finally {
@@ -289,12 +317,12 @@ function ReplyComposer({
           </button>
         </div>
       </div>
-      <textarea
+      <RichEditor
         value={reply}
-        onChange={(e) => setReply(e.target.value)}
-        rows={6}
-        placeholder="답변 내용을 입력하거나 'AI 초안'으로 자동 작성"
-        className="w-full px-3 py-2 rounded border border-gray-200 text-sm"
+        onChange={setReply}
+        folder="inquiry-replies"
+        minHeight={200}
+        placeholder="답변 내용을 입력하거나 [AI 초안]으로 자동 작성"
       />
       {err && <p className="text-sm text-rose-600">{err}</p>}
       <button

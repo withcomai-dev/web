@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Send, Loader2, Check } from "lucide-react";
+import { useRef, useState } from "react";
+import { Send, Loader2, Check, Paperclip, X } from "lucide-react";
 import { INQUIRY_TYPES } from "@/lib/constants";
+import { uploadAsset } from "@/lib/storage-upload";
 
 type Phase = "idle" | "submitting" | "done" | "error";
+
+const MAX_ATTACHMENTS = 5;
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function InquiryForm() {
   const [form, setForm] = useState({
@@ -15,13 +19,46 @@ export default function InquiryForm() {
     email: "",
     message: "",
   });
+  const [attachments, setAttachments] = useState<{ url: string; name: string; size: number }[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const onChange =
     (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm((s) => ({ ...s, [k]: e.target.value }));
+
+  const addFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    if (attachments.length + files.length > MAX_ATTACHMENTS) {
+      setErrMsg(`첨부는 최대 ${MAX_ATTACHMENTS}개까지 가능합니다.`);
+      return;
+    }
+    setUploading(true);
+    setErrMsg(null);
+    try {
+      const newOnes: typeof attachments = [];
+      for (const f of Array.from(files)) {
+        if (f.size > MAX_FILE_SIZE) {
+          setErrMsg(`${f.name}이 너무 큽니다 (최대 10MB)`);
+          continue;
+        }
+        const res = await uploadAsset(f, "inquiries");
+        newOnes.push({ url: res.url, name: f.name, size: res.size });
+      }
+      setAttachments((s) => [...s, ...newOnes]);
+    } catch (e) {
+      setErrMsg(e instanceof Error ? e.message : "업로드 실패");
+    } finally {
+      setUploading(false);
+      if (fileInput.current) fileInput.current.value = "";
+    }
+  };
+
+  const removeAttachment = (idx: number) =>
+    setAttachments((s) => s.filter((_, i) => i !== idx));
 
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -32,7 +69,10 @@ export default function InquiryForm() {
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          attachments: attachments.map((a) => a.url),
+        }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -47,6 +87,7 @@ export default function InquiryForm() {
         email: "",
         message: "",
       });
+      setAttachments([]);
     } catch (err) {
       setErrMsg(err instanceof Error ? err.message : "전송 실패");
       setPhase("error");
@@ -133,6 +174,52 @@ export default function InquiryForm() {
           className="w-full px-4 py-3 rounded-lg border border-gray-200 outline-none focus:border-blue-500"
           placeholder="문의하실 내용을 상세히 적어주세요."
         />
+      </div>
+      <div className="md:col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          첨부파일 (선택, 최대 {MAX_ATTACHMENTS}개 / 10MB)
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <input
+            ref={fileInput}
+            type="file"
+            multiple
+            accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.zip"
+            onChange={(e) => addFiles(e.target.files)}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInput.current?.click()}
+            disabled={uploading || attachments.length >= MAX_ATTACHMENTS}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-400 text-sm disabled:opacity-50"
+          >
+            {uploading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Paperclip className="w-4 h-4" />
+            )}
+            파일 선택 ({attachments.length}/{MAX_ATTACHMENTS})
+          </button>
+          {attachments.map((a, i) => (
+            <div
+              key={i}
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-lg text-sm"
+            >
+              <span className="truncate max-w-[200px]">{a.name}</span>
+              <span className="text-xs text-gray-500">
+                {(a.size / 1024).toFixed(0)}KB
+              </span>
+              <button
+                type="button"
+                onClick={() => removeAttachment(i)}
+                className="text-gray-400 hover:text-rose-600"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
       {errMsg && (
         <div className="md:col-span-2">

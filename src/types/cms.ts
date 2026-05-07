@@ -169,6 +169,8 @@ export interface UserProfile {
   status: UserStatus;
   createdAt?: string;
   lastLoginAt?: string;
+  /** 관리자 메모 (관리자만 작성·열람) */
+  adminNote?: string;
 }
 
 // ── 콘텐츠 (블로그형 게시판) ──
@@ -198,6 +200,7 @@ export interface SmeSupportDoc {
   summary?: string;
   bodyHtml: string;
   applyUrl?: string;
+  thumbnail?: string;
   status: ContentStatus;
 }
 
@@ -209,6 +212,7 @@ export interface HelpDoc {
   category: string;
   title: string;
   slug: string;
+  thumbnail?: string;
   bodyHtml: string;
   audience: HelpAudience;
   order: number;

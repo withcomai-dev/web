@@ -17,6 +17,7 @@ import {
   AdminPageHeader,
 } from "@/components/admin/AdminTableShell";
 import RichEditor from "@/components/admin/RichEditor";
+import ImageUploader from "@/components/admin/ImageUploader";
 import { HELP_CATEGORIES } from "@/lib/constants";
 import { slugify, formatDate } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +28,7 @@ const EMPTY: HelpDoc = {
   category: HELP_CATEGORIES[0],
   title: "",
   slug: "",
+  thumbnail: "",
   bodyHtml: "",
   audience: "public",
   order: 0,
@@ -281,6 +283,13 @@ function HelpDocEditor({
               className="w-full px-3 py-2 rounded border border-gray-200"
             />
           </Row>
+          <ImageUploader
+            label="대표 이미지 (선택)"
+            folder="help"
+            value={form.thumbnail ?? ""}
+            onChange={(url) => setForm({ ...form, thumbnail: url })}
+            height={120}
+          />
           <Row label="본문">
             <RichEditor
               value={form.bodyHtml}

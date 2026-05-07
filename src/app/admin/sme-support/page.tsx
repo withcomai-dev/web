@@ -16,6 +16,7 @@ import {
   AdminPageHeader,
 } from "@/components/admin/AdminTableShell";
 import RichEditor from "@/components/admin/RichEditor";
+import ImageUploader from "@/components/admin/ImageUploader";
 import type { SmeSupportDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
 
@@ -88,6 +89,7 @@ export default function AdminSmeSupportPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-xs uppercase text-gray-600">
               <tr>
+                <th className="px-4 py-3 text-left w-16"></th>
                 <th className="px-4 py-3 text-left">제목</th>
                 <th className="px-4 py-3 text-left">기관</th>
                 <th className="px-4 py-3 text-left">마감</th>
@@ -98,6 +100,15 @@ export default function AdminSmeSupportPage() {
             <tbody className="divide-y divide-gray-100">
               {items.map((it) => (
                 <tr key={it.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 w-16">
+                    {it.thumbnail && (
+                      <img
+                        src={it.thumbnail}
+                        alt=""
+                        className="w-10 h-10 rounded object-cover"
+                      />
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-semibold">{it.title}</td>
                   <td className="px-4 py-3">{it.agency || "—"}</td>
                   <td className="px-4 py-3">
@@ -204,6 +215,13 @@ function SmeEditor({
               className="w-full px-3 py-2 rounded border border-gray-200"
             />
           </Field>
+          <ImageUploader
+            label="썸네일·대표 이미지"
+            folder="sme-support"
+            value={form.thumbnail ?? ""}
+            onChange={(url) => setForm({ ...form, thumbnail: url })}
+            height={140}
+          />
           <Field label="본문">
             <RichEditor
               value={form.bodyHtml}

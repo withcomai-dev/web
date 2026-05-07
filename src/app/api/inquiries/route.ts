@@ -13,6 +13,7 @@ interface InquiryBody {
   phone?: string;
   email?: string;
   message?: string;
+  attachments?: string[];
 }
 
 export async function POST(req: NextRequest) {
@@ -45,6 +46,10 @@ export async function POST(req: NextRequest) {
   const company = (body.company ?? "").trim();
   const phone = (body.phone ?? "").trim();
 
+  const attachments = Array.isArray(body.attachments)
+    ? body.attachments.filter((u) => typeof u === "string" && u.startsWith("https://")).slice(0, 5)
+    : undefined;
+
   const inquiry: Omit<InquiryDoc, "id"> = {
     type: type || "기타",
     name,
@@ -52,6 +57,7 @@ export async function POST(req: NextRequest) {
     phone: phone || undefined,
     email,
     message,
+    attachments,
     status: "new",
     createdAt,
   };

@@ -35,8 +35,10 @@ export default function AuditPage() {
   const [actorFilter, setActorFilter] = useState("");
   const [colFilter, setColFilter] = useState("");
 
+  const [error, setError] = useState<string | null>(null);
   const load = async () => {
     setLoading(true);
+    setError(null);
     try {
       const q = query(
         collection(db, "auditLogs"),
@@ -48,6 +50,9 @@ export default function AuditPage() {
         (d) => ({ id: d.id, ...d.data() } as AuditDoc),
       );
       setItems(data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "조회 실패");
+      setItems([]);
     } finally {
       setLoading(false);
     }

@@ -32,13 +32,24 @@ export function invalidateCache(col: string) {
   }
 }
 
+function logSafeFail(op: string, e: unknown): void {
+  if (typeof console !== "undefined") {
+    console.warn(`[firestore] ${op} 실패 (오프라인 또는 미설정):`, e);
+  }
+}
+
 export async function getCollection<T>(col: string): Promise<T[]> {
   const cached = _cache.get(col);
   if (cached && Date.now() - cached.ts < CACHE_TTL) return cached.data as T[];
-  const snap = await getDocs(collection(db, col));
-  const result = snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
-  _cache.set(col, { data: result, ts: Date.now() });
-  return result;
+  try {
+    const snap = await getDocs(collection(db, col));
+    const result = snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
+    _cache.set(col, { data: result, ts: Date.now() });
+    return result;
+  } catch (e) {
+    logSafeFail(`getCollection(${col})`, e);
+    return [];
+  }
 }
 
 export async function getOrderedCollection<T>(
@@ -49,20 +60,30 @@ export async function getOrderedCollection<T>(
   const cacheKey = `${col}__${field}__${dir}`;
   const cached = _cache.get(cacheKey);
   if (cached && Date.now() - cached.ts < CACHE_TTL) return cached.data as T[];
-  const q = query(collection(db, col), orderBy(field, dir));
-  const snap = await getDocs(q);
-  const result = snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
-  _cache.set(cacheKey, { data: result, ts: Date.now() });
-  return result;
+  try {
+    const q = query(collection(db, col), orderBy(field, dir));
+    const snap = await getDocs(q);
+    const result = snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
+    _cache.set(cacheKey, { data: result, ts: Date.now() });
+    return result;
+  } catch (e) {
+    logSafeFail(`getOrderedCollection(${col})`, e);
+    return [];
+  }
 }
 
 export async function getQueriedCollection<T>(
   col: string,
   constraints: QueryConstraint[],
 ): Promise<T[]> {
-  const q = query(collection(db, col), ...constraints);
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
+  try {
+    const q = query(collection(db, col), ...constraints);
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as T));
+  } catch (e) {
+    logSafeFail(`getQueriedCollection(${col})`, e);
+    return [];
+  }
 }
 
 export async function createDoc<T extends DocumentData>(
@@ -109,9 +130,14 @@ export async function removeDoc(col: string, id: string): Promise<void> {
 }
 
 export async function getDocById<T>(col: string, id: string): Promise<T | null> {
-  const snap = await getDoc(doc(db, col, id));
-  if (!snap.exists()) return null;
-  return { id: snap.id, ...snap.data() } as T;
+  try {
+    const snap = await getDoc(doc(db, col, id));
+    if (!snap.exists()) return null;
+    return { id: snap.id, ...snap.data() } as T;
+  } catch (e) {
+    logSafeFail(`getDocById(${col}/${id})`, e);
+    return null;
+  }
 }
 
 export async function getSingletonDoc<T>(col: string, id: string): Promise<T | null> {

@@ -27,7 +27,16 @@ import {
   restorePageVersion,
   type PageVersion,
 } from "@/lib/page-versions";
-import { History } from "lucide-react";
+import {
+  loadRegistry,
+  addPage,
+  renamePage,
+  deletePage,
+  isValidKey,
+  normalizeSlug,
+} from "@/lib/page-registry";
+import type { PageRegistryEntry } from "@/types/cms";
+import { History, Plus as PlusIcon, Pencil } from "lucide-react";
 import { ALL_PAGE_SEEDS } from "@/lib/seed-data";
 import type { PageDoc, Section, SectionType } from "@/types/cms";
 import { cn } from "@/lib/utils";
@@ -35,14 +44,7 @@ import RichEditor from "@/components/admin/RichEditor";
 import ImageUploader from "@/components/admin/ImageUploader";
 import SectionItemsEditor from "@/components/admin/SectionItemsEditor";
 
-const PAGE_KEYS: { key: string; title: string }[] = [
-  { key: "home", title: "홈" },
-  { key: "about", title: "회사 소개" },
-  { key: "smartwork-ai", title: "스마트워크 & AI" },
-  { key: "it-service", title: "IT 서비스" },
-  { key: "sme-support", title: "중소기업 지원사업" },
-  { key: "contact", title: "문의하기" },
-];
+// PAGE_KEYS는 더 이상 하드코딩하지 않습니다 — Firestore page-registry에서 로드.
 
 const SECTION_TYPES: { value: SectionType; label: string }[] = [
   { value: "hero", label: "Hero (풀스크린 헤더)" },
@@ -99,12 +101,50 @@ function newSection(type: SectionType, order: number): Section {
 }
 
 export default function AdminPagesEditor() {
-  const [activeKey, setActiveKey] = useState(PAGE_KEYS[0].key);
+  const [registry, setRegistry] = useState<PageRegistryEntry[]>([]);
+  const [activeKey, setActiveKey] = useState<string>("home");
   const [page, setPage] = useState<PageDoc | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [pageOps, setPageOps] = useState<"none" | "new" | "rename">("none");
+
+  const reloadRegistry = useCallback(async () => {
+    const reg = await loadRegistry();
+    setRegistry(reg);
+    if (!reg.some((p) => p.key === activeKey)) {
+      setActiveKey(reg[0]?.key ?? "home");
+    }
+  }, [activeKey]);
+
+  useEffect(() => {
+    void reloadRegistry();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const activeEntry = registry.find((p) => p.key === activeKey);
+
+  const handleAddPage = async (data: { key: string; title: string; slug: string }) => {
+    await addPage(data);
+    await reloadRegistry();
+    setActiveKey(data.key);
+    setPageOps("none");
+  };
+
+  const handleRenamePage = async (newTitle: string, newSlug?: string) => {
+    if (!activeEntry) return;
+    await renamePage(activeEntry.key, newTitle, newSlug);
+    await reloadRegistry();
+    setPageOps("none");
+  };
+
+  const handleDeletePage = async () => {
+    if (!activeEntry || activeEntry.isBuiltIn) return;
+    if (!confirm(`정말 '${activeEntry.title}' 페이지를 삭제하시겠습니까? 본문·섹션·이전 버전이 모두 삭제됩니다.`)) return;
+    await deletePage(activeEntry.key);
+    await reloadRegistry();
+  };
 
   const load = useCallback(async (key: string) => {
     setLoading(true);
@@ -277,7 +317,7 @@ export default function AdminPagesEditor() {
       {aiOpen && (
         <AIPageGenModal
           pageKey={activeKey}
-          pageTitle={PAGE_KEYS.find((p) => p.key === activeKey)?.title ?? activeKey}
+          pageTitle={activeEntry?.title ?? activeKey}
           onClose={() => setAiOpen(false)}
           onApply={applyAIPage}
         />
@@ -288,7 +328,7 @@ export default function AdminPagesEditor() {
             <div className="sticky top-0 bg-white p-4 border-b border-gray-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <History className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-bold">이전 버전 — {PAGE_KEYS.find((p) => p.key === activeKey)?.title}</h2>
+                <h2 className="text-lg font-bold">이전 버전 — {activeEntry?.title}</h2>
               </div>
               <button onClick={() => setHistoryOpen(false)} className="p-1.5 hover:bg-gray-100 rounded">
                 <X className="w-5 h-5" />
@@ -329,22 +369,73 @@ export default function AdminPagesEditor() {
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        {PAGE_KEYS.map((p) => (
+      <div className="flex flex-wrap gap-2 mb-3">
+        {registry.map((p) => (
           <button
             key={p.key}
             onClick={() => setActiveKey(p.key)}
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-semibold border transition-colors",
+              "px-4 py-2 rounded-lg text-sm font-semibold border transition-colors inline-flex items-center gap-1.5",
               activeKey === p.key
                 ? "bg-blue-600 text-white border-blue-600"
                 : "bg-white text-gray-600 border-gray-200 hover:border-blue-300",
             )}
           >
             {p.title}
+            {!p.isBuiltIn && (
+              <span className="text-[10px] opacity-60">·{p.slug}</span>
+            )}
           </button>
         ))}
+        <button
+          onClick={() => setPageOps("new")}
+          className="px-3 py-2 rounded-lg text-sm font-semibold border-2 border-dashed border-gray-300 hover:border-blue-400 hover:text-blue-600 inline-flex items-center gap-1"
+        >
+          <PlusIcon className="w-4 h-4" /> 새 페이지
+        </button>
       </div>
+
+      {activeEntry && (
+        <div className="flex items-center gap-2 mb-6 text-xs text-gray-500">
+          <span className="font-mono px-2 py-0.5 rounded bg-gray-100">
+            key={activeEntry.key}
+          </span>
+          <span className="font-mono px-2 py-0.5 rounded bg-gray-100">
+            {activeEntry.slug}
+          </span>
+          {activeEntry.isBuiltIn && (
+            <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700">내장</span>
+          )}
+          <button
+            onClick={() => setPageOps("rename")}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded hover:bg-gray-100 text-gray-600"
+          >
+            <Pencil className="w-3 h-3" /> 이름·슬러그 변경
+          </button>
+          {!activeEntry.isBuiltIn && (
+            <button
+              onClick={handleDeletePage}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded hover:bg-rose-50 text-rose-600"
+            >
+              <Trash2 className="w-3 h-3" /> 페이지 삭제
+            </button>
+          )}
+        </div>
+      )}
+
+      {pageOps === "new" && (
+        <NewPageModal
+          onClose={() => setPageOps("none")}
+          onSubmit={handleAddPage}
+        />
+      )}
+      {pageOps === "rename" && activeEntry && (
+        <RenamePageModal
+          entry={activeEntry}
+          onClose={() => setPageOps("none")}
+          onSubmit={handleRenamePage}
+        />
+      )}
 
       {page && (
         <div className="space-y-3">
@@ -848,6 +939,195 @@ function AIPageGenModal({
               </button>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NewPageModal({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onSubmit: (data: { key: string; title: string; slug: string }) => Promise<void>;
+}) {
+  const [title, setTitle] = useState("");
+  const [key, setKey] = useState("");
+  const [slug, setSlug] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  // 제목 입력 시 key·slug 자동 제안
+  const onTitleChange = (v: string) => {
+    setTitle(v);
+    const auto = v
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9가-힣\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .slice(0, 30);
+    if (!key) setKey(auto.replace(/[가-힣]/g, "x") || `page-${Date.now() % 10000}`);
+    if (!slug) setSlug("/" + auto);
+  };
+
+  const submit = async () => {
+    if (!isValidKey(key)) {
+      setErr("키는 영문 소문자·숫자·하이픈만 가능합니다 (예: case-study)");
+      return;
+    }
+    setBusy(true);
+    setErr(null);
+    try {
+      await onSubmit({ key, title, slug: normalizeSlug(slug) });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "생성 실패");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-md rounded-2xl">
+        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 className="font-bold">새 페이지</h3>
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">제목</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => onTitleChange(e.target.value)}
+              placeholder="예: 사례 연구"
+              className="w-full px-3 py-2 rounded border border-gray-200"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
+              키 (Firestore 문서 ID)
+            </label>
+            <input
+              type="text"
+              value={key}
+              onChange={(e) => setKey(e.target.value.toLowerCase())}
+              placeholder="case-study"
+              className="w-full px-3 py-2 rounded border border-gray-200 font-mono text-sm"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              영문 소문자·숫자·하이픈만. 한 번 만들면 변경 불가.
+            </p>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">슬러그 (URL)</label>
+            <input
+              type="text"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              placeholder="/case-study"
+              className="w-full px-3 py-2 rounded border border-gray-200 font-mono text-sm"
+            />
+          </div>
+          {err && <p className="text-sm text-rose-600">{err}</p>}
+          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+            <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">
+              취소
+            </button>
+            <button
+              onClick={submit}
+              disabled={busy || !title.trim() || !key.trim() || !slug.trim()}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold"
+            >
+              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+              생성
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RenamePageModal({
+  entry,
+  onClose,
+  onSubmit,
+}: {
+  entry: PageRegistryEntry;
+  onClose: () => void;
+  onSubmit: (newTitle: string, newSlug?: string) => Promise<void>;
+}) {
+  const [title, setTitle] = useState(entry.title);
+  const [slug, setSlug] = useState(entry.slug);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const submit = async () => {
+    setBusy(true);
+    setErr(null);
+    try {
+      await onSubmit(title, entry.isBuiltIn ? undefined : slug);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "수정 실패");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-md rounded-2xl">
+        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 className="font-bold">페이지 이름 변경</h3>
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">제목</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 rounded border border-gray-200"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">슬러그 (URL)</label>
+            <input
+              type="text"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              disabled={entry.isBuiltIn}
+              className="w-full px-3 py-2 rounded border border-gray-200 font-mono text-sm disabled:bg-gray-50"
+            />
+            {entry.isBuiltIn && (
+              <p className="mt-1 text-xs text-gray-500">
+                내장 페이지의 슬러그는 변경할 수 없습니다.
+              </p>
+            )}
+          </div>
+          {err && <p className="text-sm text-rose-600">{err}</p>}
+          <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">
+            <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">
+              취소
+            </button>
+            <button
+              onClick={submit}
+              disabled={busy || !title.trim() || (!entry.isBuiltIn && !slug.trim())}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold"
+            >
+              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+              저장
+            </button>
+          </div>
         </div>
       </div>
     </div>

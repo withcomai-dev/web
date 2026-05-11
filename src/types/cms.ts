@@ -136,6 +136,26 @@ export interface PageDoc {
   updatedAt?: string;
 }
 
+/** 등록된 페이지 메타. 갑이 어드민에서 신규 페이지를 추가·삭제·이름변경할 수 있도록 한다. */
+export interface PageRegistryEntry {
+  /** 고유 식별자. siteSettings/page_<key> 문서 ID로 사용. */
+  key: string;
+  /** 어드민 탭에 보일 이름 */
+  title: string;
+  /** 공개 URL 경로. 내장 페이지는 고정, 커스텀은 사용자 입력 */
+  slug: string;
+  /** 내장 페이지 (삭제·이름변경 제한) */
+  isBuiltIn?: boolean;
+  /** 어드민 탭 순서 */
+  order: number;
+}
+
+export interface PageRegistry {
+  id?: string;
+  pages: PageRegistryEntry[];
+  updatedAt?: string;
+}
+
 export interface GlobalSettings {
   id?: string;
   logoUrl?: string;

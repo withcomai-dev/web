@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { NAV_ITEMS, SITE_NAME } from "@/lib/constants";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { NAV_ITEMS, SITE_NAME, type NavItem } from "@/lib/constants";
 import {
   COLLECTIONS,
   GLOBAL_SETTINGS_DOC_ID,
@@ -11,9 +11,44 @@ import {
 } from "@/lib/firestore";
 import type { GlobalSettings } from "@/types/cms";
 
+/** 외부 링크는 새 탭, 내부 링크는 Next Link로 렌더링 */
+function NavLink({
+  href,
+  external,
+  className,
+  onClick,
+  children,
+}: {
+  href: string;
+  external?: boolean;
+  className?: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        onClick={onClick}
+      >
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className} onClick={onClick}>
+      {children}
+    </Link>
+  );
+}
+
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const [navItems, setNavItems] = useState(NAV_ITEMS);
+  const [navItems, setNavItems] = useState<NavItem[]>(NAV_ITEMS);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -39,15 +74,38 @@ export default function Nav() {
             {SITE_NAME}
           </Link>
 
-          <div className="hidden lg:flex items-baseline space-x-2">
+          {/* 데스크톱: 호버/포커스 드롭다운 */}
+          <div className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-              >
-                {item.label}
-              </Link>
+              <div key={item.label} className="relative group">
+                <NavLink
+                  href={item.href}
+                  external={item.external}
+                  className="inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  {item.label}
+                  {item.children && item.children.length > 0 && (
+                    <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
+                  )}
+                </NavLink>
+
+                {item.children && item.children.length > 0 && (
+                  <div className="absolute left-0 top-full pt-2 min-w-[14rem] opacity-0 invisible translate-y-1 transition-all duration-150 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0">
+                    <div className="rounded-lg border border-gray-100 bg-white shadow-lg py-2">
+                      {item.children.map((child) => (
+                        <NavLink
+                          key={child.label}
+                          href={child.href}
+                          external={child.external}
+                          className="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 whitespace-nowrap"
+                        >
+                          {child.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
 
@@ -62,19 +120,58 @@ export default function Nav() {
         </div>
       </div>
 
+      {/* 모바일: 아코디언 */}
       {open && (
         <div className="lg:hidden border-t border-gray-100 bg-white">
           <div className="px-4 py-2 space-y-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const hasChildren = !!(item.children && item.children.length > 0);
+              const expanded = mobileExpanded === item.label;
+              return (
+                <div key={item.label}>
+                  <div className="flex items-center">
+                    <NavLink
+                      href={item.href}
+                      external={item.external}
+                      className="flex-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                      onClick={() => setOpen(false)}
+                    >
+                      {item.label}
+                    </NavLink>
+                    {hasChildren && (
+                      <button
+                        type="button"
+                        aria-label={`${item.label} 하위 메뉴`}
+                        aria-expanded={expanded}
+                        className="p-2 text-gray-500"
+                        onClick={() =>
+                          setMobileExpanded(expanded ? null : item.label)
+                        }
+                      >
+                        <ChevronDown
+                          className={`w-5 h-5 transition-transform ${expanded ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  {hasChildren && expanded && (
+                    <div className="ml-3 border-l border-gray-100 pl-2 space-y-1 pb-1">
+                      {item.children!.map((child) => (
+                        <NavLink
+                          key={child.label}
+                          href={child.href}
+                          external={child.external}
+                          className="block px-3 py-2 rounded-md text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                          onClick={() => setOpen(false)}
+                        >
+                          {child.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

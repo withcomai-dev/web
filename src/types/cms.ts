@@ -159,7 +159,12 @@ export interface PageRegistry {
 export interface GlobalSettings {
   id?: string;
   logoUrl?: string;
-  navItems?: { label: string; href: string }[];
+  navItems?: {
+    label: string;
+    href: string;
+    external?: boolean;
+    children?: { label: string; href: string; external?: boolean }[];
+  }[];
   footerText?: string;
   contactPhone?: string;
   contactEmail?: string;

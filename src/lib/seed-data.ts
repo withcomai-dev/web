@@ -22,11 +22,8 @@ export const SEED_HOME: PageDoc = {
         title:
           '중소기업의 <span class="text-blue-500">스마트워크</span>와 <br class="hidden md:block"> <span class="text-blue-500">생성형 AI</span> 활용을 지원하는 파트너',
         subtitle:
-          "위드컴정보는 IT 인프라 구축부터 최신 AI 기술 도입까지, 중소기업의 업무 효율 향상을 위한 최적의 솔루션을 제안합니다.",
-        ctas: [
-          { label: "상담 신청하기", href: "#contact", variant: "primary" },
-          { label: "자세히 보기", href: "#about", variant: "ghost" },
-        ],
+          "위더스컴퓨터와 WITHCOM AI는 IT 인프라 구축부터 최신 AI 기술 도입까지, 중소기업의 업무 효율 향상을 위한 최적의 솔루션을 제안합니다.",
+        ctas: [],
       },
     },
     {
@@ -36,29 +33,29 @@ export const SEED_HOME: PageDoc = {
       type: "cards",
       data: {
         eyebrow: "Our Strengths",
-        title: "위드컴정보의 핵심 역량",
+        title: "WITHCOM AI의 핵심역량",
         description: "단순한 기술 제공을 넘어, 고객사의 비즈니스 성장을 함께 고민합니다.",
         columns: 4,
         items: [
           {
-            icon: "cpu",
-            title: "IT 인프라 구축",
-            body: "최적화된 네트워크 및 서버 환경 구축으로 안정적인 비즈니스 기반을 제공합니다.",
+            icon: "zap",
+            title: "AI 기반 스마트워크 구축",
+            body: "기업 업무 환경에 맞는 AI 도구와 협업 시스템을 도입하여 반복 업무를 줄이고, 문서 작성·자료 정리·보고·고객 응대 등 전반적인 업무 생산성을 높입니다.",
           },
           {
-            icon: "zap",
-            title: "스마트워크 솔루션",
-            body: "언제 어디서나 효율적으로 일할 수 있는 협업 도구와 시스템 도입을 지원합니다.",
+            icon: "cpu",
+            title: "IT 인프라 및 시스템 통합 지원",
+            body: "AI PC(on device), 서버, 네트워크, 소프트웨어, 보안 등 기업 운영에 필요한 IT 인프라를 안정적으로 구축하고 관리합니다.",
+          },
+          {
+            icon: "monitor",
+            title: "디지털 비즈니스 구축(홈페이지·쇼핑몰)",
+            body: "기업 홈페이지, 쇼핑몰, 온라인 마케팅 채널을 구축하고 고객 문의, 원격지원, 콘텐츠 운영까지 연결되는 디지털 비즈니스 환경을 지원합니다.",
           },
           {
             icon: "message-square",
-            title: "생성형 AI 컨설팅",
-            body: "ChatGPT 등 최신 AI 기술을 실무에 즉시 적용할 수 있는 맞춤형 가이드를 제공합니다.",
-          },
-          {
-            icon: "shield-check",
-            title: "철저한 기술 지원",
-            body: "전문 엔지니어의 상시 모니터링과 신속한 원격 지원으로 업무 중단을 최소화합니다.",
+            title: "맞춤형 AI 컨설팅 및 교육",
+            body: "기업의 업무 프로세스를 분석해 실제 활용 가능한 AI 적용 방안을 제안하고, 임직원이 직접 활용할 수 있도록 실무 중심 교육을 제공합니다.",
           },
         ],
       },

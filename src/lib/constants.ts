@@ -14,16 +14,62 @@ export const COMPANY = {
     "https://www.youtube.com/@%EC%9C%84%EB%8D%94%EC%8A%A4%EC%BB%B4%ED%93%A8%ED%84%B0%EC%A3%BC",
 };
 
-export const NAV_ITEMS = [
-  { label: "홈", href: "/" },
-  { label: "회사 소개", href: "/about" },
-  { label: "스마트워크 & AI", href: "/smartwork-ai" },
-  { label: "콘텐츠", href: "/contents" },
-  { label: "IT 서비스", href: "/it-service" },
-  { label: "중소기업 지원사업", href: "/sme-support" },
-  { label: "쇼핑몰", href: "/shop" },
-  { label: "유튜브", href: "/youtube" },
-  { label: "문의하기", href: "/contact" },
+export type NavChild = { label: string; href: string; external?: boolean };
+export type NavItem = {
+  label: string;
+  href: string;
+  external?: boolean;
+  children?: NavChild[];
+};
+
+export const NAV_ITEMS: NavItem[] = [
+  {
+    label: "홈",
+    href: "/",
+    children: [
+      { label: "홈", href: "/" },
+      { label: "회사 소개", href: "/about" },
+      { label: "공지사항", href: "/contents" },
+    ],
+  },
+  {
+    label: "스마트워크 & AI",
+    href: "/smartwork-ai",
+    children: [
+      { label: "AI TOOL 소개", href: "/smartwork-ai" },
+      { label: "스마트워크 도입 성공사례", href: "/contents" },
+      { label: "블로그 및 유튜브", href: "/youtube" },
+    ],
+  },
+  {
+    label: "IT 서비스",
+    href: "/it-service",
+    children: [
+      { label: "하드웨어 및 소프트웨어 구축", href: "/it-service" },
+      { label: "상담 신청하기", href: "/contact" },
+      { label: "공식 쇼핑몰", href: "/shop" },
+    ],
+  },
+  {
+    label: "중소기업 지원사업",
+    href: "/sme-support",
+    children: [
+      { label: "소상공인 지원사업", href: "/sme-support" },
+      { label: "R&D 지원사업", href: "/sme-support" },
+    ],
+  },
+  {
+    label: "고객 서비스",
+    href: "/contact",
+    children: [
+      { label: "문의하기", href: "/contact" },
+      {
+        label: "원격지원 (위더스컴퓨터)",
+        href: "http://15663669.co.kr/start",
+        external: true,
+      },
+    ],
+  },
 ];
 
 export const ADMIN_NAV_ITEMS = [

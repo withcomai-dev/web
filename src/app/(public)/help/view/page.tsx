@@ -12,11 +12,23 @@ import {
 import type { HelpDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
 
-export default function HelpDetailClient({ slug }: { slug: string }) {
+export default function HelpViewPage() {
+  const [slug, setSlug] = useState<string | null>(null);
   const [doc, setDoc] = useState<HelpDoc | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const s = new URLSearchParams(window.location.search).get("slug");
+    setSlug(s);
+  }, []);
+
+  useEffect(() => {
+    if (slug === null) return;
+    if (!slug) {
+      setDoc(null);
+      setLoading(false);
+      return;
+    }
     let alive = true;
     void (async () => {
       setLoading(true);

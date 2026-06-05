@@ -20,11 +20,19 @@ export default function CustomPageClient({ slug }: { slug: string }) {
     let alive = true;
     void (async () => {
       setLoading(true);
+      // 정적 export 에서 빌드 시점에 없던 slug 는 Firebase Hosting rewrite 로
+      // 이 컴포넌트(__none__)가 서빙된다. 그 경우 prop(slug)이 아니라 실제 URL 에서 slug 를 읽어야 한다.
+      const pathSlug =
+        typeof window !== "undefined"
+          ? decodeURIComponent(window.location.pathname.split("/").filter(Boolean)[0] ?? "")
+          : slug;
+      const effectiveSlug = pathSlug && pathSlug !== "__none__" ? pathSlug : slug;
+
       const reg = await getSingletonDoc<PageRegistry>(
         COLLECTIONS.SETTINGS,
         REGISTRY_DOC_ID,
       );
-      const norm = "/" + slug;
+      const norm = "/" + effectiveSlug;
       const entry = reg?.pages?.find((p) => p.slug === norm);
       let pg: PageDoc | null = null;
       if (entry) {

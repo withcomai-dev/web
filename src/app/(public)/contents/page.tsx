@@ -1,4 +1,8 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import {
   COLLECTIONS,
   getOrderedCollection,
@@ -6,21 +10,35 @@ import {
 import type { ContentDoc } from "@/types/cms";
 import { formatDate, htmlToPlainTextSummary } from "@/lib/utils";
 
-async function loadContents(): Promise<ContentDoc[]> {
-  try {
-    const docs = await getOrderedCollection<ContentDoc>(
-      COLLECTIONS.CONTENTS,
-      "publishedAt",
-      "desc",
-    );
-    return docs.filter((d) => d.status === "published");
-  } catch {
-    return [];
-  }
-}
+export default function ContentsPage() {
+  const [items, setItems] = useState<ContentDoc[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function ContentsPage() {
-  const items = await loadContents();
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      setLoading(true);
+      let docs: ContentDoc[] = [];
+      try {
+        const all = await getOrderedCollection<ContentDoc>(
+          COLLECTIONS.CONTENTS,
+          "publishedAt",
+          "desc",
+        );
+        docs = all.filter((d) => d.status === "published");
+      } catch {
+        docs = [];
+      }
+      if (alive) {
+        setItems(docs);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <section className="py-16 bg-slate-50 min-h-[60vh]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,7 +49,11 @@ export default async function ContentsPage() {
           <h1 className="mt-2 text-3xl font-extrabold text-gray-900">업무활용 콘텐츠</h1>
         </header>
 
-        {items.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          </div>
+        ) : items.length === 0 ? (
           <p className="text-center text-gray-500 py-20">
             등록된 콘텐츠가 없습니다.
           </p>
@@ -40,7 +62,7 @@ export default async function ContentsPage() {
             {items.map((item) => (
               <Link
                 key={item.id}
-                href={`/contents/${item.slug}`}
+                href={`/contents/view?slug=${encodeURIComponent(item.slug)}`}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group"
               >
                 {item.thumbnail && (

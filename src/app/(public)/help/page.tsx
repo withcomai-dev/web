@@ -1,22 +1,44 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { COLLECTIONS, getOrderedCollection } from "@/lib/firestore";
 import type { HelpDoc } from "@/types/cms";
 import { HELP_CATEGORIES } from "@/lib/constants";
 
-async function loadDocs(): Promise<HelpDoc[]> {
-  try {
-    const docs = await getOrderedCollection<HelpDoc>(COLLECTIONS.HELP_DOCS, "order", "asc");
-    return docs.filter(
-      (d) =>
-        d.status === "published" && (d.audience === "public" || d.audience === "both"),
-    );
-  } catch {
-    return [];
-  }
-}
+export default function HelpIndex() {
+  const [docs, setDocs] = useState<HelpDoc[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function HelpIndex() {
-  const docs = await loadDocs();
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      setLoading(true);
+      let result: HelpDoc[] = [];
+      try {
+        const all = await getOrderedCollection<HelpDoc>(
+          COLLECTIONS.HELP_DOCS,
+          "order",
+          "asc",
+        );
+        result = all.filter(
+          (d) =>
+            d.status === "published" &&
+            (d.audience === "public" || d.audience === "both"),
+        );
+      } catch {
+        result = [];
+      }
+      if (alive) {
+        setDocs(result);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="py-16 bg-slate-50 min-h-[60vh]">
@@ -31,7 +53,11 @@ export default async function HelpIndex() {
           </p>
         </header>
 
-        {docs.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          </div>
+        ) : docs.length === 0 ? (
           <p className="text-center text-gray-500 py-20">
             등록된 도움말이 없습니다.
           </p>
@@ -47,7 +73,7 @@ export default async function HelpIndex() {
                     {items.map((doc) => (
                       <li key={doc.id}>
                         <Link
-                          href={`/help/${doc.slug}`}
+                          href={`/help/view?slug=${encodeURIComponent(doc.slug)}`}
                           className="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all"
                         >
                           {doc.thumbnail ? (

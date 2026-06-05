@@ -21,25 +21,26 @@ const HARD_RESERVED = new Set([
 ]);
 
 // 빌드 시점에 존재하는 커스텀 페이지 slug 를 정적 생성한다.
-// (이후 새로 만든 페이지는 재배포 시 반영)
+// "__none__" 은 항상 포함 — Firebase Hosting 의 catch-all rewrite 대상(범용 렌더러)이며,
+// 빌드 환경이 Firestore 에 접근 못 해도(빈 배열 불가) 안전망 역할을 한다.
+// 빌드에 없던 새 커스텀 페이지도 rewrite 로 __none__ 가 서빙되어 런타임에 렌더된다.
 export async function generateStaticParams() {
+  const params: { slug: string }[] = [{ slug: "__none__" }];
   try {
     const reg = await getSingletonDoc<PageRegistry>(
       COLLECTIONS.SETTINGS,
       REGISTRY_DOC_ID,
     );
     if (reg && Array.isArray(reg.pages)) {
-      const params = reg.pages
-        .map((p) => (p.slug ?? "").replace(/^\//, ""))
-        .filter((s) => s.length > 0 && !HARD_RESERVED.has(s))
-        .map((slug) => ({ slug }));
-      if (params.length > 0) return params;
+      for (const p of reg.pages) {
+        const s = (p.slug ?? "").replace(/^\//, "");
+        if (s.length > 0 && !HARD_RESERVED.has(s)) params.push({ slug: s });
+      }
     }
   } catch {
-    /* 빌드 시 Firestore 미연결 → sentinel 폴백 */
+    /* 빌드 시 Firestore 미연결 → __none__ 만으로 진행 */
   }
-  // output:export 는 빈 배열을 허용하지 않으므로 sentinel 1개 (클라이언트가 not-found 렌더)
-  return [{ slug: "__none__" }];
+  return params;
 }
 
 export default async function CustomPage({

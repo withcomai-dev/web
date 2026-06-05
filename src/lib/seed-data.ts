@@ -111,7 +111,7 @@ export const SEED_HOME: PageDoc = {
               "실무에서 바로 활용 가능한 구체적인 방법론과 사례를 통해 디지털 전환의 해답을 제시합니다.",
             thumbnail:
               "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800",
-            href: "/contents/ai-report-tips",
+            href: "/contents/view?slug=ai-report-tips",
           },
           {
             category: "스마트워크",
@@ -121,7 +121,7 @@ export const SEED_HOME: PageDoc = {
               "실무에서 바로 활용 가능한 구체적인 방법론과 사례를 통해 디지털 전환의 해답을 제시합니다.",
             thumbnail:
               "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800",
-            href: "/contents/collab-tools-case",
+            href: "/contents/view?slug=collab-tools-case",
           },
           {
             category: "IT 트렌드",
@@ -131,7 +131,7 @@ export const SEED_HOME: PageDoc = {
               "실무에서 바로 활용 가능한 구체적인 방법론과 사례를 통해 디지털 전환의 해답을 제시합니다.",
             thumbnail:
               "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800",
-            href: "/contents/dx-strategy-2026",
+            href: "/contents/view?slug=dx-strategy-2026",
           },
         ],
       },

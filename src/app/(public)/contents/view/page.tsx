@@ -12,7 +12,7 @@ import {
 import type { ContentDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
 
-export default function ContentDetailClient({ slug }: { slug: string }) {
+export default function ContentViewPage() {
   const [item, setItem] = useState<ContentDoc | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +20,14 @@ export default function ContentDetailClient({ slug }: { slug: string }) {
     let alive = true;
     void (async () => {
       setLoading(true);
+      const slug = new URLSearchParams(window.location.search).get("slug");
+      if (!slug) {
+        if (alive) {
+          setItem(null);
+          setLoading(false);
+        }
+        return;
+      }
       let found: ContentDoc | null = null;
       try {
         const docs = await getQueriedCollection<ContentDoc>(
@@ -38,7 +46,7 @@ export default function ContentDetailClient({ slug }: { slug: string }) {
     return () => {
       alive = false;
     };
-  }, [slug]);
+  }, []);
 
   if (loading) {
     return (

@@ -199,7 +199,7 @@ export default function HelpWidget() {
                       {filtered.map((doc) => (
                         <li key={doc.id}>
                           <Link
-                            href={`/help/${doc.slug}`}
+                            href={`/help/view?slug=${encodeURIComponent(doc.slug)}`}
                             onClick={() => setOpen(false)}
                             className="block p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50 transition-colors"
                           >

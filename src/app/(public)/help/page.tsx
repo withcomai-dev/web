@@ -3,8 +3,6 @@ import { COLLECTIONS, getOrderedCollection } from "@/lib/firestore";
 import type { HelpDoc } from "@/types/cms";
 import { HELP_CATEGORIES } from "@/lib/constants";
 
-export const dynamic = "force-dynamic";
-
 async function loadDocs(): Promise<HelpDoc[]> {
   try {
     const docs = await getOrderedCollection<HelpDoc>(COLLECTIONS.HELP_DOCS, "order", "asc");

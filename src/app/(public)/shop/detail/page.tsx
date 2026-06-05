@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ExternalLink, Loader2 } from "lucide-react";
 import {
@@ -10,23 +10,31 @@ import {
 import type { RunmoaContent } from "@/types/runmoa";
 import { formatPrice } from "@/lib/utils";
 
-export default function ShopDetailPage({
-  params,
-}: {
-  params: Promise<{ contentId: string }>;
-}) {
-  const { contentId } = use(params);
+/**
+ * 상품 상세. (정적 export 호환: 쿼리파라미터 ?id=)
+ * 런타임에 런모아 API 에서 상품을 조회하므로 어떤 상품이든 재배포 없이 표시된다.
+ */
+export default function ShopDetailPage() {
   const [item, setItem] = useState<RunmoaContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const id =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("id")
+        : null;
+    if (!id) {
+      setError("상품 없음");
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    getRunmoaContentById(Number(contentId))
+    getRunmoaContentById(Number(id))
       .then((c) => setItem(c))
       .catch((e) => setError(e instanceof Error ? e.message : "오류"))
       .finally(() => setLoading(false));
-  }, [contentId]);
+  }, []);
 
   if (loading)
     return (

@@ -1,8 +1,6 @@
 import { loadPage } from "@/lib/page-loader";
 import SectionRenderer from "@/components/sections/SectionRenderer";
 
-export const dynamic = "force-dynamic";
-
 export default async function ITServicePage() {
   const page = await loadPage("it-service");
   if (!page) return <div className="py-20 text-center">페이지를 찾을 수 없습니다.</div>;

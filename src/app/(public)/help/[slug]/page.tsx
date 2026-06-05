@@ -1,26 +1,20 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import {
-  COLLECTIONS,
-  getQueriedCollection,
-  where,
-  limit,
-} from "@/lib/firestore";
+import { COLLECTIONS, getCollection } from "@/lib/firestore";
 import type { HelpDoc } from "@/types/cms";
-import { formatDate } from "@/lib/utils";
+import HelpDetailClient from "./HelpDetailClient";
 
-export const dynamic = "force-dynamic";
-
-async function loadBySlug(slug: string): Promise<HelpDoc | null> {
+// 빌드 시점에 발행된 도움말 slug 를 정적 생성 (이후 새 글은 재배포 시 반영)
+export async function generateStaticParams() {
   try {
-    const docs = await getQueriedCollection<HelpDoc>(COLLECTIONS.HELP_DOCS, [
-      where("slug", "==", slug),
-      limit(1),
-    ]);
-    return docs[0] ?? null;
+    const docs = await getCollection<HelpDoc>(COLLECTIONS.HELP_DOCS);
+    const params = docs
+      .filter((d) => d.status === "published" && !!d.slug)
+      .map((d) => ({ slug: d.slug }));
+    if (params.length > 0) return params;
   } catch {
-    return null;
+    /* 빌드 시 Firestore 미연결 → sentinel 폴백 */
   }
+  // output:export 는 빈 배열을 허용하지 않으므로 sentinel 1개 (클라이언트가 not-found 렌더)
+  return [{ slug: "__none__" }];
 }
 
 export default async function HelpDetail({
@@ -29,34 +23,5 @@ export default async function HelpDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const doc = await loadBySlug(slug);
-  if (!doc || doc.status !== "published") notFound();
-
-  return (
-    <article className="py-16 bg-white min-h-[60vh]">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/help"
-          className="text-sm text-blue-600 hover:underline mb-6 inline-block"
-        >
-          ← 도움말 센터
-        </Link>
-        <header className="mb-10 pb-6 border-b border-gray-100">
-          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-4">
-            {doc.category}
-          </span>
-          <h1 className="text-3xl font-extrabold text-gray-900">{doc.title}</h1>
-          {doc.updatedAt && (
-            <p className="mt-2 text-sm text-gray-400">
-              최종 업데이트: {formatDate(doc.updatedAt)}
-            </p>
-          )}
-        </header>
-        <div
-          className="prose-content"
-          dangerouslySetInnerHTML={{ __html: doc.bodyHtml }}
-        />
-      </div>
-    </article>
-  );
+  return <HelpDetailClient slug={slug} />;
 }

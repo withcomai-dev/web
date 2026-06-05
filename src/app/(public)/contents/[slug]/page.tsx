@@ -1,26 +1,21 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import {
-  COLLECTIONS,
-  getQueriedCollection,
-  where,
-  limit,
-} from "@/lib/firestore";
+import { COLLECTIONS, getCollection } from "@/lib/firestore";
 import type { ContentDoc } from "@/types/cms";
-import { formatDate } from "@/lib/utils";
+import ContentDetailClient from "./ContentDetailClient";
 
-export const dynamic = "force-dynamic";
-
-async function loadBySlug(slug: string): Promise<ContentDoc | null> {
+// 빌드 시점에 발행된 콘텐츠 slug 를 정적 생성 (이후 새 글은 재배포 시 반영).
+// output:export 는 빈 배열을 허용하지 않으므로, 비었을 땐 sentinel 1개를 둔다
+// (클라이언트가 not-found 를 렌더 → 실제 콘텐츠가 생기면 재배포 시 채워진다).
+export async function generateStaticParams() {
   try {
-    const docs = await getQueriedCollection<ContentDoc>(COLLECTIONS.CONTENTS, [
-      where("slug", "==", slug),
-      limit(1),
-    ]);
-    return docs[0] ?? null;
+    const docs = await getCollection<ContentDoc>(COLLECTIONS.CONTENTS);
+    const params = docs
+      .filter((d) => d.status === "published" && !!d.slug)
+      .map((d) => ({ slug: d.slug }));
+    if (params.length > 0) return params;
   } catch {
-    return null;
+    /* 빌드 시 Firestore 미연결 → sentinel 폴백 */
   }
+  return [{ slug: "__none__" }];
 }
 
 export default async function ContentDetail({
@@ -29,41 +24,5 @@ export default async function ContentDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = await loadBySlug(slug);
-  if (!item || item.status !== "published") notFound();
-
-  return (
-    <article className="py-16 bg-white min-h-[60vh]">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/contents"
-          className="text-sm text-blue-600 hover:underline mb-6 inline-block"
-        >
-          ← 콘텐츠 목록으로
-        </Link>
-        <header className="mb-10">
-          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-4">
-            {item.category}
-          </span>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            {item.title}
-          </h1>
-          {item.publishedAt && (
-            <p className="text-sm text-gray-500">{formatDate(item.publishedAt)}</p>
-          )}
-        </header>
-        {item.thumbnail && (
-          <img
-            src={item.thumbnail}
-            alt={item.title}
-            className="w-full rounded-2xl mb-10"
-          />
-        )}
-        <div
-          className="prose-content"
-          dangerouslySetInnerHTML={{ __html: item.bodyHtml }}
-        />
-      </div>
-    </article>
-  );
+  return <ContentDetailClient slug={slug} />;
 }

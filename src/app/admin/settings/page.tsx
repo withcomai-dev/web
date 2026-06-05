@@ -12,6 +12,7 @@ import { AdminPageHeader } from "@/components/admin/AdminTableShell";
 import { COMPANY, NAV_ITEMS } from "@/lib/constants";
 import ImageUploader from "@/components/admin/ImageUploader";
 import type { GlobalSettings } from "@/types/cms";
+import { featureDisabled } from "@/lib/static-mode";
 
 const DEFAULT: GlobalSettings = {
   logoUrl: "",
@@ -242,15 +243,7 @@ function BackupRestore() {
     setRestoring(true);
     setResult(null);
     try {
-      const text = await file.text();
-      const res = await fetch("/api/backup/import", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: text,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "복원 실패");
-      setResult(`복원 완료: ${JSON.stringify(data.restored)}`);
+      featureDisabled();
     } catch (err) {
       setResult(`오류: ${err instanceof Error ? err.message : "fail"}`);
     } finally {

@@ -70,7 +70,7 @@ export default function ShopPage() {
               {data.map((p) => (
                 <Link
                   key={p.content_id}
-                  href={`/shop/${p.content_id}`}
+                  href={`/shop/detail?id=${p.content_id}`}
                   className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow"
                 >
                   {p.featured_image && (

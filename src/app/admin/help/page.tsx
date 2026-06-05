@@ -23,6 +23,7 @@ import { slugify, formatDate } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import type { HelpDoc, HelpQuestion } from "@/types/cms";
 import { cn } from "@/lib/utils";
+import { featureDisabled } from "@/lib/static-mode";
 
 const EMPTY: HelpDoc = {
   category: HELP_CATEGORIES[0],
@@ -348,17 +349,7 @@ function QuestionList({
     setAiLoading(true);
     setErr(null);
     try {
-      const res = await fetch("/api/ai/draft-reply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: answering.question,
-          tone: "friendly",
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "AI 호출 실패");
-      setAnswer(data.result);
+      featureDisabled();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "AI 실패");
     } finally {
@@ -379,17 +370,9 @@ function QuestionList({
       });
       if (sendMail && answering.askerEmail) {
         try {
-          await fetch("/api/mail/help-answer", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              to: answering.askerEmail,
-              question: answering.question,
-              answer: answer.trim(),
-            }),
-          });
+          featureDisabled();
         } catch {
-          // mail failure is non-blocking
+          // mail failure is non-blocking (정적 모드에서는 메일 발송 불가)
         }
       }
       setAnswering(null);

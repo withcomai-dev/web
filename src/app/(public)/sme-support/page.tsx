@@ -8,8 +8,6 @@ import {
 import type { SmeSupportDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
-
 async function loadList(): Promise<SmeSupportDoc[]> {
   try {
     const items = await getOrderedCollection<SmeSupportDoc>(

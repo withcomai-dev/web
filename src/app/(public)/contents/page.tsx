@@ -6,8 +6,6 @@ import {
 import type { ContentDoc } from "@/types/cms";
 import { formatDate, htmlToPlainTextSummary } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
-
 async function loadContents(): Promise<ContentDoc[]> {
   try {
     const docs = await getOrderedCollection<ContentDoc>(

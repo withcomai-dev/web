@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminTableShell";
 import { cn } from "@/lib/utils";
+import { featureDisabled, STATIC_MODE_DISABLED_MSG } from "@/lib/static-mode";
 
 type IntegrationKey =
   | "geminiApiKey"
@@ -150,10 +151,9 @@ export default function AdminIntegrationsPage() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/integrations");
-      if (!res.ok) throw new Error(`조회 실패 (${res.status})`);
-      const data = await res.json();
-      setStatus(data.status);
+      // 정적 배포 모드: 서버 API가 없으므로 빈 상태로 두고 안내만 표시한다.
+      setStatus({} as Record<IntegrationKey, KeyStatus>);
+      setErr(STATIC_MODE_DISABLED_MSG);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "조회 실패");
     } finally {
@@ -170,17 +170,7 @@ export default function AdminIntegrationsPage() {
     setSaving(true);
     setErr(null);
     try {
-      const res = await fetch("/api/admin/integrations", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(edits),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? `저장 실패 (${res.status})`);
-      setStatus(data.status);
-      setEdits({});
-      setSavedAt(Date.now());
-      setTimeout(() => setSavedAt(null), 2500);
+      featureDisabled();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "저장 실패");
     } finally {
@@ -193,19 +183,7 @@ export default function AdminIntegrationsPage() {
     setSaving(true);
     setErr(null);
     try {
-      const res = await fetch("/api/admin/integrations", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [key]: "" }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? `삭제 실패`);
-      setStatus(data.status);
-      setEdits((e) => {
-        const n = { ...e };
-        delete n[key];
-        return n;
-      });
+      featureDisabled();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "삭제 실패");
     } finally {

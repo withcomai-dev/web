@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import {
   COLLECTIONS,
@@ -12,33 +12,36 @@ import { ALL_PAGE_SEEDS } from "@/lib/seed-data";
 import type { PageDoc } from "@/types/cms";
 
 /**
- * 새 탭에서 페이지를 미리 본다.
+ * 새 탭에서 페이지를 미리 본다. (정적 export 호환: 쿼리파라미터 ?key=)
  * - ?draft=1 + sessionStorage 의 임시 데이터를 우선 사용
  * - sessionStorage 키: withcom.preview.<key>
  */
-export default function PreviewPage({
-  params,
-}: {
-  params: Promise<{ key: string }>;
-}) {
-  const { key } = use(params);
+export default function PreviewPage() {
   const [page, setPage] = useState<PageDoc | null>(null);
   const [source, setSource] = useState<"draft" | "saved" | "seed">("seed");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const key =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("key") ?? ""
+        : "";
+
     void (async () => {
+      if (!key) {
+        setPage(null);
+        setLoading(false);
+        return;
+      }
       try {
         // 1) Try draft from sessionStorage
-        if (typeof window !== "undefined") {
-          const draftRaw = sessionStorage.getItem(`withcom.preview.${key}`);
-          if (draftRaw) {
-            const draft = JSON.parse(draftRaw) as PageDoc;
-            setPage(draft);
-            setSource("draft");
-            setLoading(false);
-            return;
-          }
+        const draftRaw = sessionStorage.getItem(`withcom.preview.${key}`);
+        if (draftRaw) {
+          const draft = JSON.parse(draftRaw) as PageDoc;
+          setPage(draft);
+          setSource("draft");
+          setLoading(false);
+          return;
         }
 
         // 2) Saved doc
@@ -62,7 +65,7 @@ export default function PreviewPage({
       setSource("seed");
       setLoading(false);
     })();
-  }, [key]);
+  }, []);
 
   if (loading) {
     return (

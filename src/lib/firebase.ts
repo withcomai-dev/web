@@ -66,7 +66,11 @@ export const auth: Auth = (() => {
 export const db: Firestore = (() => {
   if (_db) return _db;
   if (typeof window === "undefined") {
-    _db = initializeFirestore(ensureApp(), {});
+    // 서버/빌드 환경: gRPC/WebChannel 이 막힌 네트워크에서도 읽을 수 있도록
+    // HTTPS long-polling 강제 (정적 export 빌드 시 Firestore 데이터 수집용)
+    _db = initializeFirestore(ensureApp(), {
+      experimentalForceLongPolling: true,
+    });
   } else {
     _db = initializeFirestore(ensureApp(), {
       localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),

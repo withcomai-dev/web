@@ -2,11 +2,8 @@
 
 import { useRef, useState } from "react";
 import { Send, Loader2, Check, Paperclip, X } from "lucide-react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { INQUIRY_TYPES } from "@/lib/constants";
 import { uploadAsset } from "@/lib/storage-upload";
-import { db } from "@/lib/firebase";
-import { COLLECTIONS } from "@/lib/firestore";
 
 type Phase = "idle" | "submitting" | "done" | "error";
 
@@ -66,48 +63,21 @@ export default function InquiryForm() {
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (phase === "submitting") return;
-    setErrMsg(null);
-
-    // 클라이언트 유효성 검사 (서버 라우트 대신 정적 모드에서 Firestore 직접 저장)
-    const name = form.name.trim();
-    const email = form.email.trim();
-    const message = form.message.trim();
-    if (!name || !email || !message) {
-      setErrMsg("성함·이메일·문의 내용은 필수입니다.");
-      setPhase("error");
-      return;
-    }
-    if (message.length > 9999) {
-      setErrMsg("문의 내용이 너무 깁니다.");
-      setPhase("error");
-      return;
-    }
-    if (!/.+@.+\..+/.test(email)) {
-      setErrMsg("유효한 이메일이 필요합니다.");
-      setPhase("error");
-      return;
-    }
-
     setPhase("submitting");
+    setErrMsg(null);
     try {
-      const urls = attachments
-        .map((a) => a.url)
-        .filter((u) => typeof u === "string" && u.startsWith("https://"))
-        .slice(0, MAX_ATTACHMENTS);
-
-      // Firestore 보안 규칙(firestore.rules)이 inquiries 의 public create 를 허용
-      await addDoc(collection(db, COLLECTIONS.INQUIRIES), {
-        type: form.type || "기타",
-        name,
-        company: form.company.trim() || null,
-        phone: form.phone.trim() || null,
-        email,
-        message,
-        attachments: urls.length > 0 ? urls : null,
-        status: "new",
-        createdAt: serverTimestamp(),
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          attachments: attachments.map((a) => a.url),
+        }),
       });
-
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `요청 실패 (${res.status})`);
+      }
       setPhase("done");
       setForm({
         type: INQUIRY_TYPES[0],

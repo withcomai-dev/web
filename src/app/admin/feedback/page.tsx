@@ -27,7 +27,6 @@ import {
 } from "@/lib/constants";
 import type { FeedbackReport, FeedbackStatus } from "@/types/cms";
 import { cn } from "@/lib/utils";
-import { featureDisabled } from "@/lib/static-mode";
 
 export default function AdminFeedbackPage() {
   const [items, setItems] = useState<FeedbackReport[]>([]);
@@ -204,7 +203,21 @@ function FeedbackDetail({
     setAiLoading(true);
     setErr(null);
     try {
-      featureDisabled();
+      const res = await fetch("/api/ai/analyze-feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: report.message,
+          url: report.context.url,
+          routeFile: report.context.routeFile,
+          consoleErrors: report.context.consoleErrors,
+          networkErrors: report.context.networkErrors,
+          screenshotUrl: report.screenshotUrl,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "AI 호출 실패");
+      setAnalysis(data.analysis);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "AI 실패");
     } finally {
@@ -216,7 +229,18 @@ function FeedbackDetail({
     setBusy(true);
     setErr(null);
     try {
-      featureDisabled();
+      const res = await fetch("/api/github/create-issue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: `[버그] ${report.message.slice(0, 80)}`,
+          body: formatPrompt(report) + (analysis ? `\n\n---\n## AI 분석\n${analysis}` : ""),
+          labels: ["bug", "from-feedback-widget"],
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "GitHub 실패");
+      setIssueUrl(data.url);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "GitHub Issue 생성 실패");
     } finally {
@@ -232,7 +256,18 @@ function FeedbackDetail({
     setBusy(true);
     setErr(null);
     try {
-      featureDisabled();
+      const res = await fetch("/api/mail/feedback-resolved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: report.reporterEmail,
+          message: report.message,
+          resolution: report.resolution,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "메일 실패");
+      alert("신고자에게 처리 결과 메일을 발송했습니다.");
     } catch (e) {
       setErr(e instanceof Error ? e.message : "메일 발송 실패");
     } finally {

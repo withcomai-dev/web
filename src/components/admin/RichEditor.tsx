@@ -35,7 +35,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { uploadAsset } from "@/lib/storage-upload";
-import { featureDisabled } from "@/lib/static-mode";
 
 interface Props {
   value: string;
@@ -131,7 +130,14 @@ export default function RichEditor({
     }
     setAiLoading(true);
     try {
-      featureDisabled();
+      const res = await fetch("/api/ai/refine-text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, mode }),
+      });
+      if (!res.ok) throw new Error(`AI ${res.status}`);
+      const data = (await res.json()) as { result: string };
+      editor.chain().focus().deleteRange({ from: selection.from, to: selection.to }).insertContent(data.result).run();
     } catch (e) {
       alert(e instanceof Error ? e.message : "AI 호출 실패");
     } finally {

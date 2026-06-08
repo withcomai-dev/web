@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { featureDisabled } from "@/lib/static-mode";
 import {
   Save,
   Plus,
@@ -216,7 +215,7 @@ export default function AdminPagesEditor() {
   const openPreview = () => {
     if (!page) return;
     sessionStorage.setItem(`withcom.preview.${page.key}`, JSON.stringify(page));
-    window.open(`/preview?key=${encodeURIComponent(page.key)}`, "_blank", "noopener");
+    window.open(`/preview/${page.key}`, "_blank", "noopener");
   };
 
   const [aiOpen, setAiOpen] = useState(false);
@@ -841,7 +840,17 @@ function AIPageGenModal({
     setErr(null);
     setPreview(null);
     try {
-      featureDisabled();
+      const res = await fetch("/api/ai/page-generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, tone, pageKey, pageTitle }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `요청 실패 (${res.status})`);
+      }
+      const data = (await res.json()) as { sections: Section[] };
+      setPreview(data.sections);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "AI 호출 실패");
     } finally {

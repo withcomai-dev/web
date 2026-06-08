@@ -17,7 +17,6 @@ import {
 import RichEditor from "@/components/admin/RichEditor";
 import type { InquiryDoc, InquiryStatus } from "@/types/cms";
 import { cn } from "@/lib/utils";
-import { featureDisabled } from "@/lib/static-mode";
 
 const STATUS_LABEL: Record<InquiryStatus, string> = {
   new: "신규",
@@ -237,7 +236,25 @@ function ReplyComposer({
     setAiLoading(true);
     setErr(null);
     try {
-      featureDisabled();
+      const res = await fetch("/api/ai/draft-reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: inquiry.message,
+          context: `유형: ${inquiry.type}, 회사: ${inquiry.company ?? "—"}`,
+          tone,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "AI 호출 실패");
+      // 평문 → 단순 HTML
+      const html = `<p>${(data.result as string)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\n\n+/g, "</p><p>")
+        .replace(/\n/g, "<br>")}</p>`;
+      setReply(html);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "AI 실패");
     } finally {
@@ -250,7 +267,21 @@ function ReplyComposer({
     setSending(true);
     setErr(null);
     try {
-      featureDisabled();
+      const res = await fetch("/api/mail/inquiry-reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: inquiry.email,
+          recipientName: inquiry.name,
+          inquiryMessage: inquiry.message,
+          reply,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "메일 발송 실패");
+      setDone(true);
+      onSent();
+      setTimeout(() => setDone(false), 2500);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "발송 실패");
     } finally {

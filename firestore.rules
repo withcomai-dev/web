@@ -108,6 +108,14 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // ── 런모아 로그인 회원 ──
+    // 쓰기는 서버 Admin SDK 전용(/auth/callback) — 클라이언트 쓰기 완전 차단.
+    // 관리자만 목록 조회 가능.
+    match /runmoaMembers/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
     // ── 버그/피드백 신고 ──
     match /feedbackReports/{id} {
       allow create: if request.resource.data.status == 'open'

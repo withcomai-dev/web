@@ -184,6 +184,7 @@ export const COLLECTIONS = {
   BANNERS: "banners",
   INQUIRIES: "inquiries",
   FEEDBACK_REPORTS: "feedbackReports",
+  RUNMOA_MEMBERS: "runmoaMembers",
 } as const;
 
 export const PAGE_DOC_ID = (key: string) => `page_${key}`;

@@ -293,6 +293,25 @@ export interface InquiryDoc {
   note?: string;
 }
 
+// ── 런모아 로그인 회원 ──
+// 런모아 호스티드 로그인으로 들어온 사용자를 기록한다(서버 Admin SDK 전용 쓰기).
+// 문서 ID = 런모아 user_id (재로그인 시 자동 갱신·로그인 횟수 누적).
+// ⚠️ CMS 관리자 계정인 `users` 컬렉션과는 전혀 별개의 신원이다.
+export interface RunmoaMemberDoc {
+  id?: string;
+  runmoaUserId: number;
+  loginId: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  socialChannel?: string | null;
+  marketingAgree?: string | null;
+  firstLoginAt?: string;
+  lastLoginAt?: string;
+  loginCount?: number;
+  updatedAt?: string;
+}
+
 // ── 버그 신고 ──
 export type FeedbackStatus = "open" | "in_progress" | "closed";
 

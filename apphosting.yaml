@@ -1,0 +1,104 @@
+# Firebase App Hosting 설정
+# 문서: https://firebase.google.com/docs/app-hosting/configure
+# App Hosting 이 GitHub(main 브랜치)에 연결되면, push 할 때마다 이 파일을 읽어
+# `npm ci && npm run build` 로 Next.js 를 빌드하고 Cloud Run 에 SSR 로 배포합니다.
+
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0      # 트래픽 없을 땐 0으로 내려가 비용 절감 (콜드스타트 허용)
+  maxInstances: 10
+  concurrency: 80
+
+env:
+  # ── 공개 Firebase 클라이언트 설정 (브라우저 번들에 노출되는 공개 키) ──
+  # 빌드 시점에 클라이언트 코드에 주입되어야 하므로 BUILD availability 필요
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyAqfNSNWx3AtLqUwoBRfNu3EcfqO2ZT77Y
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: withcomai-web.firebaseapp.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: withcomai-web
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: withcomai-web.firebasestorage.app
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "345857326079"
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:345857326079:web:0ed48cf03928076b2645ca
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_SUPER_ADMIN_EMAIL
+    value: withcomai@gmail.com
+    availability: [BUILD, RUNTIME]
+
+  # ── 런모아 쇼핑/로그인 공개 설정 (브라우저 노출 OK) ──
+  - variable: NEXT_PUBLIC_RUNMOA_BASE_URL
+    value: https://aish.runmoa.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_RUNMOA_CLIENT_ID
+    value: withcomai
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_RUNMOA_AUTH_BASE_URL
+    value: https://www.runmoa.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_RUNMOA_LOGIN_PATH
+    value: /login
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_RUNMOA_REGISTER_PATH
+    value: /register
+    availability: [BUILD, RUNTIME]
+  # ⚠️ 콜백 주소: 런모아 측 화이트리스트에 등록된 값과 정확히 일치해야 함.
+  #    App Hosting 도메인 확정(또는 커스텀 도메인 연결) 후 실제 주소로 교체할 것.
+  - variable: NEXT_PUBLIC_RUNMOA_REDIRECT_URI
+    value: https://withcomai-web.web.app/auth/callback
+    availability: [BUILD, RUNTIME]
+  # NEXT_PUBLIC_RUNMOA_API_KEY 는 공개값이지만 비어있을 수 있어 Secret 으로 둔다(아래 참조).
+
+  # ── 서버 전용 비밀값 (Secret Manager 연동) ──
+  # 비밀이므로 값을 직접 쓰지 않고 Secret Manager 에 등록 후 secret: 으로 참조한다.
+  # 등록 명령(예): firebase apphosting:secrets:set RUNMOA_CLIENT_SECRET
+  # 시크릿을 만들기 전에 주석을 풀면 빌드가 실패하므로, 등록 후 해당 줄의 주석을 해제할 것.
+  #
+  # 런모아 OAuth 토큰교환에 필수 (이것 하나만 있어도 로그인은 동작):
+  - variable: RUNMOA_CLIENT_SECRET
+    secret: RUNMOA_CLIENT_SECRET
+    availability: [RUNTIME]
+  #
+  # 나머지 서버 API(AI·메일·GitHub·시트·cron)용 — 등록 후 주석 해제:
+  # - variable: NEXT_PUBLIC_RUNMOA_API_KEY
+  #   secret: RUNMOA_API_KEY
+  #   availability: [BUILD, RUNTIME]
+  # - variable: GEMINI_API_KEY
+  #   secret: GEMINI_API_KEY
+  #   availability: [RUNTIME]
+  # - variable: SMTP_USER
+  #   secret: SMTP_USER
+  #   availability: [RUNTIME]
+  # - variable: SMTP_APP_PASSWORD
+  #   secret: SMTP_APP_PASSWORD
+  #   availability: [RUNTIME]
+  # - variable: ADMIN_NOTIFY_EMAIL
+  #   secret: ADMIN_NOTIFY_EMAIL
+  #   availability: [RUNTIME]
+  # - variable: GITHUB_TOKEN
+  #   secret: GH_TOKEN
+  #   availability: [RUNTIME]
+  # - variable: GITHUB_REPO
+  #   secret: GH_REPO
+  #   availability: [RUNTIME]
+  # - variable: GOOGLE_SHEETS_INQUIRY_SHEET_ID
+  #   secret: GOOGLE_SHEETS_INQUIRY_SHEET_ID
+  #   availability: [RUNTIME]
+  # - variable: GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL
+  #   secret: GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL
+  #   availability: [RUNTIME]
+  # - variable: GOOGLE_SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY
+  #   secret: GOOGLE_SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY
+  #   availability: [RUNTIME]
+  # - variable: CRON_SECRET
+  #   secret: CRON_SECRET
+  #   availability: [RUNTIME]

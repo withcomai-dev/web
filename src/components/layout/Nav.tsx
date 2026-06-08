@@ -72,7 +72,7 @@ export default function Nav() {
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center" aria-label={SITE_NAME}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/with_logo.webp" alt={SITE_NAME} className="h-9 w-auto" />
+            <img src="/with_logo.webp" alt={SITE_NAME} className="h-14 w-auto" />
           </Link>
 
           {/* 데스크톱: 호버/포커스 드롭다운 */}

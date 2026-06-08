@@ -34,7 +34,10 @@ function LoginInner() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-10 text-center">
-        <h1 className="text-3xl font-extrabold text-blue-700 mb-2">위드컴정보</h1>
+        <div className="flex justify-center mb-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/with_logo.webp" alt="위드컴정보" className="h-12 w-auto" />
+        </div>
         <p className="text-gray-500 mb-10">Google 계정으로 로그인하세요.</p>
 
         {loading ? (

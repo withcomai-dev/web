@@ -45,8 +45,9 @@ export default function AdminSidebar() {
   return (
     <aside className="w-60 bg-slate-900 text-white flex flex-col h-screen sticky top-0">
       <div className="p-6 border-b border-white/10">
-        <Link href="/" className="text-xl font-bold text-blue-400">
-          위드컴정보
+        <Link href="/" className="inline-block bg-white rounded px-2 py-1.5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/with_logo.webp" alt="위드컴정보" className="h-7 w-auto" />
         </Link>
         <p className="text-xs text-gray-400 mt-1">관리자</p>
       </div>

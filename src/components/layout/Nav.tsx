@@ -70,8 +70,9 @@ export default function Nav() {
     <nav className="fixed w-full z-40 bg-white/95 backdrop-blur shadow-sm py-2">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-2xl font-bold tracking-tighter text-blue-700">
-            {SITE_NAME}
+          <Link href="/" className="flex items-center" aria-label={SITE_NAME}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/with_logo.webp" alt={SITE_NAME} className="h-9 w-auto" />
           </Link>
 
           {/* 데스크톱: 호버/포커스 드롭다운 */}

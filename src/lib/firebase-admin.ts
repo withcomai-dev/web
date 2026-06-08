@@ -28,6 +28,13 @@ function ensureApp() {
 export function adminDb(): Firestore {
   if (_adminDb) return _adminDb;
   _adminDb = getFirestore(ensureApp());
+  // undefined 필드를 무시(에러 대신). 문의 등에서 빈 값이 undefined 로 들어와도
+  // "Cannot use undefined as a Firestore value" 로 쓰기가 실패하지 않게 한다.
+  try {
+    _adminDb.settings({ ignoreUndefinedProperties: true });
+  } catch {
+    // 이미 settings 가 적용된 경우 등은 무시
+  }
   return _adminDb;
 }
 

@@ -22,6 +22,22 @@ import { upsertRunmoaMember } from "@/lib/runmoa-members";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+/**
+ * 브라우저가 실제로 접속한 "공개 origin" 을 구한다.
+ * App Hosting/Cloud Run 같은 프록시 뒤에선 req.url 의 호스트가 내부 주소
+ * (0.0.0.0:8080)로 잡히므로, 그대로 쓰면 리다이렉트가 내부 주소를 가리켜 깨진다.
+ * 따라서 x-forwarded-* 헤더를 우선 사용한다.
+ */
+function getPublicOrigin(req: NextRequest): string {
+  const first = (v: string | null) => v?.split(",")[0]?.trim();
+  const proto = first(req.headers.get("x-forwarded-proto")) || "https";
+  const host =
+    first(req.headers.get("x-forwarded-host")) ||
+    first(req.headers.get("host")) ||
+    new URL(req.url).host;
+  return `${proto}://${host}`;
+}
+
 /** /auth/done 으로 프래그먼트를 실어 리다이렉트 */
 function redirectToDone(origin: string, fragment: Record<string, string>) {
   const done = new URL("/auth/done", origin);
@@ -30,7 +46,8 @@ function redirectToDone(origin: string, fragment: Record<string, string>) {
 }
 
 export async function GET(req: NextRequest) {
-  const { origin, searchParams } = new URL(req.url);
+  const { searchParams } = new URL(req.url);
+  const origin = getPublicOrigin(req);
 
   // 1) 에러 반환 처리
   const error =

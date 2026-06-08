@@ -15,7 +15,7 @@ export default function Footer() {
                 aria-label="WITHCOM AI 홈페이지"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/withcom_ai_logo3.webp" alt="WITHCOM AI" className="h-9 w-auto" />
+                <img src="/withcom_logo_001.png" alt="WITHCOM AI" className="h-10 w-auto" />
               </a>
               <a
                 href="https://withuspc.com"
@@ -25,9 +25,9 @@ export default function Footer() {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/with_logo.webp"
+                  src="/withus_logo_002.png"
                   alt="WITHUS COMPUTER"
-                  className="h-9 w-auto rounded-md"
+                  className="h-10 w-auto"
                 />
               </a>
             </div>

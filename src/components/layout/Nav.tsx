@@ -80,9 +80,9 @@ export default function Nav() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/withcom_ai_logo3.webp"
+                src="/withcom_logo_002.png"
                 alt="WITHCOM AI"
-                className="h-8 sm:h-11 w-auto rounded-md"
+                className="h-10 sm:h-12 w-auto"
               />
             </a>
             <a
@@ -94,9 +94,9 @@ export default function Nav() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/with_logo.webp"
+                src="/withus_logo_001.png"
                 alt="WITHUS COMPUTER"
-                className="h-8 sm:h-11 w-auto rounded-md border border-gray-200"
+                className="h-10 sm:h-12 w-auto"
               />
             </a>
           </div>

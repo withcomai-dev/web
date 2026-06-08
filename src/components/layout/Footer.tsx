@@ -7,9 +7,29 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
-            <div className="inline-block bg-white rounded-md px-3 py-2 mb-6">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/with_logo.webp" alt={SITE_NAME} className="h-8 w-auto" />
+            <div className="flex items-center gap-3 mb-6">
+              <a
+                href="https://withcom.co.kr"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WITHCOM AI 홈페이지"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/withcom_ai_logo3.webp" alt="WITHCOM AI" className="h-9 w-auto" />
+              </a>
+              <a
+                href="https://withuspc.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WITHUS 홈페이지"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/with_logo.webp"
+                  alt="WITHUS COMPUTER"
+                  className="h-9 w-auto rounded-md"
+                />
+              </a>
             </div>
             <p className="text-gray-400 max-w-md mb-6 leading-relaxed">
               우리는 중소기업이 디지털 시대의 변화에 발맞춰 성장할 수 있도록 돕는 든든한 IT

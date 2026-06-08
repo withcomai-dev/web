@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { NAV_ITEMS, SITE_NAME, type NavItem } from "@/lib/constants";
+import { NAV_ITEMS, type NavItem } from "@/lib/constants";
 import {
   COLLECTIONS,
   GLOBAL_SETTINGS_DOC_ID,
@@ -70,10 +70,36 @@ export default function Nav() {
     <nav className="fixed w-full z-40 bg-white/95 backdrop-blur shadow-sm py-2">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center" aria-label={SITE_NAME}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/with_logo.webp" alt={SITE_NAME} className="h-14 w-auto" />
-          </Link>
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <a
+              href="https://withcom.co.kr"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WITHCOM AI 홈페이지"
+              className="shrink-0"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/withcom_ai_logo3.webp"
+                alt="WITHCOM AI"
+                className="h-8 sm:h-11 w-auto rounded-md"
+              />
+            </a>
+            <a
+              href="https://withuspc.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WITHUS 홈페이지"
+              className="shrink-0"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/with_logo.webp"
+                alt="WITHUS COMPUTER"
+                className="h-8 sm:h-11 w-auto rounded-md border border-gray-200"
+              />
+            </a>
+          </div>
 
           {/* 데스크톱: 호버/포커스 드롭다운 */}
           <div className="hidden lg:flex items-center space-x-1">

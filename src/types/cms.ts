@@ -217,8 +217,11 @@ export interface ContentDoc {
 }
 
 // ── 중소기업 지원사업 ──
+export type SmeCategory = "small-business" | "rnd";
+
 export interface SmeSupportDoc {
   id?: string;
+  category?: SmeCategory; // 소상공인지원사업 / R&D지원사업
   title: string;
   agency?: string;
   deadline?: string;
@@ -226,7 +229,8 @@ export interface SmeSupportDoc {
   bodyHtml: string;
   applyUrl?: string;
   thumbnail?: string;
-  status: ContentStatus;
+  sortOrder?: number; // 정렬 순서 (작을수록 먼저)
+  status: ContentStatus; // 노출 여부 (published=노출, draft=숨김)
 }
 
 // ── 도움말 ──

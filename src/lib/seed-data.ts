@@ -271,44 +271,190 @@ export const SEED_SMARTWORK_AI: PageDoc = {
 
 export const SEED_IT_SERVICE: PageDoc = {
   key: "it-service",
-  title: "IT 서비스 / 원격지원",
+  title: "하드웨어 및 소프트웨어 구축",
+  seoTitle: "하드웨어 및 소프트웨어 구축 — WITHCOM AI",
+  seoDescription:
+    "WITHCOM AI는 고객사의 업무 특성과 예산에 맞춰 하드웨어와 소프트웨어를 통합 설계하고, 설치·설정·운영 지원까지 원스톱으로 제공합니다.",
   sections: [
+    // 1. 메인 비주얼
     {
       id: "it-hero",
       order: 1,
       visible: true,
       type: "hero",
       data: {
-        eyebrow: "IT Service",
-        title: "전문 엔지니어의 신속한 IT 서비스",
-        subtitle: "원격지원, 인프라 구축, 모니터링까지 — 업무 중단을 최소화합니다.",
+        bgImage:
+          "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=2000",
+        eyebrow: "Hardware & Software",
+        title: "기업의 업무 효율을 높이는 안정적인 IT 인프라 구축",
+        subtitle:
+          "WITHCOM AI는 고객사의 업무 특성과 예산에 맞춰 하드웨어와 소프트웨어를 통합 설계하고, 설치·설정·운영 지원까지 원스톱으로 제공합니다.",
+        ctas: [{ label: "구축 상담 신청", href: "/contact", variant: "primary" }],
       },
     },
+    // 2. IT 인프라 구축 소개
     {
-      id: "it-cards",
+      id: "it-intro",
       order: 2,
       visible: true,
-      type: "cards",
+      type: "feature",
       data: {
-        title: "주요 서비스",
-        columns: 3,
+        eyebrow: "Why Infra Matters",
+        title: "안정적인 IT 환경이 곧 비즈니스 경쟁력입니다",
+        image:
+          "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=1000",
+        side: "right",
         items: [
           {
-            icon: "cpu",
-            title: "IT 인프라 구축",
-            body: "네트워크·서버 환경의 최적 구성을 설계하고 운영합니다.",
+            icon: "zap",
+            title: "생산성 향상",
+            body: "업무에 최적화된 장비와 소프트웨어로 임직원의 업무 효율을 높입니다.",
           },
           {
             icon: "shield-check",
-            title: "원격지원",
-            body: "전문 엔지니어가 신속하게 문제를 해결합니다.",
+            title: "업무 중단 최소화",
+            body: "안정적으로 설계된 인프라와 상시 지원으로 장애와 다운타임을 줄입니다.",
           },
           {
-            icon: "monitor",
-            title: "상시 모니터링",
-            body: "주요 지표를 모니터링하여 장애를 사전에 감지합니다.",
+            icon: "cpu",
+            title: "디지털 전환의 기초",
+            body: "탄탄한 IT 환경은 스마트워크·AI 도입 등 디지털 전환의 토대가 됩니다.",
           },
         ],
+      },
+    },
+    // 3. 하드웨어 구축 항목
+    {
+      id: "it-hardware",
+      order: 3,
+      visible: true,
+      type: "cards",
+      data: {
+        eyebrow: "Hardware",
+        title: "하드웨어 구축",
+        description: "업무 환경에 필요한 모든 장비를 진단·설계·구축합니다.",
+        columns: 3,
+        items: [
+          {
+            icon: "laptop",
+            title: "업무용 PC 및 노트북",
+            body: "업무 특성과 예산에 맞는 데스크톱·노트북을 선정하고 세팅합니다.",
+          },
+          {
+            icon: "server",
+            title: "서버 구축",
+            body: "파일·업무·백업 서버를 안정적으로 구성하고 운영을 지원합니다.",
+          },
+          {
+            icon: "network",
+            title: "네트워크 장비 구축",
+            body: "유무선 네트워크, 스위치·공유기 등 통신 환경을 최적화합니다.",
+          },
+          {
+            icon: "lock",
+            title: "보안 장비 구축",
+            body: "방화벽, CCTV, 출입 통제 등 물리·네트워크 보안 장비를 구축합니다.",
+          },
+          {
+            icon: "printer",
+            title: "프린터 및 주변기기",
+            body: "복합기, 스캐너 등 사무용 주변기기를 설치하고 연동합니다.",
+          },
+          {
+            icon: "cpu",
+            title: "사무실 IT 장비 세팅",
+            body: "신규 사무실 이전·확장 시 IT 장비 전반을 일괄 세팅합니다.",
+          },
+        ],
+      },
+    },
+    // 4. 소프트웨어 구축 항목
+    {
+      id: "it-software",
+      order: 4,
+      visible: true,
+      type: "cards",
+      data: {
+        eyebrow: "Software",
+        title: "소프트웨어 구축",
+        description: "업무에 필요한 소프트웨어와 솔루션을 도입·연동합니다.",
+        columns: 3,
+        items: [
+          {
+            icon: "monitor",
+            title: "업무용 소프트웨어",
+            body: "오피스, 회계, 그룹웨어 등 업무에 필요한 소프트웨어를 도입합니다.",
+          },
+          {
+            icon: "shield-check",
+            title: "보안 솔루션",
+            body: "백신, 문서 보안, 망 분리 등 기업 보안 솔루션을 적용합니다.",
+          },
+          {
+            icon: "users",
+            title: "협업 도구",
+            body: "메신저, 화상회의, 일정·문서 공유 등 협업 환경을 구축합니다.",
+          },
+          {
+            icon: "cloud",
+            title: "클라우드 기반 서비스",
+            body: "클라우드 스토리지·SaaS로 언제 어디서나 일할 수 있게 지원합니다.",
+          },
+          {
+            icon: "database",
+            title: "백업 및 데이터 관리",
+            body: "정기 백업과 복구 체계로 중요한 데이터를 안전하게 보호합니다.",
+          },
+          {
+            icon: "bot",
+            title: "업무 자동화 솔루션",
+            body: "반복 업무를 줄이는 자동화·AI 도구로 생산성을 높입니다.",
+          },
+        ],
+      },
+    },
+    // 5. 설치·설정·유지보수 지원
+    {
+      id: "it-support",
+      order: 5,
+      visible: true,
+      type: "feature",
+      data: {
+        eyebrow: "One-stop Service",
+        title: "설치부터 설정·유지보수까지 원스톱 지원",
+        image:
+          "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&q=80&w=1000",
+        side: "left",
+        items: [
+          {
+            icon: "wrench",
+            title: "설치 및 설정",
+            body: "현장 방문 설치와 초기 설정까지 전문 엔지니어가 직접 진행합니다.",
+          },
+          {
+            icon: "settings",
+            title: "운영 및 유지보수",
+            body: "정기 점검과 신속한 장애 대응으로 안정적인 운영을 지원합니다.",
+          },
+          {
+            icon: "headphones",
+            title: "원격 지원",
+            body: "원격 지원으로 문제를 빠르게 진단하고 해결합니다.",
+          },
+        ],
+      },
+    },
+    // 6. 상담 유도 CTA
+    {
+      id: "it-cta",
+      order: 6,
+      visible: true,
+      type: "cta",
+      data: {
+        bg: "blue",
+        title: "우리 회사에 맞는 IT 인프라, 어떻게 시작해야 할까요?",
+        body: "업무 특성과 예산에 맞는 하드웨어·소프트웨어 구축, WITHCOM AI가 상담해 드립니다.",
+        button: { label: "구축 상담 신청하기", href: "/contact" },
       },
     },
   ] as Section[],

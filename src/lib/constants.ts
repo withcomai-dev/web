@@ -47,7 +47,11 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "하드웨어 및 소프트웨어 구축", href: "/it-service" },
       { label: "상담 신청하기", href: "/contact" },
-      { label: "공식 쇼핑몰", href: "/shop" },
+      {
+        label: "공식 쇼핑몰 바로가기",
+        href: "https://withcom.runmoa.com/",
+        external: true,
+      },
     ],
   },
   {
@@ -130,6 +134,16 @@ export const FEEDBACK_STATUS_COLORS: Record<string, string> = {
   in_progress: "bg-yellow-100 text-yellow-700",
   closed: "bg-gray-100 text-gray-600",
 };
+
+export const SME_CATEGORY_LABELS: Record<string, string> = {
+  "small-business": "소상공인 지원사업",
+  rnd: "R&D 지원사업",
+};
+
+export const SME_CATEGORY_ORDER: ("small-business" | "rnd")[] = [
+  "small-business",
+  "rnd",
+];
 
 export const INQUIRY_TYPES = [
   "스마트워크 도입",

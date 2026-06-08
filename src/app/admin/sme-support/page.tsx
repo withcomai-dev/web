@@ -5,11 +5,12 @@ import { Edit2, Trash2, X, Save } from "lucide-react";
 import {
   COLLECTIONS,
   createDoc,
-  getOrderedCollection,
+  getCollection,
   invalidateCache,
   removeDoc,
   upsertDoc,
 } from "@/lib/firestore";
+import { SME_CATEGORY_LABELS, SME_CATEGORY_ORDER } from "@/lib/constants";
 import {
   AdminEmpty,
   AdminLoading,
@@ -21,14 +22,29 @@ import type { SmeSupportDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
 
 const EMPTY: SmeSupportDoc = {
+  category: "small-business",
   title: "",
   agency: "",
   deadline: "",
   summary: "",
   bodyHtml: "",
   applyUrl: "",
+  sortOrder: 0,
   status: "draft",
 };
+
+/** 카테고리 → 정렬순서 → 마감일 순으로 정렬 */
+function sortSme(list: SmeSupportDoc[]): SmeSupportDoc[] {
+  return [...list].sort((a, b) => {
+    const ca = SME_CATEGORY_ORDER.indexOf(a.category ?? "small-business");
+    const cb = SME_CATEGORY_ORDER.indexOf(b.category ?? "small-business");
+    if (ca !== cb) return ca - cb;
+    const sa = a.sortOrder ?? 9999;
+    const sb = b.sortOrder ?? 9999;
+    if (sa !== sb) return sa - sb;
+    return (a.deadline ?? "").localeCompare(b.deadline ?? "");
+  });
+}
 
 export default function AdminSmeSupportPage() {
   const [items, setItems] = useState<SmeSupportDoc[]>([]);
@@ -39,12 +55,8 @@ export default function AdminSmeSupportPage() {
     setLoading(true);
     try {
       invalidateCache(COLLECTIONS.SME_SUPPORT);
-      const data = await getOrderedCollection<SmeSupportDoc>(
-        COLLECTIONS.SME_SUPPORT,
-        "deadline",
-        "asc",
-      );
-      setItems(data);
+      const data = await getCollection<SmeSupportDoc>(COLLECTIONS.SME_SUPPORT);
+      setItems(sortSme(data));
     } finally {
       setLoading(false);
     }
@@ -90,9 +102,11 @@ export default function AdminSmeSupportPage() {
             <thead className="bg-gray-50 text-xs uppercase text-gray-600">
               <tr>
                 <th className="px-4 py-3 text-left w-16"></th>
+                <th className="px-4 py-3 text-left">카테고리</th>
                 <th className="px-4 py-3 text-left">제목</th>
                 <th className="px-4 py-3 text-left">기관</th>
                 <th className="px-4 py-3 text-left">마감</th>
+                <th className="px-4 py-3 text-left">순서</th>
                 <th className="px-4 py-3 text-left">상태</th>
                 <th className="w-24"></th>
               </tr>
@@ -109,11 +123,17 @@ export default function AdminSmeSupportPage() {
                       />
                     )}
                   </td>
+                  <td className="px-4 py-3">
+                    <span className="px-2 py-0.5 rounded text-xs bg-blue-50 text-blue-700">
+                      {SME_CATEGORY_LABELS[it.category ?? "small-business"]}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 font-semibold">{it.title}</td>
                   <td className="px-4 py-3">{it.agency || "—"}</td>
                   <td className="px-4 py-3">
                     {it.deadline ? formatDate(it.deadline) : "—"}
                   </td>
+                  <td className="px-4 py-3 text-gray-500">{it.sortOrder ?? 0}</td>
                   <td className="px-4 py-3">
                     <span
                       className={
@@ -181,6 +201,36 @@ function SmeEditor({
           </button>
         </div>
         <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="카테고리">
+              <select
+                value={form.category ?? "small-business"}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    category: e.target.value as SmeSupportDoc["category"],
+                  })
+                }
+                className="w-full px-3 py-2 rounded border border-gray-200"
+              >
+                {SME_CATEGORY_ORDER.map((c) => (
+                  <option key={c} value={c}>
+                    {SME_CATEGORY_LABELS[c]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="정렬 순서 (작을수록 먼저)">
+              <input
+                type="number"
+                value={form.sortOrder ?? 0}
+                onChange={(e) =>
+                  setForm({ ...form, sortOrder: Number(e.target.value) })
+                }
+                className="w-full px-3 py-2 rounded border border-gray-200"
+              />
+            </Field>
+          </div>
           <Field label="제목">
             <input
               type="text"

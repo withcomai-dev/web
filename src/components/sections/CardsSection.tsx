@@ -1,4 +1,24 @@
-import { Cpu, Zap, MessageSquare, ShieldCheck, Users, Monitor } from "lucide-react";
+import {
+  Cpu,
+  Zap,
+  MessageSquare,
+  ShieldCheck,
+  Users,
+  Monitor,
+  Server,
+  Network,
+  Printer,
+  Cloud,
+  Database,
+  Lock,
+  Settings,
+  Wrench,
+  Bot,
+  HardDrive,
+  Wifi,
+  Laptop,
+  Headphones,
+} from "lucide-react";
 import type { CardsData } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +29,19 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   "shield-check": ShieldCheck,
   users: Users,
   monitor: Monitor,
+  server: Server,
+  network: Network,
+  printer: Printer,
+  cloud: Cloud,
+  database: Database,
+  lock: Lock,
+  settings: Settings,
+  wrench: Wrench,
+  bot: Bot,
+  "hard-drive": HardDrive,
+  wifi: Wifi,
+  laptop: Laptop,
+  headphones: Headphones,
 };
 
 export default function CardsSection({ data }: { data: CardsData }) {

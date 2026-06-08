@@ -1,7 +1,11 @@
 import { COMPANY } from "@/lib/constants";
-import { Youtube, ExternalLink } from "lucide-react";
+import { Youtube, ExternalLink, ArrowRight } from "lucide-react";
 
 export const metadata = { title: "유튜브 자료실" };
+
+const BLOG_URL = "https://naver.me/5UV1WrvA";
+const BLOG_THUMBNAIL =
+  "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000";
 
 export default function YoutubePage() {
   return (
@@ -32,6 +36,45 @@ export default function YoutubePage() {
             채널 바로가기 <ExternalLink className="w-5 h-5" />
           </span>
         </a>
+
+        {/* 블로그 영역 */}
+        <section className="mt-14">
+          <h2 className="text-2xl font-extrabold text-gray-900 mb-2">블로그</h2>
+          <p className="text-gray-500 mb-6">
+            스마트워크와 AI 활용 노하우, 도입 사례를 블로그에서 만나보세요.
+          </p>
+
+          <a
+            href={BLOG_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block sm:flex overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-100 hover:shadow-lg transition-shadow"
+          >
+            <div className="sm:w-2/5 aspect-[16/10] sm:aspect-auto overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={BLOG_THUMBNAIL}
+                alt="WITHCOM AI 블로그"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <div className="flex-1 p-8 flex flex-col justify-center">
+              <span className="inline-block w-fit text-xs font-semibold text-green-700 bg-green-50 rounded-full px-3 py-1 mb-3">
+                BLOG
+              </span>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                WITHCOM AI 공식 블로그
+              </h3>
+              <p className="text-gray-500 mb-5 leading-relaxed">
+                스마트워크 도입, 생성형 AI 실무 활용, IT 인프라 구축 등 중소기업에
+                바로 도움이 되는 콘텐츠를 정기적으로 발행합니다.
+              </p>
+              <span className="inline-flex items-center gap-2 font-bold text-green-700 group-hover:gap-3 transition-all">
+                블로그 바로가기 <ArrowRight className="w-5 h-5" />
+              </span>
+            </div>
+          </a>
+        </section>
       </div>
     </div>
   );

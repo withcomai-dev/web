@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogIn, LogOut } from "lucide-react";
 import { NAV_ITEMS, type NavItem } from "@/lib/constants";
 import {
   COLLECTIONS,
@@ -10,6 +10,8 @@ import {
   getSingletonDoc,
 } from "@/lib/firestore";
 import type { GlobalSettings } from "@/types/cms";
+import { startRunmoa } from "@/lib/runmoa-auth";
+import { isRunmoaLoggedIn, runmoaLogout } from "@/lib/runmoa-session";
 
 /** 외부 링크는 새 탭, 내부 링크는 Next Link로 렌더링 */
 function NavLink({
@@ -49,6 +51,18 @@ export default function Nav() {
   const [open, setOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItem[]>(NAV_ITEMS);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  // 클라이언트에서만 로그인 상태 확인 (정적 export 하이드레이션 안전)
+  useEffect(() => {
+    setLoggedIn(isRunmoaLoggedIn());
+  }, []);
+
+  const handleLogout = () => {
+    runmoaLogout();
+    setLoggedIn(false);
+    setOpen(false);
+  };
 
   useEffect(() => {
     void (async () => {
@@ -134,6 +148,27 @@ export default function Nav() {
                 )}
               </div>
             ))}
+
+            {/* 인증: 런모아 로그인/회원가입 */}
+            <div className="flex items-center gap-2 pl-3 ml-1 border-l border-gray-200">
+              {loggedIn ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" /> 로그아웃
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => startRunmoa("login")}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                >
+                  <LogIn className="w-4 h-4" /> 로그인
+                </button>
+              )}
+            </div>
           </div>
 
           <button
@@ -199,6 +234,30 @@ export default function Nav() {
                 </div>
               );
             })}
+
+            {/* 인증: 런모아 로그인/회원가입 (모바일) */}
+            <div className="pt-2 mt-2 border-t border-gray-100 space-y-2">
+              {loggedIn ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-base font-medium text-gray-700 border border-gray-200 hover:bg-gray-50"
+                >
+                  <LogOut className="w-5 h-5" /> 로그아웃
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    startRunmoa("login");
+                  }}
+                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-base font-semibold text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  <LogIn className="w-5 h-5" /> 로그인
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

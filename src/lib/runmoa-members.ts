@@ -14,9 +14,13 @@ import type { RunmoaUser } from "@/lib/runmoa-oauth";
 
 /** 런모아 사용자 → runmoaMembers upsert (실패해도 로그인 흐름은 막지 않음) */
 export async function upsertRunmoaMember(user: RunmoaUser): Promise<void> {
-  const ref = adminDb()
-    .collection(COLLECTIONS.RUNMOA_MEMBERS)
-    .doc(String(user.user_id));
+  // 문서 ID = user_id. 누락/빈값이면 잘못된 문서가 생기므로 기록하지 않는다.
+  const memberId = String(user.user_id ?? "").trim();
+  if (!memberId || memberId === "undefined" || memberId === "null") {
+    throw new Error("runmoaMembers upsert: 유효한 user_id 가 없습니다");
+  }
+
+  const ref = adminDb().collection(COLLECTIONS.RUNMOA_MEMBERS).doc(memberId);
 
   const now = new Date().toISOString();
   const base = {

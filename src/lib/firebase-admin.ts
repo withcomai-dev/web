@@ -13,14 +13,16 @@ function ensureApp() {
     "\n",
   );
 
-  if (!projectId || !clientEmail || !privateKey) {
-    throw new Error(
-      "Firebase Admin 환경변수가 설정되지 않았습니다. (PROJECT_ID, SERVICE_ACCOUNT_EMAIL, PRIVATE_KEY)",
-    );
+  // 1) 명시적 서비스계정 자격증명이 있으면 사용 (로컬 개발·Google Sheets 연동 등).
+  if (projectId && clientEmail && privateKey) {
+    const serviceAccount: ServiceAccount = { projectId, clientEmail, privateKey };
+    return initializeApp({ credential: cert(serviceAccount) });
   }
 
-  const serviceAccount: ServiceAccount = { projectId, clientEmail, privateKey };
-  return initializeApp({ credential: cert(serviceAccount) });
+  // 2) 없으면 런타임 기본 자격증명(ADC)으로 초기화.
+  //    App Hosting/Cloud Run 에선 백엔드 서비스계정으로 Firestore 접근이 되므로
+  //    별도 서비스계정 시크릿 없이도 동작한다. (문의·런모아 회원 기록 등)
+  return initializeApp(projectId ? { projectId } : undefined);
 }
 
 export function adminDb(): Firestore {

@@ -45,6 +45,10 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export default function CardsSection({ data }: { data: CardsData }) {
+  if (data.variant === "highlight") {
+    return <HighlightCards data={data} />;
+  }
+
   const cols = data.columns ?? Math.min(4, data.items.length || 1);
   return (
     <section className="py-24 bg-white">
@@ -89,6 +93,86 @@ export default function CardsSection({ data }: { data: CardsData }) {
                 )}
                 <h3 className="text-xl font-bold text-gray-900 mb-4">{item.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{item.body}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * 다크 네이비 + 번호형 강조 카드 (image01 스타일).
+ * 좌측 큰 번호 배지 + 아이콘 + 제목 + 본문. 반응형 1열(모바일)→2열(lg).
+ */
+function HighlightCards({ data }: { data: CardsData }) {
+  return (
+    <section className="relative overflow-hidden bg-slate-950 py-20 sm:py-24">
+      {/* 배경 장식: 블루 글로우 + 미세 그리드 */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-blue-600/20 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
+          }}
+        />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {(data.eyebrow || data.title) && (
+          <div className="text-center mb-12 sm:mb-14">
+            {data.eyebrow && (
+              <span className="inline-block px-4 py-1.5 mb-5 text-xs font-semibold tracking-widest text-blue-300 uppercase bg-blue-400/10 rounded-full border border-blue-400/20">
+                {data.eyebrow}
+              </span>
+            )}
+            {data.title && (
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white break-keep">
+                {data.title}
+              </h2>
+            )}
+            {data.description && (
+              <p className="mt-5 max-w-2xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed break-keep">
+                {data.description}
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+          {data.items.map((item, i) => {
+            const Icon = item.icon ? ICONS[item.icon] : null;
+            const num = String(i + 1).padStart(2, "0");
+            return (
+              <div
+                key={i}
+                className="group relative flex gap-5 rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8 backdrop-blur-sm transition-all hover:border-blue-400/40 hover:bg-white/[0.07]"
+              >
+                {/* 번호 + 아이콘 */}
+                <div className="flex flex-col items-center gap-3 shrink-0">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-lg font-extrabold text-white shadow-lg shadow-blue-900/40">
+                    {num}
+                  </span>
+                  {Icon && (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-blue-300 transition-colors group-hover:text-blue-200">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                  )}
+                </div>
+                {/* 텍스트 */}
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold text-white mb-2 break-keep">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm sm:text-[15px] leading-relaxed text-slate-300 break-keep">
+                    {item.body}
+                  </p>
+                </div>
               </div>
             );
           })}

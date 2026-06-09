@@ -57,6 +57,7 @@ const SECTION_TYPES: { value: SectionType; label: string }[] = [
   { value: "richtext", label: "RichText (HTML 본문)" },
   { value: "cta", label: "CTA (행동 유도)" },
   { value: "image", label: "Image (단일 이미지)" },
+  { value: "sme", label: "SME (중소기업 지원사업 목록)" },
 ];
 
 function newSection(type: SectionType, order: number): Section {
@@ -97,6 +98,20 @@ function newSection(type: SectionType, order: number): Section {
         visible: true,
         type,
         data: { title: "문의하기" },
+      };
+    case "sme":
+      return {
+        id,
+        order,
+        visible: true,
+        type,
+        data: {
+          eyebrow: "SME Support",
+          heading: "중소기업 지원사업",
+          description: "소상공인·R&D 지원사업 정보를 한눈에 확인하세요.",
+          limitPerCategory: 3,
+          showViewAll: true,
+        },
       };
   }
 }
@@ -765,6 +780,53 @@ function SectionForm({
             value={(d.address as string) ?? ""}
             onChange={(v) => onChange({ address: v })}
           />
+        </div>
+      );
+    case "sme":
+      return (
+        <div className="space-y-3">
+          <Input
+            label="Eyebrow"
+            value={(d.eyebrow as string) ?? ""}
+            onChange={(v) => onChange({ eyebrow: v })}
+          />
+          <Input
+            label="제목"
+            value={(d.heading as string) ?? ""}
+            onChange={(v) => onChange({ heading: v })}
+          />
+          <Textarea
+            label="설명"
+            value={(d.description as string) ?? ""}
+            onChange={(v) => onChange({ description: v })}
+          />
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
+              카테고리별 최대 노출 개수 (0 = 전체)
+            </label>
+            <input
+              type="number"
+              min={0}
+              value={(d.limitPerCategory as number) ?? 0}
+              onChange={(e) =>
+                onChange({
+                  limitPerCategory: Number(e.target.value) || undefined,
+                })
+              }
+              className="w-full px-3 py-2 rounded border border-gray-200 outline-none focus:border-blue-500 text-sm"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={(d.showViewAll as boolean) ?? false}
+              onChange={(e) => onChange({ showViewAll: e.target.checked })}
+            />
+            전체 보기(/sme-support) 링크 표시
+          </label>
+          <p className="text-xs text-gray-500">
+            ※ 지원사업 콘텐츠 자체는 [중소기업 지원] 메뉴에서 등록·관리합니다.
+          </p>
         </div>
       );
   }

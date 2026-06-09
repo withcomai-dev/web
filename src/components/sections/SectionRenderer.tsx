@@ -7,6 +7,7 @@ import ImageSection from "./ImageSection";
 import BlogSection from "./BlogSection";
 import ServicesSection from "./ServicesSection";
 import ContactSection from "./ContactSection";
+import SmeSupportList from "@/app/(public)/sme-support/SmeSupportList";
 import type {
   Section,
   HeroData,
@@ -18,6 +19,7 @@ import type {
   BlogData,
   ServicesData,
   ContactSectionData,
+  SmeSectionData,
 } from "@/types/cms";
 
 export default function SectionRenderer({ sections }: { sections: Section[] }) {
@@ -49,6 +51,21 @@ export default function SectionRenderer({ sections }: { sections: Section[] }) {
             return (
               <ContactSection key={s.id} data={s.data as ContactSectionData} />
             );
+          case "sme": {
+            const d = s.data as SmeSectionData;
+            return (
+              <SmeSupportList
+                key={s.id}
+                sectionClassName="py-20 bg-white"
+                eyebrow={d.eyebrow}
+                heading={d.heading}
+                description={d.description}
+                limitPerCategory={d.limitPerCategory}
+                showViewAll={d.showViewAll}
+                hideWhenEmpty
+              />
+            );
+          }
           default:
             return null;
         }

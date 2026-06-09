@@ -9,7 +9,8 @@ export type SectionType =
   | "image"
   | "blog"
   | "services"
-  | "contact";
+  | "contact"
+  | "sme";
 
 export interface HeroData {
   bgImage?: string;
@@ -17,6 +18,10 @@ export interface HeroData {
   title: string;
   subtitle?: string;
   ctas?: { label: string; href: string; variant?: "primary" | "ghost" }[];
+  /** 레이아웃 변형: fullscreen(기본, 전체 화면) | banner(좌측 텍스트 + 우측 일러스트 컴팩트 배너) */
+  variant?: "fullscreen" | "banner";
+  /** banner variant 우측 장식 일러스트 선택 */
+  illustration?: "it" | "consult";
 }
 
 export interface CardItem {
@@ -31,6 +36,8 @@ export interface CardsData {
   description?: string;
   items: CardItem[];
   columns?: 2 | 3 | 4;
+  /** 디자인 변형: default(밝은 카드) | highlight(다크 네이비 + 번호형 강조 카드) */
+  variant?: "default" | "highlight";
 }
 
 export interface FeatureData {
@@ -97,6 +104,17 @@ export interface ContactSectionData {
   address?: string;
 }
 
+/** 중소기업 지원사업 목록 섹션 (Firestore smeSupport 컬렉션을 카테고리별로 노출) */
+export interface SmeSectionData {
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  /** 카테고리별 최대 노출 개수 (요약 노출용). 미지정 시 전체 */
+  limitPerCategory?: number;
+  /** 전체 보기 링크(/sme-support) 노출 여부 */
+  showViewAll?: boolean;
+}
+
 export type SectionData =
   | { type: "hero"; data: HeroData }
   | { type: "cards"; data: CardsData }
@@ -106,7 +124,8 @@ export type SectionData =
   | { type: "image"; data: ImageBlockData }
   | { type: "blog"; data: BlogData }
   | { type: "services"; data: ServicesData }
-  | { type: "contact"; data: ContactSectionData };
+  | { type: "contact"; data: ContactSectionData }
+  | { type: "sme"; data: SmeSectionData };
 
 export interface Section {
   id: string;
@@ -122,7 +141,8 @@ export interface Section {
     | ImageBlockData
     | BlogData
     | ServicesData
-    | ContactSectionData;
+    | ContactSectionData
+    | SmeSectionData;
 }
 
 export interface PageDoc {

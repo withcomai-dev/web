@@ -1,13 +1,26 @@
 import { Phone, Mail, MapPin } from "lucide-react";
 import { COMPANY } from "@/lib/constants";
 import InquiryForm from "@/components/sections/InquiryForm";
+import HeroSection from "@/components/sections/HeroSection";
 
 export const metadata = { title: "문의하기" };
 
 export default function ContactPage() {
   return (
-    <section className="py-20 bg-slate-50 min-h-[80vh]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <HeroSection
+        data={{
+          variant: "banner",
+          illustration: "consult",
+          eyebrow: "Contact",
+          title:
+            '간편하게 시작하는<br class="hidden sm:block"/> <span class="text-blue-400">상담 신청하기</span>',
+          subtitle:
+            "구글·네이버·카카오 간편 로그인으로 회원가입 후 빠르게 상담을 신청할 수 있습니다. 접수된 상담 내용은 자동으로 등록되어 담당자가 신속하게 확인하고 안내해 드립니다.",
+        }}
+      />
+      <section className="py-20 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
           <div className="lg:w-1/3 bg-blue-600 p-12 text-white">
             <h1 className="text-3xl font-bold mb-6">문의하기</h1>
@@ -29,8 +42,9 @@ export default function ContactPage() {
             <InquiryForm />
           </div>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }
 

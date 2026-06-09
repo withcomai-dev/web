@@ -10,7 +10,7 @@
  */
 
 import { Suspense, useEffect, useState } from "react";
-import { Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
 import { signInWithCustomToken } from "firebase/auth";
 import { consumeRunmoaNext } from "@/lib/runmoa-auth";
 import { setRunmoaSession } from "@/lib/runmoa-session";
@@ -88,38 +88,20 @@ function DoneInner() {
     };
   }, []);
 
+  // 흰 카드(모달처럼 보이던 것) 제거 — 로그인 처리 중엔 옅은 스피너만, 실패 시에만 간단 안내.
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-10 text-center">
-        {phase.kind === "loading" && (
-          <>
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-4" />
-            <p className="text-gray-600">런모아 로그인 처리 중…</p>
-          </>
-        )}
-
-        {phase.kind === "success" && (
-          <>
-            <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto mb-4" />
-            <p className="text-gray-800 font-semibold mb-1">로그인되었습니다</p>
-            <p className="text-gray-500 text-sm">잠시 후 이동합니다…</p>
-          </>
-        )}
-
-        {phase.kind === "error" && (
-          <>
-            <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-4" />
-            <p className="text-gray-800 font-semibold mb-1">로그인에 실패했습니다</p>
-            <p className="text-gray-500 text-sm break-all mb-6">{phase.message}</p>
-            <a
-              href="/"
-              className="inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-            >
-              홈으로
-            </a>
-          </>
-        )}
-      </div>
+    <main className="min-h-screen flex items-center justify-center bg-white px-4">
+      {phase.kind === "error" ? (
+        <div className="text-center">
+          <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-3" />
+          <p className="text-gray-700 text-sm break-all mb-4">{phase.message}</p>
+          <a href="/" className="text-blue-600 text-sm underline">
+            홈으로
+          </a>
+        </div>
+      ) : (
+        <Loader2 className="w-7 h-7 animate-spin text-gray-300" />
+      )}
     </main>
   );
 }

@@ -63,10 +63,20 @@ export async function fullLogout(): Promise<void> {
     // ignore
   }
   if (typeof window !== "undefined") {
-    const runmoaLogoutUrl = process.env.NEXT_PUBLIC_RUNMOA_LOGOUT_URL;
+    // 런모아 SSO 세션까지 종료: 런모아 로그아웃 엔드포인트로 이동 → 끝나면 우리 /login 으로 복귀.
+    // (이렇게 해야 재로그인 시 런모아가 자동 통과시키지 않고 로그인 폼을 다시 보여준다)
+    const override = process.env.NEXT_PUBLIC_RUNMOA_LOGOUT_URL;
+    let dest: string;
+    if (override && override.length > 0) {
+      dest = override;
+    } else {
+      const redirectTo = encodeURIComponent(`${window.location.origin}/login`);
+      const authBase = (
+        process.env.NEXT_PUBLIC_RUNMOA_AUTH_BASE_URL || "https://www.runmoa.com"
+      ).replace(/\/+$/, "");
+      dest = `${authBase}/?runmoa-logout=true&redirect_to=${redirectTo}`;
+    }
     // replace 로 이동해 뒤로가기로 이전 로그인 상태가 복원되지 않게 한다.
-    window.location.replace(
-      runmoaLogoutUrl && runmoaLogoutUrl.length > 0 ? runmoaLogoutUrl : "/login",
-    );
+    window.location.replace(dest);
   }
 }

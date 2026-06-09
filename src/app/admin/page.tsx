@@ -82,22 +82,29 @@ export default function AdminDashboard() {
       days.push({ date: ymd.slice(5), users: 0, inquiries: 0, feedback: 0 });
     }
     const idx = (ymd: string) => days.findIndex((x) => x.date === ymd);
+    // createdAt 는 ISO 문자열일 수도, Firestore Timestamp 객체일 수도 있어 안전하게 MM-DD 로.
+    const mmdd = (v: unknown): string | null => {
+      if (!v) return null;
+      if (typeof v === "string") return v.slice(5, 10);
+      const ts = v as { toDate?: () => Date };
+      if (typeof ts.toDate === "function") return ts.toDate().toISOString().slice(5, 10);
+      if (v instanceof Date) return v.toISOString().slice(5, 10);
+      if (typeof v === "number") return new Date(v).toISOString().slice(5, 10);
+      return null;
+    };
     users.forEach((u) => {
-      if (!u.createdAt) return;
-      const k = u.createdAt.slice(5, 10);
-      const i = idx(k);
+      const k = mmdd(u.createdAt);
+      const i = k ? idx(k) : -1;
       if (i >= 0) days[i].users++;
     });
     inquiries.forEach((it) => {
-      if (!it.createdAt) return;
-      const k = it.createdAt.slice(5, 10);
-      const i = idx(k);
+      const k = mmdd(it.createdAt);
+      const i = k ? idx(k) : -1;
       if (i >= 0) days[i].inquiries++;
     });
     feedbacks.forEach((it) => {
-      if (!it.createdAt) return;
-      const k = it.createdAt.slice(5, 10);
-      const i = idx(k);
+      const k = mmdd(it.createdAt);
+      const i = k ? idx(k) : -1;
       if (i >= 0) days[i].feedback++;
     });
     return days;

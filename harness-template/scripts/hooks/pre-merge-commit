@@ -1,0 +1,19 @@
+#!/bin/bash
+# main 브랜치 직접 머지 차단 — '메인적용' 키워드 전용 sentinel 으로만 허용
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ALLOW_FILE="/tmp/{{PROJECT_SLUG}}-allow-merge"
+
+if [ "$CURRENT_BRANCH" = "{{MAIN_BRANCH}}" ]; then
+  if [ -f "$ALLOW_FILE" ]; then
+    echo "[pre-merge-commit] sentinel 감지 — {{MAIN_BRANCH}} 머지 허용"
+    exit 0
+  fi
+  echo ""
+  echo "[pre-merge-commit] {{MAIN_BRANCH}} 브랜치 직접 머지가 차단되었습니다."
+  echo "  사용자가 '메인적용' 키워드를 입력한 경우에만 진행 가능합니다."
+  echo ""
+  exit 1
+fi
+
+exit 0

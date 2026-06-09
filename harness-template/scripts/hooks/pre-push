@@ -1,0 +1,49 @@
+#!/bin/bash
+# main 브랜치 직접 push 차단 — '메인적용' 키워드 전용 sentinel 으로만 허용
+#
+# sentinel 파일: /tmp/{{PROJECT_SLUG}}-allow-merge
+# - TTL 300초 (5분) — push 실패 시에도 TTL 이내면 재시도 가능
+# - sentinel 정리는 '메인적용'(/main-apply) 명령이 push 성공 후 명시적으로 수행
+# - TTL 초과 sentinel 은 pre-push 가 감지 시 자동 삭제
+
+ALLOW_FILE="/tmp/{{PROJECT_SLUG}}-allow-merge"
+TTL_SECONDS=300
+
+while read local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/{{MAIN_BRANCH}}" ]; then
+    if [ -f "$ALLOW_FILE" ]; then
+      # mtime 조회 — macOS: stat -f %m / Linux: stat -c %Y
+      if FILE_MTIME=$(stat -f %m "$ALLOW_FILE" 2>/dev/null); then
+        :
+      else
+        FILE_MTIME=$(stat -c %Y "$ALLOW_FILE" 2>/dev/null)
+      fi
+
+      if [ -z "$FILE_MTIME" ]; then
+        echo "[pre-push] sentinel mtime 조회 실패 — 안전을 위해 차단"
+        exit 1
+      fi
+
+      NOW=$(date +%s)
+      AGE=$((NOW - FILE_MTIME))
+
+      if [ "$AGE" -gt "$TTL_SECONDS" ]; then
+        echo "[pre-push] sentinel 만료 (${AGE}s > ${TTL_SECONDS}s) — 차단 + 정리"
+        rm -f "$ALLOW_FILE"
+        exit 1
+      fi
+
+      echo "[pre-push] sentinel 감지 (age=${AGE}s / TTL=${TTL_SECONDS}s) — main push 허용"
+      # 여기서 지우지 않는다. push 실패 시 TTL 이내 재시도 가능.
+      # 정리는 /main-apply 6단계에서 rm -f 로 수행.
+      exit 0
+    fi
+    echo ""
+    echo "[pre-push] {{MAIN_BRANCH}} 브랜치 직접 push 가 차단되었습니다."
+    echo "  사용자가 '메인적용' 키워드를 입력한 경우에만 진행 가능합니다."
+    echo ""
+    exit 1
+  fi
+done
+
+exit 0

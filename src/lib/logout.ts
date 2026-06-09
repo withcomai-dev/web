@@ -70,7 +70,8 @@ export async function fullLogout(): Promise<void> {
     if (override && override.length > 0) {
       dest = override;
     } else {
-      const redirectTo = encodeURIComponent(`${window.location.origin}/login`);
+      // 런모아 SSO 종료 후 메인(홈)으로 복귀 — 로그인 화면을 거치지 않는다.
+      const redirectTo = encodeURIComponent(`${window.location.origin}/`);
       const authBase = (
         process.env.NEXT_PUBLIC_RUNMOA_AUTH_BASE_URL || "https://www.runmoa.com"
       ).replace(/\/+$/, "");

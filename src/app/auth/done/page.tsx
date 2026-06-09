@@ -79,8 +79,8 @@ function DoneInner() {
 
       const next = consumeRunmoaNext();
       if (cancelled) return;
-      setPhase({ kind: "success", next });
-      setTimeout(() => window.location.replace(next), 600);
+      // 성공 시 흰 카드("로그인되었습니다")를 띄우지 않고 즉시 원래 위치로 이동(매끄러운 경험).
+      window.location.replace(next);
     })();
 
     return () => {

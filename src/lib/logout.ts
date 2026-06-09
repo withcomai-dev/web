@@ -43,10 +43,24 @@ function clearAuthStorage() {
 /** 완전 로그아웃 후 로그인 화면(또는 런모아 로그아웃 URL)으로 이동. */
 export async function fullLogout(): Promise<void> {
   clearAuthStorage();
+  // signOut 이 혹시 지연/행이 걸려도 리다이렉트를 막지 않도록 타임아웃과 경쟁.
   try {
-    await signOut(auth);
+    await Promise.race([
+      signOut(auth),
+      new Promise((resolve) => setTimeout(resolve, 1500)),
+    ]);
   } catch {
     // Firebase 세션이 없던 경우 등은 무시
+  }
+  // Firebase 영속 세션 잔여 키(localStorage) 백업 정리 — IndexedDB 는 signOut 이 처리.
+  try {
+    for (const k of Object.keys(localStorage)) {
+      if (k.startsWith("firebase:") || k.includes("firebaseLocalStorage")) {
+        localStorage.removeItem(k);
+      }
+    }
+  } catch {
+    // ignore
   }
   if (typeof window !== "undefined") {
     const runmoaLogoutUrl = process.env.NEXT_PUBLIC_RUNMOA_LOGOUT_URL;

@@ -11,7 +11,8 @@ import {
 } from "@/lib/firestore";
 import type { GlobalSettings } from "@/types/cms";
 import { startRunmoa } from "@/lib/runmoa-auth";
-import { isRunmoaLoggedIn, runmoaLogout } from "@/lib/runmoa-session";
+import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
+import { fullLogout } from "@/lib/logout";
 
 /** 외부 링크는 새 탭, 내부 링크는 Next Link로 렌더링 */
 function NavLink({
@@ -59,9 +60,9 @@ export default function Nav() {
   }, []);
 
   const handleLogout = () => {
-    runmoaLogout();
-    setLoggedIn(false);
     setOpen(false);
+    // 런모아·Firebase·모든 저장소 정리 후 로그인 화면으로 이동(페이지 리로드).
+    void fullLogout();
   };
 
   useEffect(() => {

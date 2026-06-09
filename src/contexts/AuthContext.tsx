@@ -8,14 +8,11 @@ import {
   useCallback,
   ReactNode,
 } from "react";
-import {
-  onAuthStateChanged,
-  signOut,
-  User as FirebaseUser,
-} from "firebase/auth";
+import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { COLLECTIONS, getDocById, upsertDoc } from "@/lib/firestore";
 import { startRunmoa } from "@/lib/runmoa-auth";
+import { fullLogout } from "@/lib/logout";
 import type { UserProfile, UserRole } from "@/types/cms";
 
 const SUPER_ADMIN_EMAIL =
@@ -179,17 +176,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       return;
     }
-    if (typeof window !== "undefined") {
-      try {
-        const keys = Object.keys(localStorage).filter((k) =>
-          k.startsWith(CACHE_KEY),
-        );
-        keys.forEach((k) => localStorage.removeItem(k));
-      } catch {
-        // ignore
-      }
-    }
-    await signOut(auth);
+    // 런모아 세션 + Firebase 세션 + 모든 저장소 정리 후 로그인 화면으로 이동.
+    await fullLogout();
   }, []);
 
   const isAdmin = profile?.role === "admin" || profile?.role === "superadmin";

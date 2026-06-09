@@ -3,8 +3,9 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import AIPanel from "@/components/admin/AIPanel";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 import NotificationBell from "@/components/admin/NotificationBell";
-import FeedbackButton from "@/components/feedback/FeedbackButton";
-import HelpWidget from "@/components/help/HelpWidget";
+// 우측 플로팅 위젯(신고하기·도움말) 임시 숨김 — 컴포넌트는 유지, 렌더만 제외(추후 복원 가능)
+// import FeedbackButton from "@/components/feedback/FeedbackButton";
+// import HelpWidget from "@/components/help/HelpWidget";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,8 +17,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <NotificationBell />
       <AIPanel />
       <GlobalSearch />
-      <FeedbackButton />
-      <HelpWidget />
+      {/* <FeedbackButton /> */}
+      {/* <HelpWidget /> */}
     </AdminGuard>
   );
 }

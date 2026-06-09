@@ -298,13 +298,8 @@ export const SEED_IT_SERVICE: PageDoc = {
       type: "hero",
       data: {
         variant: "banner",
-        illustration: "it",
-        eyebrow: "Hardware & Software",
-        title:
-          '기업의 업무 효율을 높이는<br class="hidden sm:block"/> 안정적인 <span class="text-blue-400">IT 인프라</span> 구축',
-        subtitle:
-          "WITHCOM AI는 고객사의 업무 특성과 예산에 맞춰 하드웨어와 소프트웨어를 통합 설계하고, 설치·설정·운영 지원까지 원스톱으로 제공합니다.",
-        ctas: [{ label: "구축 상담 신청", href: "/contact", variant: "primary" }],
+        bgImage: "/banner-it-service.png",
+        title: "기업의 업무 효율을 높이는 안정적인 IT 인프라 구축",
       },
     },
     // 2. IT 인프라 구축 소개

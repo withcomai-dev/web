@@ -11,12 +11,8 @@ export default function ContactPage() {
       <HeroSection
         data={{
           variant: "banner",
-          illustration: "consult",
-          eyebrow: "Contact",
-          title:
-            '간편하게 시작하는<br class="hidden sm:block"/> <span class="text-blue-400">상담 신청하기</span>',
-          subtitle:
-            "구글·네이버·카카오 간편 로그인으로 회원가입 후 빠르게 상담을 신청할 수 있습니다. 접수된 상담 내용은 자동으로 등록되어 담당자가 신속하게 확인하고 안내해 드립니다.",
+          bgImage: "/banner-contact.png",
+          title: "간편하게 시작하는 상담 신청하기",
         }}
       />
       <section className="py-20 bg-slate-50 min-h-[60vh]">

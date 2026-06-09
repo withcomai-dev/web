@@ -113,6 +113,8 @@ export interface SmeSectionData {
   limitPerCategory?: number;
   /** 전체 보기 링크(/sme-support) 노출 여부 */
   showViewAll?: boolean;
+  /** 등록 항목이 없을 때 섹션 자체를 숨길지 여부 (기본 false = 항상 노출) */
+  hideWhenEmpty?: boolean;
 }
 
 export type SectionData =

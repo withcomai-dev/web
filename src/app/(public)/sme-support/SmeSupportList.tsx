@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Loader2, ArrowRight } from "lucide-react";
 import { COLLECTIONS, getCollection } from "@/lib/firestore";
@@ -125,13 +125,48 @@ export default function SmeSupportList({
     };
   }, []);
 
+  // 공통 헤더 (eyebrow/heading/description)
+  const header =
+    eyebrow || heading || description ? (
+      <div className="text-center">
+        {eyebrow && (
+          <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">
+            {eyebrow}
+          </h2>
+        )}
+        {heading && (
+          <p className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            {heading}
+          </p>
+        )}
+        {description && (
+          <p className="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">
+            {description}
+          </p>
+        )}
+      </div>
+    ) : null;
+
+  // 섹션 래퍼 (sectionClassName 지정 시 자체 <section> 으로 감쌈)
+  const wrap = (inner: ReactNode) =>
+    sectionClassName ? (
+      <section className={sectionClassName}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">{inner}</div>
+      </section>
+    ) : (
+      <>{inner}</>
+    );
+
   if (loading) {
     // 메인 페이지(hideWhenEmpty)에서는 로딩 중 공간을 차지하지 않음
     if (hideWhenEmpty) return null;
-    return (
-      <div className="flex justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-      </div>
+    return wrap(
+      <div className="space-y-12">
+        {header}
+        <div className="flex justify-center py-8">
+          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        </div>
+      </div>,
     );
   }
 
@@ -144,36 +179,31 @@ export default function SmeSupportList({
       return { category, list };
     }).filter((g) => g.list.length > 0);
 
+  // 등록 항목이 없을 때: hideWhenEmpty면 숨김, 아니면 섹션 구조 + 준비중 안내 노출
   if (grouped.length === 0) {
     if (hideWhenEmpty) return null;
-    return (
-      <p className="text-gray-500 text-center py-12">
-        등록된 지원사업이 없습니다.
-      </p>
+    return wrap(
+      <div className="space-y-12">
+        {header}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {SME_CATEGORY_ORDER.map((category) => (
+            <div key={category}>
+              <h3 className="text-2xl font-extrabold text-gray-900 mb-4">
+                {SME_CATEGORY_LABELS[category]}
+              </h3>
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-12 text-center text-sm text-gray-400">
+                지원사업 정보를 준비 중입니다.
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>,
     );
   }
 
-  const content = (
+  return wrap(
     <div className="space-y-14">
-      {(eyebrow || heading || description) && (
-        <div className="text-center">
-          {eyebrow && (
-            <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">
-              {eyebrow}
-            </h2>
-          )}
-          {heading && (
-            <p className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              {heading}
-            </p>
-          )}
-          {description && (
-            <p className="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">
-              {description}
-            </p>
-          )}
-        </div>
-      )}
+      {header}
       {grouped.map(({ category, list }) => (
         <section key={category}>
           <div className="flex items-end justify-between mb-6">
@@ -196,16 +226,6 @@ export default function SmeSupportList({
           </div>
         </section>
       ))}
-    </div>
+    </div>,
   );
-
-  if (sectionClassName) {
-    return (
-      <section className={sectionClassName}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">{content}</div>
-      </section>
-    );
-  }
-
-  return content;
 }

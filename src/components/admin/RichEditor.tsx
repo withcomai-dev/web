@@ -1,4 +1,5 @@
 "use client";
+import { authedFetch } from "@/lib/authed-fetch";
 
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -130,7 +131,7 @@ export default function RichEditor({
     }
     setAiLoading(true);
     try {
-      const res = await fetch("/api/ai/refine-text", {
+      const res = await authedFetch("/api/ai/refine-text", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, mode }),

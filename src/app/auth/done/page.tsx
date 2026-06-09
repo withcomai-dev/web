@@ -11,8 +11,10 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { signInWithCustomToken } from "firebase/auth";
 import { consumeRunmoaNext } from "@/lib/runmoa-auth";
 import { setRunmoaSession } from "@/lib/runmoa-session";
+import { auth } from "@/lib/firebase";
 import type { RunmoaUser } from "@/lib/runmoa-oauth";
 
 type Phase =
@@ -29,43 +31,61 @@ function readFragment(): URLSearchParams {
   return new URLSearchParams(hash);
 }
 
-function handleResult(): Phase {
-  const f = readFragment();
-
-  const error = f.get("error");
-  if (error) return { kind: "error", message: error };
-
-  const token = f.get("token");
-  const userRaw = f.get("user");
-  if (token && userRaw) {
-    try {
-      const user = JSON.parse(userRaw) as RunmoaUser;
-      setRunmoaSession(token, user);
-      return { kind: "success", next: consumeRunmoaNext() };
-    } catch {
-      return { kind: "error", message: "사용자 정보 해석에 실패했습니다" };
-    }
-  }
-
-  return { kind: "error", message: "로그인 결과를 받지 못했습니다" };
-}
-
 function DoneInner() {
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
 
   useEffect(() => {
-    const result = handleResult();
+    const f = readFragment();
+    const error = f.get("error");
+    const token = f.get("token");
+    const userRaw = f.get("user");
+    const fbToken = f.get("fbToken");
     // 토큰이 주소창(프래그먼트)에 남지 않도록 즉시 제거
     try {
       window.history.replaceState(null, "", window.location.pathname);
     } catch {
       // ignore
     }
-    setPhase(result);
-    if (result.kind === "success") {
-      const t = setTimeout(() => window.location.replace(result.next), 600);
-      return () => clearTimeout(t);
-    }
+
+    let cancelled = false;
+    void (async () => {
+      if (error) {
+        if (!cancelled) setPhase({ kind: "error", message: error });
+        return;
+      }
+      if (!token || !userRaw) {
+        if (!cancelled)
+          setPhase({ kind: "error", message: "로그인 결과를 받지 못했습니다" });
+        return;
+      }
+      let user: RunmoaUser;
+      try {
+        user = JSON.parse(userRaw) as RunmoaUser;
+      } catch {
+        if (!cancelled)
+          setPhase({ kind: "error", message: "사용자 정보 해석에 실패했습니다" });
+        return;
+      }
+
+      setRunmoaSession(token, user);
+      // 어드민 권한용 Firebase 세션 수립(커스텀 토큰이 있을 때만). 실패해도 일반 로그인은 성공.
+      if (fbToken) {
+        try {
+          await signInWithCustomToken(auth, fbToken);
+        } catch (e) {
+          console.error("Firebase 세션 수립 실패:", e);
+        }
+      }
+
+      const next = consumeRunmoaNext();
+      if (cancelled) return;
+      setPhase({ kind: "success", next });
+      setTimeout(() => window.location.replace(next), 600);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (

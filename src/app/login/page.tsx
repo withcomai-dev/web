@@ -48,7 +48,7 @@ function LoginInner() {
             className="h-10 w-auto rounded-md border border-gray-200"
           />
         </div>
-        <p className="text-gray-500 mb-10">Google 계정으로 로그인하세요.</p>
+        <p className="text-gray-500 mb-10">런모아 계정으로 로그인하세요.</p>
 
         {loading ? (
           <div className="flex justify-center py-6">
@@ -59,7 +59,7 @@ function LoginInner() {
             onClick={signIn}
             className="w-full inline-flex items-center justify-center gap-3 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
           >
-            <LogIn className="w-5 h-5" /> Google로 로그인
+            <LogIn className="w-5 h-5" /> 런모아 계정으로 로그인
           </button>
         )}
 

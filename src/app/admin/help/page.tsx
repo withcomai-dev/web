@@ -1,4 +1,5 @@
 "use client";
+import { authedFetch } from "@/lib/authed-fetch";
 
 import { useEffect, useState, useCallback } from "react";
 import { Edit2, Trash2, X, Save, Send, MessageSquare, Sparkles, Loader2, Mail } from "lucide-react";
@@ -348,7 +349,7 @@ function QuestionList({
     setAiLoading(true);
     setErr(null);
     try {
-      const res = await fetch("/api/ai/draft-reply", {
+      const res = await authedFetch("/api/ai/draft-reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -379,7 +380,7 @@ function QuestionList({
       });
       if (sendMail && answering.askerEmail) {
         try {
-          await fetch("/api/mail/help-answer", {
+          await authedFetch("/api/mail/help-answer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

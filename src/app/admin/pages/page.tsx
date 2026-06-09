@@ -1,4 +1,5 @@
 "use client";
+import { authedFetch } from "@/lib/authed-fetch";
 
 import { useEffect, useState, useCallback } from "react";
 import {
@@ -840,7 +841,7 @@ function AIPageGenModal({
     setErr(null);
     setPreview(null);
     try {
-      const res = await fetch("/api/ai/page-generate", {
+      const res = await authedFetch("/api/ai/page-generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt, tone, pageKey, pageTitle }),

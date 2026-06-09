@@ -1,4 +1,5 @@
 "use client";
+import { authedFetch } from "@/lib/authed-fetch";
 
 import { useEffect, useState, useCallback } from "react";
 import { Mail, Trash2, X, Check, Send, Sparkles, Loader2 } from "lucide-react";
@@ -236,7 +237,7 @@ function ReplyComposer({
     setAiLoading(true);
     setErr(null);
     try {
-      const res = await fetch("/api/ai/draft-reply", {
+      const res = await authedFetch("/api/ai/draft-reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -267,7 +268,7 @@ function ReplyComposer({
     setSending(true);
     setErr(null);
     try {
-      const res = await fetch("/api/mail/inquiry-reply", {
+      const res = await authedFetch("/api/mail/inquiry-reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

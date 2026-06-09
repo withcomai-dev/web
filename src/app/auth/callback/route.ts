@@ -17,6 +17,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { exchangeCodeForToken, fetchRunmoaUser } from "@/lib/runmoa-oauth";
 import { upsertRunmoaMember } from "@/lib/runmoa-members";
+import { createRunmoaFirebaseToken } from "@/lib/runmoa-roles";
 
 // 요청마다 code 가 다르므로 정적화 불가 — 항상 동적 실행.
 export const dynamic = "force-dynamic";
@@ -82,7 +83,20 @@ export async function GET(req: NextRequest) {
       console.error("runmoaMembers upsert 실패:", e);
     }
 
-    return redirectToDone(origin, { token, user: JSON.stringify(user) });
+    // 어드민 권한용 Firebase 커스텀 토큰 발급(역할 동기화 포함). 실패해도 일반 로그인은 진행.
+    let fbToken = "";
+    try {
+      fbToken = await createRunmoaFirebaseToken(user);
+    } catch (e) {
+      console.error("Firebase 커스텀 토큰 발급 실패:", e);
+    }
+
+    const fragment: Record<string, string> = {
+      token,
+      user: JSON.stringify(user),
+    };
+    if (fbToken) fragment.fbToken = fbToken;
+    return redirectToDone(origin, fragment);
   } catch (e) {
     return redirectToDone(origin, {
       error: e instanceof Error ? e.message : "로그인 처리 중 오류가 발생했습니다",

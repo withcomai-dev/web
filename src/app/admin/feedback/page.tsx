@@ -1,4 +1,5 @@
 "use client";
+import { authedFetch } from "@/lib/authed-fetch";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import {
@@ -203,7 +204,7 @@ function FeedbackDetail({
     setAiLoading(true);
     setErr(null);
     try {
-      const res = await fetch("/api/ai/analyze-feedback", {
+      const res = await authedFetch("/api/ai/analyze-feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -229,7 +230,7 @@ function FeedbackDetail({
     setBusy(true);
     setErr(null);
     try {
-      const res = await fetch("/api/github/create-issue", {
+      const res = await authedFetch("/api/github/create-issue", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -256,7 +257,7 @@ function FeedbackDetail({
     setBusy(true);
     setErr(null);
     try {
-      const res = await fetch("/api/mail/feedback-resolved", {
+      const res = await authedFetch("/api/mail/feedback-resolved", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

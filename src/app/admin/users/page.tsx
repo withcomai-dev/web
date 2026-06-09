@@ -110,8 +110,8 @@ export default function AdminUsersPage() {
   return (
     <div>
       <AdminPageHeader
-        title="회원 관리"
-        description="Google 로그인한 회원 목록. 행 클릭 시 활동 이력·메모를 확인할 수 있습니다."
+        title="관리자 권한"
+        description="런모아 로그인 사용자의 권한(superadmin/admin/user)을 관리합니다. 권한 변경은 슈퍼 관리자만 가능합니다."
         onRefresh={load}
         extra={
           <div className="flex gap-2">

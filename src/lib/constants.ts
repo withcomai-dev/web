@@ -84,7 +84,7 @@ export const ADMIN_NAV_ITEMS = [
   { label: "쇼핑몰(런모아)", href: "/admin/shop", icon: "shopping-bag" },
   { label: "배너", href: "/admin/banners", icon: "image" },
   { label: "문의", href: "/admin/inquiries", icon: "mail" },
-  { label: "회원", href: "/admin/users", icon: "users" },
+  { label: "관리자 권한", href: "/admin/users", icon: "users" },
   { label: "런모아 회원", href: "/admin/members", icon: "user-check" },
   { label: "도움말", href: "/admin/help", icon: "help-circle" },
   { label: "버그 신고", href: "/admin/feedback", icon: "bug" },

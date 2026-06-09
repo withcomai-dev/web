@@ -1,4 +1,5 @@
 "use client";
+import { authedFetch } from "@/lib/authed-fetch";
 
 import { useEffect, useState } from "react";
 import { Save, Loader2, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
@@ -243,7 +244,7 @@ function BackupRestore() {
     setResult(null);
     try {
       const text = await file.text();
-      const res = await fetch("/api/backup/import", {
+      const res = await authedFetch("/api/backup/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: text,

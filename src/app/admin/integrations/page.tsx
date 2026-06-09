@@ -1,4 +1,5 @@
 "use client";
+import { authedFetch } from "@/lib/authed-fetch";
 
 import { useEffect, useState } from "react";
 import {
@@ -150,7 +151,7 @@ export default function AdminIntegrationsPage() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/integrations");
+      const res = await authedFetch("/api/admin/integrations");
       if (!res.ok) throw new Error(`조회 실패 (${res.status})`);
       const data = await res.json();
       setStatus(data.status);
@@ -170,7 +171,7 @@ export default function AdminIntegrationsPage() {
     setSaving(true);
     setErr(null);
     try {
-      const res = await fetch("/api/admin/integrations", {
+      const res = await authedFetch("/api/admin/integrations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(edits),
@@ -193,7 +194,7 @@ export default function AdminIntegrationsPage() {
     setSaving(true);
     setErr(null);
     try {
-      const res = await fetch("/api/admin/integrations", {
+      const res = await authedFetch("/api/admin/integrations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [key]: "" }),

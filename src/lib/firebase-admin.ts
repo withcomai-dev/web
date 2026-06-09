@@ -1,5 +1,6 @@
 import { getApps, initializeApp, cert, ServiceAccount } from "firebase-admin/app";
 import { getFirestore, Firestore, FieldValue } from "firebase-admin/firestore";
+import { getAuth, Auth } from "firebase-admin/auth";
 
 let _adminDb: Firestore | null = null;
 
@@ -36,6 +37,11 @@ export function adminDb(): Firestore {
     // 이미 settings 가 적용된 경우 등은 무시
   }
   return _adminDb;
+}
+
+/** Firebase Admin Auth (런모아 로그인용 커스텀 토큰 발급 등). */
+export function adminAuth(): Auth {
+  return getAuth(ensureApp());
 }
 
 export { FieldValue };

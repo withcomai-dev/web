@@ -10,12 +10,12 @@ import {
 } from "react";
 import {
   onAuthStateChanged,
-  signInWithPopup,
   signOut,
   User as FirebaseUser,
 } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { COLLECTIONS, getDocById, upsertDoc } from "@/lib/firestore";
+import { startRunmoa } from "@/lib/runmoa-auth";
 import type { UserProfile, UserRole } from "@/types/cms";
 
 const SUPER_ADMIN_EMAIL =
@@ -82,9 +82,12 @@ function writeCache(profile: UserProfile) {
 async function ensureUserProfile(fbUser: FirebaseUser): Promise<UserProfile> {
   const existing = await getDocById<UserProfile>(COLLECTIONS.USERS, fbUser.uid);
 
-  const isSuper =
-    SUPER_ADMIN_EMAIL.length > 0 &&
-    fbUser.email?.toLowerCase() === SUPER_ADMIN_EMAIL;
+  // 런모아 사용자(uid=runmoa:*)는 fbUser 에 email/이름이 비어있고, 서버(/auth/callback)가
+  // 이미 users 문서를 정확히 기록했으므로 그 문서를 신뢰하고 클라이언트가 덮어쓰지 않는다.
+  const isRunmoa = fbUser.uid.startsWith("runmoa:");
+  const email = (fbUser.email ?? existing?.email ?? "").toLowerCase();
+
+  const isSuper = SUPER_ADMIN_EMAIL.length > 0 && email === SUPER_ADMIN_EMAIL;
 
   let role: UserRole = "user";
   if (isSuper) role = "superadmin";
@@ -92,7 +95,7 @@ async function ensureUserProfile(fbUser: FirebaseUser): Promise<UserProfile> {
 
   const profile: UserProfile = {
     id: fbUser.uid,
-    email: fbUser.email ?? "",
+    email: fbUser.email ?? existing?.email ?? "",
     displayName: fbUser.displayName ?? existing?.displayName ?? "",
     photoURL: fbUser.photoURL ?? existing?.photoURL ?? "",
     role,
@@ -100,6 +103,9 @@ async function ensureUserProfile(fbUser: FirebaseUser): Promise<UserProfile> {
     createdAt: existing?.createdAt,
     lastLoginAt: new Date().toISOString(),
   };
+
+  // 런모아 사용자는 서버가 권위 있게 기록 → 클라이언트 덮어쓰기 생략(빈 값 덮어쓰기 방지).
+  if (isRunmoa) return profile;
 
   await upsertDoc(COLLECTIONS.USERS, fbUser.uid, {
     email: profile.email,
@@ -163,7 +169,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(async () => {
     if (DEV_BYPASS) return;
-    await signInWithPopup(auth, googleProvider);
+    // 어드민도 런모아 계정 기준 — 런모아 호스티드 로그인으로 이동.
+    startRunmoa("login");
   }, []);
 
   const signOutNow = useCallback(async () => {

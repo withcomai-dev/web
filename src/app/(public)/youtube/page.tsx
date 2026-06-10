@@ -4,7 +4,7 @@ import { PageBanner } from "@/components/sections/HeroSection";
 
 export const metadata = { title: "블로그 및 유튜브" };
 
-const BLOG_URL = "https://naver.me/5UV1WrvA";
+const BLOG_URL = "https://blog.naver.com/withcom_ai";
 const BLOG_THUMBNAIL =
   "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1000";
 

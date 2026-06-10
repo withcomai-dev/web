@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAuth } from "firebase-admin/auth";
 import { adminDb, FieldValue } from "@/lib/firebase-admin";
 import { appendInquiryRow } from "@/lib/sheets";
 import { COLLECTIONS } from "@/lib/firestore";
@@ -16,7 +17,41 @@ interface InquiryBody {
   attachments?: string[];
 }
 
+/** 문의 제출은 로그인 사용자만 허용 — Bearer ID 토큰 검증 (역할 불문) */
+async function requireLogin(
+  req: NextRequest,
+): Promise<{ uid: string | null; errorResponse: NextResponse | null }> {
+  if (process.env.NEXT_PUBLIC_DEV_BYPASS_AUTH === "true") {
+    return { uid: "dev-bypass-uid", errorResponse: null };
+  }
+  const m = (req.headers.get("authorization") ?? "").match(/^Bearer (.+)$/);
+  if (!m) {
+    return {
+      uid: null,
+      errorResponse: NextResponse.json(
+        { error: "로그인이 필요합니다." },
+        { status: 401 },
+      ),
+    };
+  }
+  try {
+    const decoded = await getAuth().verifyIdToken(m[1]);
+    return { uid: decoded.uid, errorResponse: null };
+  } catch {
+    return {
+      uid: null,
+      errorResponse: NextResponse.json(
+        { error: "로그인이 필요합니다." },
+        { status: 401 },
+      ),
+    };
+  }
+}
+
 export async function POST(req: NextRequest) {
+  const { uid, errorResponse } = await requireLogin(req);
+  if (errorResponse) return errorResponse;
+
   let body: InquiryBody;
   try {
     body = (await req.json()) as InquiryBody;
@@ -60,6 +95,7 @@ export async function POST(req: NextRequest) {
     attachments,
     status: "new",
     createdAt,
+    submitterUid: uid ?? undefined,
   };
 
   let docId = "";

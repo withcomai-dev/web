@@ -1,14 +1,20 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Send, Loader2, Check, Paperclip, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Send, Loader2, Check, Paperclip, X, LogIn, Lock } from "lucide-react";
 import { INQUIRY_TYPES } from "@/lib/constants";
 import { uploadAsset } from "@/lib/storage-upload";
+import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
+import { startRunmoa } from "@/lib/runmoa-auth";
+import { auth } from "@/lib/firebase";
 
 type Phase = "idle" | "submitting" | "done" | "error";
 
 const MAX_ATTACHMENTS = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+/** 로그인 전 작성 내용을 보관하는 키 (로그인 다녀와도 같은 탭이면 유지) */
+const DRAFT_KEY = "inquiry.draft.v1";
 
 export default function InquiryForm() {
   const [form, setForm] = useState({
@@ -24,6 +30,46 @@ export default function InquiryForm() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  // 로그인 상태(null=확인 전) + 로그인 요구 모달
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // 마운트 시: 로그인 상태 확인 + 보관해 둔 작성 내용 복원
+  useEffect(() => {
+    setLoggedIn(isRunmoaLoggedIn());
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const d = JSON.parse(raw) as {
+          form?: Partial<typeof form>;
+          attachments?: { url: string; name: string; size: number }[];
+        };
+        if (d.form) setForm((s) => ({ ...s, ...d.form }));
+        if (Array.isArray(d.attachments)) setAttachments(d.attachments);
+      }
+    } catch {
+      // 복원 실패는 무시 (새로 작성)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /** 작성 중인 내용을 보관 (로그인 다녀오기 전 호출) */
+  const saveDraft = (
+    f: typeof form = form,
+    atts: typeof attachments = attachments,
+  ) => {
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ form: f, attachments: atts }));
+    } catch {
+      // 저장 실패 시 무시
+    }
+  };
+
+  /** 내용 보관 후 런모아 로그인으로 이동 (완료되면 이 페이지로 복귀) */
+  const goLogin = () => {
+    saveDraft();
+    startRunmoa("login");
+  };
 
   const onChange =
     (k: keyof typeof form) =>
@@ -63,20 +109,45 @@ export default function InquiryForm() {
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (phase === "submitting") return;
+
+    // 로그인 필수: 비로그인 시 내용을 보관하고 로그인 안내 모달
+    if (!isRunmoaLoggedIn()) {
+      saveDraft();
+      setShowLoginModal(true);
+      return;
+    }
+
     setPhase("submitting");
     setErrMsg(null);
     try {
+      // 서버가 로그인 사용자만 받도록 Firebase ID 토큰 동봉
+      const idToken = await auth.currentUser?.getIdToken().catch(() => null);
       const res = await fetch("/api/inquiries", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
+        },
         body: JSON.stringify({
           ...form,
           attachments: attachments.map((a) => a.url),
         }),
       });
+      if (res.status === 401) {
+        // 세션 만료 등 — 내용 보관 후 로그인 유도
+        saveDraft();
+        setPhase("idle");
+        setShowLoginModal(true);
+        return;
+      }
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error ?? `요청 실패 (${res.status})`);
+      }
+      try {
+        sessionStorage.removeItem(DRAFT_KEY);
+      } catch {
+        // ignore
       }
       setPhase("done");
       setForm({
@@ -107,6 +178,25 @@ export default function InquiryForm() {
   }
 
   return (
+    <>
+      {/* 비로그인 안내 — 작성은 가능하되 제출은 로그인 필요 */}
+      {loggedIn === false && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
+          <p className="flex items-start gap-2 text-sm text-blue-900 leading-relaxed">
+            <Lock className="w-4 h-4 mt-0.5 shrink-0 text-blue-500" />
+            문의 제출은 <b>로그인 후 가능</b>합니다. 지금 작성하셔도 내용은 로그인
+            후 그대로 유지됩니다.
+          </p>
+          <button
+            type="button"
+            onClick={goLogin}
+            className="shrink-0 inline-flex items-center gap-1.5 self-start sm:self-auto sm:ml-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
+          >
+            <LogIn className="w-4 h-4" /> 간편 로그인
+          </button>
+        </div>
+      )}
+
     <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">성함 / 담당자명</label>
@@ -241,5 +331,46 @@ export default function InquiryForm() {
         </button>
       </div>
     </form>
+
+      {/* 로그인 요구 모달 — 작성 내용은 보관되어 로그인 후 그대로 복원 */}
+      {showLoginModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full max-w-sm rounded-2xl bg-white p-7 text-center shadow-2xl">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+              <Lock className="h-6 w-6 text-blue-600" />
+            </div>
+            <h3 className="mb-2 text-lg font-bold text-gray-900">
+              로그인이 필요합니다
+            </h3>
+            <p className="mb-6 text-sm leading-relaxed text-gray-500">
+              문의 제출은 로그인 후 가능합니다.
+              <br />
+              <b className="text-gray-700">작성하신 내용은 그대로 보관</b>되어,
+              로그인하면 이어서 제출할 수 있습니다.
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={goLogin}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 font-bold text-white transition-colors hover:bg-blue-700"
+              >
+                <LogIn className="h-4 w-4" /> 로그인 하기
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowLoginModal(false)}
+                className="w-full rounded-lg py-3 text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                계속 작성하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

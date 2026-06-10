@@ -315,6 +315,8 @@ export interface InquiryDoc {
   status: InquiryStatus;
   createdAt?: string;
   note?: string;
+  /** 제출한 로그인 회원의 Firebase UID (문의 제출 로그인 필수화 이후 기록) */
+  submitterUid?: string;
 }
 
 // ── 런모아 로그인 회원 ──

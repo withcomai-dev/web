@@ -837,6 +837,22 @@ function SectionForm({
     case "sme":
       return (
         <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
+              노출 카테고리
+            </label>
+            <select
+              value={(d.category as string) ?? ""}
+              onChange={(e) =>
+                onChange({ category: e.target.value || undefined })
+              }
+              className="w-full px-3 py-2 rounded border border-gray-200 text-sm"
+            >
+              <option value="">전체 (소상공인 + R&D)</option>
+              <option value="small-business">소상공인 지원사업만</option>
+              <option value="rnd">R&D 지원사업만</option>
+            </select>
+          </div>
           <Input
             label="Eyebrow"
             value={(d.eyebrow as string) ?? ""}

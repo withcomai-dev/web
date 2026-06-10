@@ -26,11 +26,7 @@ export const NAV_ITEMS: NavItem[] = [
   {
     label: "홈",
     href: "/",
-    children: [
-      { label: "홈", href: "/" },
-      { label: "회사 소개", href: "/about" },
-      { label: "업무활용 콘텐츠", href: "/contents" },
-    ],
+    children: [{ label: "회사 소개", href: "/about" }],
   },
   {
     label: "스마트워크 & AI",
@@ -58,8 +54,8 @@ export const NAV_ITEMS: NavItem[] = [
     label: "중소기업 지원사업",
     href: "/sme-support",
     children: [
-      { label: "소상공인 지원사업", href: "/sme-support" },
-      { label: "R&D 지원사업", href: "/sme-support" },
+      { label: "소상공인 지원사업", href: "/sme-support/small-business" },
+      { label: "R&D 지원사업", href: "/sme-support/rnd" },
     ],
   },
   {

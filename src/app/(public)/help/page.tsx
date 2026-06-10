@@ -45,7 +45,7 @@ export default function HelpIndex() {
     <>
       <PageBanner
         eyebrow="Help Center"
-        title='궁금한 점을 빠르게, <span class="text-blue-400">도움말 센터</span>'
+        title='궁금한 점을 빠르게,<br class="hidden sm:block"/> <span class="text-blue-400">도움말 센터</span>'
         subtitle="사이트 이용, 회원·로그인, 쇼핑몰, 문의·상담 — 자주 묻는 내용을 카테고리별로 모았습니다."
       />
       <div className="py-16 bg-slate-50 min-h-[60vh]">

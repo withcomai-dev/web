@@ -246,16 +246,33 @@ export const SEED_ABOUT: PageDoc = {
       },
     },
     {
-      id: "about-richtext",
+      id: "about-mission",
       order: 3,
       visible: true,
-      type: "richtext",
+      type: "feature",
       data: {
-        html: `
-          <h2>우리의 미션</h2>
-          <p>중소기업이 디지털 시대의 변화에 발맞춰 성장할 수 있도록 든든한 IT 파트너 역할을 합니다.</p>
-          <p>위더스컴퓨터(하드웨어·인프라)와 WITHCOM AI(스마트워크·AI 컨설팅)가 함께, 장비 한 대의 구매 상담부터 전사 디지털 전환까지 끊김 없이 지원합니다.</p>
-        `,
+        eyebrow: "Our Mission",
+        title: "중소기업의 디지털 성장, 처음부터 끝까지 함께합니다",
+        image:
+          "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=1000",
+        side: "right",
+        items: [
+          {
+            icon: "monitor",
+            title: "장비 한 대부터 전사 전환까지",
+            body: "위더스컴퓨터(하드웨어·인프라)와 WITHCOM AI(스마트워크·AI)가 함께, 규모에 맞는 단계적 전환을 지원합니다.",
+          },
+          {
+            icon: "users",
+            title: "사람이 중심인 디지털 전환",
+            body: "도구 도입으로 끝내지 않고, 임직원이 실제로 쓸 수 있을 때까지 교육하고 정착을 돕습니다.",
+          },
+          {
+            icon: "shield-check",
+            title: "25년 이상의 현장 경험",
+            body: "1999년부터 쌓아온 중소기업 IT 운영 노하우로, 시행착오 없는 가장 빠른 길을 안내합니다.",
+          },
+        ],
       },
     },
     {
@@ -587,15 +604,127 @@ export const SEED_SME_SUPPORT: PageDoc = {
       },
     },
     {
-      id: "sme-richtext",
+      id: "sme-howto",
       order: 2,
       visible: true,
-      type: "richtext",
+      type: "cards",
       data: {
-        html: `
-          <p>위드컴정보는 다양한 중소기업 지원사업의 신청 자격과 절차를 안내하고, 신청서 작성까지 도와드립니다.</p>
-          <p>아래 콘텐츠를 통해 진행 중인 사업 목록을 확인하세요.</p>
-        `,
+        eyebrow: "How We Help",
+        title: "신청까지 이렇게 도와드립니다",
+        description:
+          "공고 확인부터 서류 준비까지, 지원사업이 처음이어도 걱정 없습니다.",
+        columns: 3,
+        items: [
+          {
+            icon: "zap",
+            title: "1. 맞춤 사업 큐레이션",
+            body: "수많은 공고 중 우리 회사 업종·규모에 맞는 지원사업만 골라 안내합니다.",
+          },
+          {
+            icon: "shield-check",
+            title: "2. 신청 자격 진단",
+            body: "신청 자격과 필요 서류를 함께 점검해 헛수고 없이 준비를 시작합니다.",
+          },
+          {
+            icon: "message-square",
+            title: "3. 신청·서류 컨설팅",
+            body: "사업계획서 작성과 온라인 접수 절차까지 실무 경험으로 도와드립니다.",
+          },
+        ],
+      },
+    },
+  ] as Section[],
+};
+
+export const SEED_SME_SMALL: PageDoc = {
+  key: "sme-small-business",
+  title: "소상공인 지원사업",
+  seoTitle: "소상공인 지원사업 — WITHCOM AI",
+  seoDescription:
+    "소상공인을 위한 정부·지자체 지원사업 정보를 한눈에 확인하고, 신청 컨설팅까지 받아보세요.",
+  sections: [
+    {
+      id: "sme-sb-hero",
+      order: 1,
+      visible: true,
+      type: "hero",
+      data: {
+        variant: "banner",
+        eyebrow: "Small Business",
+        title:
+          '사장님의 든든한 지원군,<br class="hidden sm:block"/> <span class="text-blue-400">소상공인 지원사업</span>',
+        subtitle:
+          "정책자금, 경영안정, 디지털 전환 — 소상공인이 받을 수 있는 지원사업을 모아 안내합니다.",
+      },
+    },
+    {
+      id: "sme-sb-list",
+      order: 2,
+      visible: true,
+      type: "sme",
+      data: {
+        category: "small-business",
+        heading: "진행 중인 소상공인 지원사업",
+        description: "노출 중인 사업만 표시됩니다. 카드를 누르면 상세 안내를 볼 수 있습니다.",
+      },
+    },
+    {
+      id: "sme-sb-cta",
+      order: 3,
+      visible: true,
+      type: "cta",
+      data: {
+        bg: "blue",
+        title: "어떤 사업에 신청할 수 있는지 궁금하신가요?",
+        body: "업종과 매출 규모만 알려주시면, 신청 가능한 지원사업을 무료로 진단해 드립니다.",
+        button: { label: "무료 진단 상담", href: "/contact" },
+      },
+    },
+  ] as Section[],
+};
+
+export const SEED_SME_RND: PageDoc = {
+  key: "sme-rnd",
+  title: "R&D 지원사업",
+  seoTitle: "R&D 지원사업 — WITHCOM AI",
+  seoDescription:
+    "중소기업 기술개발(R&D) 지원사업 정보를 한눈에 확인하고, 사업계획서 작성까지 컨설팅 받아보세요.",
+  sections: [
+    {
+      id: "sme-rnd-hero",
+      order: 1,
+      visible: true,
+      type: "hero",
+      data: {
+        variant: "banner",
+        eyebrow: "R&D",
+        title:
+          '기술개발 자금이 필요하다면,<br class="hidden sm:block"/> <span class="text-blue-400">R&D 지원사업</span>',
+        subtitle:
+          "신기술·신제품 개발을 위한 정부 R&D 과제를 안내하고, 사업계획서 작성까지 도와드립니다.",
+      },
+    },
+    {
+      id: "sme-rnd-list",
+      order: 2,
+      visible: true,
+      type: "sme",
+      data: {
+        category: "rnd",
+        heading: "진행 중인 R&D 지원사업",
+        description: "노출 중인 사업만 표시됩니다. 카드를 누르면 상세 안내를 볼 수 있습니다.",
+      },
+    },
+    {
+      id: "sme-rnd-cta",
+      order: 3,
+      visible: true,
+      type: "cta",
+      data: {
+        bg: "slate",
+        title: "R&D 과제, 계획서가 절반입니다",
+        body: "과제 선정 경험이 있는 전문가가 사업계획서 방향을 함께 잡아드립니다.",
+        button: { label: "계획서 컨설팅 문의", href: "/contact" },
       },
     },
   ] as Section[],
@@ -639,5 +768,7 @@ export const ALL_PAGE_SEEDS: PageDoc[] = [
   SEED_SMARTWORK_AI,
   SEED_IT_SERVICE,
   SEED_SME_SUPPORT,
+  SEED_SME_SMALL,
+  SEED_SME_RND,
   SEED_CONTACT,
 ];

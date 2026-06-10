@@ -18,7 +18,9 @@ export const BUILT_IN_PAGES: PageRegistryEntry[] = [
   { key: "smartwork-ai", title: "스마트워크 & AI", slug: "/smartwork-ai", isBuiltIn: true, order: 3 },
   { key: "it-service", title: "IT 서비스", slug: "/it-service", isBuiltIn: true, order: 4 },
   { key: "sme-support", title: "중소기업 지원사업", slug: "/sme-support", isBuiltIn: true, order: 5 },
-  { key: "contact", title: "문의하기", slug: "/contact", isBuiltIn: true, order: 6 },
+  { key: "sme-small-business", title: "소상공인 지원사업", slug: "/sme-support/small-business", isBuiltIn: true, order: 6 },
+  { key: "sme-rnd", title: "R&D 지원사업", slug: "/sme-support/rnd", isBuiltIn: true, order: 7 },
+  { key: "contact", title: "문의하기", slug: "/contact", isBuiltIn: true, order: 8 },
 ];
 
 const RESERVED_SLUGS = new Set([
@@ -27,6 +29,8 @@ const RESERVED_SLUGS = new Set([
   "/smartwork-ai",
   "/it-service",
   "/sme-support",
+  "/sme-support/small-business",
+  "/sme-support/rnd",
   "/contact",
   "/contents",
   "/shop",

@@ -13,7 +13,7 @@ export default function YoutubePage() {
     <>
       <PageBanner
         eyebrow="Blog & YouTube"
-        title='영상과 글로 배우는 <span class="text-blue-400">IT 활용 노하우</span>'
+        title='영상과 글로 배우는<br class="hidden sm:block"/> <span class="text-blue-400">IT 활용 노하우</span>'
         subtitle="IT 트렌드, 솔루션 활용 가이드, 스마트워크 도입 사례를 유튜브와 블로그로 전합니다."
       />
       <div className="py-16 bg-slate-50 min-h-[60vh]">

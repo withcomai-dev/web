@@ -109,6 +109,8 @@ export interface SmeSectionData {
   eyebrow?: string;
   heading?: string;
   description?: string;
+  /** 특정 카테고리만 노출 (미지정 시 전체 카테고리) */
+  category?: SmeCategory;
   /** 카테고리별 최대 노출 개수 (요약 노출용). 미지정 시 전체 */
   limitPerCategory?: number;
   /** 전체 보기 링크(/sme-support) 노출 여부 */

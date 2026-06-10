@@ -63,6 +63,7 @@ export default function SectionRenderer({ sections }: { sections: Section[] }) {
                 limitPerCategory={d.limitPerCategory}
                 showViewAll={d.showViewAll}
                 hideWhenEmpty={d.hideWhenEmpty ?? false}
+                category={d.category}
               />
             );
           }

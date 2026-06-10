@@ -413,7 +413,7 @@ export const SEED_IT_SERVICE: PageDoc = {
       type: "hero",
       data: {
         variant: "banner",
-        bgImage: "/banner-it-service.png",
+        bgImage: "/banner-it-service.webp",
         title: "기업의 업무 효율을 높이는 안정적인 IT 인프라 구축",
       },
     },
@@ -744,7 +744,7 @@ export const SEED_CONTACT: PageDoc = {
       type: "hero",
       data: {
         variant: "banner",
-        bgImage: "/banner-contact.png",
+        bgImage: "/banner-contact.webp",
         title: "간편하게 시작하는 상담 신청하기",
       },
     },

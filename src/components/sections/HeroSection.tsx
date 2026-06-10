@@ -148,6 +148,7 @@ function BannerHero({ data }: { data: HeroData }) {
           alt={alt}
           className="block w-full h-auto"
           fetchPriority="high"
+          decoding="async"
         />
       </div>
     </section>

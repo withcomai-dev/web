@@ -9,13 +9,15 @@ export default function Footer() {
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <a
-                href="https://withcom.co.kr"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="https://mall.withcom.co.kr"
                 aria-label="WITHCOM AI 홈페이지"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/withcom_logo_001.png" alt="WITHCOM AI" className="h-10 w-auto" />
+                <img
+                  src="/withcomai_02_white.png"
+                  alt="WITHCOM AI"
+                  className="h-10 w-auto"
+                />
               </a>
               <a
                 href="https://withuspc.com"

@@ -89,15 +89,13 @@ export default function Nav() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <a
-              href="https://withcom.co.kr"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="https://mall.withcom.co.kr"
               aria-label="WITHCOM AI 홈페이지"
               className="shrink-0"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/withcom_logo_002.png"
+                src="/withcomai_01_color.png"
                 alt="WITHCOM AI"
                 className="h-10 sm:h-12 w-auto"
               />

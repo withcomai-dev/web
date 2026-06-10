@@ -1,6 +1,7 @@
 import AdminGuard from "@/components/admin/AdminGuard";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import AIPanel from "@/components/admin/AIPanel";
+// 우측 상단 AI 도우미 임시 숨김 — 컴포넌트는 유지, 렌더만 제외(추후 복원 가능)
+// import AIPanel from "@/components/admin/AIPanel";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 import NotificationBell from "@/components/admin/NotificationBell";
 // 우측 플로팅 위젯(신고하기·도움말) 임시 숨김 — 컴포넌트는 유지, 렌더만 제외(추후 복원 가능)
@@ -15,7 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="flex-1 p-8 overflow-x-auto">{children}</main>
       </div>
       <NotificationBell />
-      <AIPanel />
+      {/* <AIPanel /> */}
       <GlobalSearch />
       {/* <FeedbackButton /> */}
       {/* <HelpWidget /> */}

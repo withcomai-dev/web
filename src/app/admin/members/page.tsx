@@ -48,7 +48,7 @@ export default function AdminMembersPage() {
   return (
     <div>
       <AdminPageHeader
-        title="런모아 회원"
+        title="회원"
         description="런모아 호스티드 로그인으로 접속한 회원 목록입니다. (로그인 시 자동 기록)"
         onRefresh={load}
       />

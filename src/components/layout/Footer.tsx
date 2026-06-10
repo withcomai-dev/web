@@ -16,7 +16,7 @@ export default function Footer() {
                 <img
                   src="/withcomai_02_white.png"
                   alt="WITHCOM AI"
-                  className="h-10 w-auto"
+                  className="h-[31px] w-auto"
                 />
               </a>
               <a

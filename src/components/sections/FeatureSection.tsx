@@ -15,7 +15,7 @@ export default function FeatureSection({ data }: { data: FeatureData }) {
   const isLeft = data.side === "left";
   return (
     <section className="py-24 bg-slate-900 text-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div
           className={cn(
             "flex flex-col lg:flex-row items-center gap-16",

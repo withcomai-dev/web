@@ -8,7 +8,7 @@ export default async function SmeSupportPage() {
     <>
       <LivePageRenderer pageKey="sme-support" initialSections={page?.sections ?? []} />
       <section className="py-20 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <SmeSupportList />
         </div>
       </section>

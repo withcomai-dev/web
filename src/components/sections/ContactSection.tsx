@@ -9,7 +9,7 @@ export default function ContactSection({ data }: { data: ContactSectionData }) {
   const address = data.address ?? COMPANY.address;
   return (
     <section id="contact" className="py-24 bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
           <div className="lg:w-1/3 bg-blue-600 p-12 text-white">
             <h2 className="text-3xl font-bold mb-6">{data.title ?? "문의하기"}</h2>

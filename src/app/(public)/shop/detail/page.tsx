@@ -48,7 +48,7 @@ export default function ShopDetailPage() {
 
   return (
     <div className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/shop"
           className="text-sm text-blue-600 hover:underline mb-6 inline-block"

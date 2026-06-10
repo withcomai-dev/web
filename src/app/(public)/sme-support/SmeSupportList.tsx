@@ -151,7 +151,7 @@ export default function SmeSupportList({
   const wrap = (inner: ReactNode) =>
     sectionClassName ? (
       <section className={sectionClassName}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">{inner}</div>
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">{inner}</div>
       </section>
     ) : (
       <>{inner}</>

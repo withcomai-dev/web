@@ -18,10 +18,8 @@ export interface HeroData {
   title: string;
   subtitle?: string;
   ctas?: { label: string; href: string; variant?: "primary" | "ghost" }[];
-  /** 레이아웃 변형: fullscreen(기본, 전체 화면) | banner(좌측 텍스트 + 우측 일러스트 컴팩트 배너) */
+  /** 레이아웃 변형: fullscreen(기본, 전체 화면) | banner(배경 이미지를 컨테이너 폭 배너로 노출) */
   variant?: "fullscreen" | "banner";
-  /** banner variant 우측 장식 일러스트 선택 */
-  illustration?: "it" | "consult";
 }
 
 export interface CardItem {

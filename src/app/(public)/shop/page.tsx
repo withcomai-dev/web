@@ -26,7 +26,7 @@ export default function ShopPage() {
 
   return (
     <div className="py-16 bg-slate-50 min-h-[60vh]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-10">
           <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
             Shop

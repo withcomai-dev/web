@@ -13,7 +13,7 @@ export default function CTASection({ data }: { data: CTAData }) {
         bg === "white" && "bg-slate-50 text-slate-900",
       )}
     >
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl md:text-4xl font-extrabold mb-4">{data.title}</h2>
         {data.body && (
           <p className={cn("text-lg mb-8", bg === "white" ? "text-gray-600" : "text-white/80")}>

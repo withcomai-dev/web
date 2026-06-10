@@ -504,6 +504,9 @@ export const SEED_SME_SUPPORT: PageDoc = {
 export const SEED_CONTACT: PageDoc = {
   key: "contact",
   title: "문의하기",
+  seoTitle: "문의하기 — WITHCOM AI",
+  seoDescription:
+    "구글·네이버·카카오 간편 로그인으로 빠르게 상담을 신청하세요. 접수된 상담은 담당자가 신속하게 확인하고 안내해 드립니다.",
   sections: [
     {
       id: "contact-hero",
@@ -511,10 +514,20 @@ export const SEED_CONTACT: PageDoc = {
       visible: true,
       type: "hero",
       data: {
-        eyebrow: "Contact",
-        title: "전문가가 직접 상담해 드립니다",
-        subtitle:
-          "스마트워크 도입, AI 컨설팅, IT 인프라 구축 — 어떤 문의든 환영합니다.",
+        variant: "banner",
+        bgImage: "/banner-contact.png",
+        title: "간편하게 시작하는 상담 신청하기",
+      },
+    },
+    {
+      id: "contact-form",
+      order: 2,
+      visible: true,
+      type: "contact",
+      data: {
+        title: "문의하기",
+        description:
+          "스마트워크 도입, AI 컨설팅, IT 인프라 구축 등 궁금하신 점을 남겨주시면 전문가가 신속히 답변해 드립니다.",
       },
     },
   ] as Section[],

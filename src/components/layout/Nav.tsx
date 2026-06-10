@@ -83,7 +83,7 @@ export default function Nav() {
 
   return (
     <nav className="fixed w-full z-40 bg-white/95 backdrop-blur shadow-sm py-2">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <a

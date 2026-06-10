@@ -71,7 +71,7 @@ export default function ContentViewPage() {
 
   return (
     <article className="py-16 bg-white min-h-[60vh]">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/contents"
           className="text-sm text-blue-600 hover:underline mb-6 inline-block"

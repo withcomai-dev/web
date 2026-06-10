@@ -20,18 +20,18 @@ export default function HeroSection({ data }: { data: HeroData }) {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-transparent to-slate-900" />
         </div>
       )}
-      <div className="relative z-10 text-center px-4 max-w-4xl">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto text-center px-4 sm:px-6 lg:px-8">
         {data.eyebrow && (
           <span className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wider text-blue-400 uppercase bg-blue-400/10 rounded-full border border-blue-400/20">
             {data.eyebrow}
           </span>
         )}
         <h1
-          className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight tracking-tight"
+          className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight tracking-tight break-keep"
           dangerouslySetInnerHTML={{ __html: data.title }}
         />
         {data.subtitle && (
-          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto font-light leading-relaxed break-keep">
             {data.subtitle}
           </p>
         )}
@@ -60,7 +60,7 @@ export default function HeroSection({ data }: { data: HeroData }) {
 
 /**
  * 이미지 배너 (image03/04): 제공된 배너 이미지를 그대로 노출한다.
- * - 배경(네이비)은 화면 전체 폭으로 확장하고, 이미지는 컨테이너 폭(max-w-7xl)에 맞춰 중앙 배치.
+ * - 배경(네이비)은 화면 전체 폭으로 확장하고, 이미지는 컨테이너 폭(max-w-[1400px])에 맞춰 중앙 배치.
  * - 이미지 가장자리 색(#010c21)과 동일한 배경을 써서 넓은 화면에서도 이음매 없이 보인다.
  */
 function BannerHero({ data }: { data: HeroData }) {
@@ -70,7 +70,7 @@ function BannerHero({ data }: { data: HeroData }) {
   if (!data.bgImage) {
     return (
       <section className="bg-slate-950 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1
             className="text-3xl sm:text-4xl font-extrabold text-white"
             dangerouslySetInnerHTML={{ __html: data.title }}
@@ -82,7 +82,7 @@ function BannerHero({ data }: { data: HeroData }) {
 
   return (
     <section className="w-full" style={{ backgroundColor: "#010c21" }}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={data.bgImage}

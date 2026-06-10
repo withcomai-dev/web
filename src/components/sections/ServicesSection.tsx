@@ -43,7 +43,7 @@ export default function ServicesSection({ data }: { data: ServicesData }) {
               <>
                 <div>
                   <Icon className="w-10 h-10 mb-4 opacity-80" />
-                  <h3 className="text-2xl font-bold">{item.title}</h3>
+                  <h3 className="text-xl font-bold">{item.title}</h3>
                   <p className={cn("mt-2 opacity-80", SUBTITLE_COLOR[item.bg])}>
                     {item.body}
                   </p>

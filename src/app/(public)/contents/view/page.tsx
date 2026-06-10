@@ -82,7 +82,7 @@ export default function ContentViewPage() {
           <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-4">
             {item.category}
           </span>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 mb-4">
             {item.title}
           </h1>
           {item.publishedAt && (

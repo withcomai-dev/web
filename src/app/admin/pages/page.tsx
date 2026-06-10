@@ -752,6 +752,25 @@ function SectionForm({
     case "blog":
       return (
         <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
+              콘텐츠 소스
+            </label>
+            <select
+              value={(d.source as string) ?? "auto"}
+              onChange={(e) => onChange({ source: e.target.value })}
+              className="w-full px-3 py-2 rounded border border-gray-200 text-sm"
+            >
+              <option value="auto">자동 — [콘텐츠] 메뉴의 최신 게시글 3개</option>
+              <option value="manual">수동 — 아래 카드 직접 구성</option>
+            </select>
+            {((d.source as string) ?? "auto") === "auto" && (
+              <p className="mt-1 text-xs text-gray-500">
+                [콘텐츠] 메뉴에서 글을 게시하면 즉시 반영됩니다. 게시글이 없으면 아래
+                카드가 예비로 표시됩니다.
+              </p>
+            )}
+          </div>
           <Input label="Eyebrow" value={(d.eyebrow as string) ?? ""} onChange={(v) => onChange({ eyebrow: v })} />
           <Input label="제목" value={(d.title as string) ?? ""} onChange={(v) => onChange({ title: v })} />
           <Input

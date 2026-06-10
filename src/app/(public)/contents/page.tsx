@@ -43,10 +43,10 @@ export default function ContentsPage() {
     <section className="py-16 bg-slate-50 min-h-[60vh]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-12">
-          <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
+          <p className="text-base font-semibold text-blue-600 uppercase tracking-wide">
             Contents
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold text-gray-900">업무활용 콘텐츠</h1>
+          <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">업무활용 콘텐츠</h1>
         </header>
 
         {loading ? (

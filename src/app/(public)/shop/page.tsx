@@ -28,13 +28,13 @@ export default function ShopPage() {
     <div className="py-16 bg-slate-50 min-h-[60vh]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-10">
-          <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
+          <p className="text-base font-semibold text-blue-600 uppercase tracking-wide">
             Shop
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold text-gray-900">
+          <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
             위드컴정보 쇼핑몰
           </h1>
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-lg text-gray-500">
             비즈니스에 필요한 IT 하드웨어 및 소프트웨어. 결제는 런모아에서 안전하게
             진행됩니다.
           </p>

@@ -86,7 +86,7 @@ export default function HelpViewPage() {
           <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full mb-4">
             {doc.category}
           </span>
-          <h1 className="text-3xl font-extrabold text-gray-900">{doc.title}</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">{doc.title}</h1>
           {doc.updatedAt && (
             <p className="mt-2 text-sm text-gray-400">
               최종 업데이트: {formatDate(doc.updatedAt)}

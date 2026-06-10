@@ -14,7 +14,7 @@ export default function CTASection({ data }: { data: CTAData }) {
       )}
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">{data.title}</h2>
+        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">{data.title}</h2>
         {data.body && (
           <p className={cn("text-lg mb-8", bg === "white" ? "text-gray-600" : "text-white/80")}>
             {data.body}

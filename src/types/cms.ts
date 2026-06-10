@@ -77,6 +77,8 @@ export interface BlogData {
   eyebrow?: string;
   title: string;
   viewAllHref?: string;
+  /** auto(기본): [콘텐츠] 메뉴 최신 게시글 자동 표시 · manual: items 직접 구성 */
+  source?: "auto" | "manual";
   items: BlogPostItem[];
 }
 

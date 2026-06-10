@@ -1,8 +1,54 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import type { BlogData } from "@/types/cms";
+import { COLLECTIONS, getCollection } from "@/lib/firestore";
+import { formatDate } from "@/lib/utils";
+import type { BlogData, BlogPostItem, ContentDoc } from "@/types/cms";
 
+/**
+ * 업무활용 콘텐츠 섹션.
+ * - source "auto"(기본): 어드민 [콘텐츠]의 최신 게시글 3개를 자동 표시 (재배포 불필요)
+ * - source "manual": 페이지·섹션 에디터에서 직접 구성한 항목 표시
+ * - 자동 모드에서 게시글이 없으면 구성된 항목(시드)을 예비로 표시
+ */
 export default function BlogSection({ data }: { data: BlogData }) {
+  const [liveItems, setLiveItems] = useState<BlogPostItem[] | null>(null);
+
+  useEffect(() => {
+    if (data.source === "manual") {
+      setLiveItems(null);
+      return;
+    }
+    let alive = true;
+    void (async () => {
+      try {
+        const docs = await getCollection<ContentDoc>(COLLECTIONS.CONTENTS);
+        const latest = docs
+          .filter((d) => d.status === "published")
+          .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""))
+          .slice(0, 3)
+          .map<BlogPostItem>((d) => ({
+            category: d.category,
+            date: d.publishedAt ? formatDate(d.publishedAt) : "",
+            title: d.title,
+            summary: d.summary ?? "",
+            thumbnail: d.thumbnail ?? "",
+            href: `/contents/view?slug=${encodeURIComponent(d.slug)}`,
+          }));
+        if (alive && latest.length > 0) setLiveItems(latest);
+      } catch {
+        // Firestore 미접속 시 구성 항목 유지
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [data.source]);
+
+  const items = liveItems ?? data.items;
+
   return (
     <section className="py-24 bg-slate-50">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,7 +59,7 @@ export default function BlogSection({ data }: { data: BlogData }) {
                 {data.eyebrow}
               </h2>
             )}
-            <p className="mt-2 text-3xl font-extrabold text-gray-900">
+            <p className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
               {data.title}
             </p>
           </div>
@@ -27,7 +73,7 @@ export default function BlogSection({ data }: { data: BlogData }) {
           )}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {data.items.map((item, i) => {
+          {items.map((item, i) => {
             const Wrapper = item.href ? Link : "article";
             const wrapperProps = item.href
               ? { href: item.href }
@@ -39,12 +85,19 @@ export default function BlogSection({ data }: { data: BlogData }) {
                 {...wrapperProps}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group cursor-pointer block"
               >
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={item.thumbnail}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
+                <div className="relative h-56 overflow-hidden bg-slate-100">
+                  {item.thumbnail ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.thumbnail}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-300 text-sm">
+                      이미지 준비중
+                    </div>
+                  )}
                   <div className="absolute top-4 left-4">
                     <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
                       {item.category}

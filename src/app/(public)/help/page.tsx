@@ -44,11 +44,11 @@ export default function HelpIndex() {
     <div className="py-16 bg-slate-50 min-h-[60vh]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-12 text-center">
-          <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
+          <p className="text-base font-semibold text-blue-600 uppercase tracking-wide">
             Help Center
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold text-gray-900">도움말 센터</h1>
-          <p className="mt-3 text-gray-500">
+          <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">도움말 센터</h1>
+          <p className="mt-3 text-lg text-gray-500">
             궁금하신 점을 카테고리별로 모았습니다.
           </p>
         </header>

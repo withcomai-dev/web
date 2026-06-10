@@ -66,7 +66,7 @@ export default function CardsSection({ data }: { data: CardsData }) {
               </p>
             )}
             {data.description && (
-              <div className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+              <div className="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">
                 {data.description}
               </div>
             )}
@@ -132,12 +132,12 @@ function HighlightCards({ data }: { data: CardsData }) {
               </span>
             )}
             {data.title && (
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white break-keep">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white break-keep">
                 {data.title}
               </h2>
             )}
             {data.description && (
-              <p className="mt-5 max-w-2xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed break-keep">
+              <p className="mt-5 max-w-2xl mx-auto text-lg text-slate-300 leading-relaxed break-keep">
                 {data.description}
               </p>
             )}

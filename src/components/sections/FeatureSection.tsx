@@ -28,7 +28,7 @@ export default function FeatureSection({ data }: { data: FeatureData }) {
                 {data.eyebrow}
               </h2>
             )}
-            <h3 className="text-3xl md:text-4xl font-extrabold mb-8 leading-tight">
+            <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-8 leading-tight">
               {data.title}
             </h3>
             <div className="space-y-6">

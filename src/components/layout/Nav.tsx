@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronDown, LogIn, LogOut } from "lucide-react";
+import { Menu, X, LogIn, LogOut } from "lucide-react";
 import { NAV_ITEMS, type NavItem } from "@/lib/constants";
 import {
   COLLECTIONS,
@@ -13,6 +13,7 @@ import type { GlobalSettings } from "@/types/cms";
 import { startRunmoa } from "@/lib/runmoa-auth";
 import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
 import { fullLogout } from "@/lib/logout";
+import { cn } from "@/lib/utils";
 
 /** 외부 링크는 새 탭, 내부 링크는 Next Link로 렌더링 */
 function NavLink({
@@ -51,8 +52,9 @@ function NavLink({
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItem[]>(NAV_ITEMS);
-  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  // 데스크톱 드롭다운: 마우스 오버 중인 메뉴만 연다 (클릭 시 즉시 닫힘)
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   // 클라이언트에서만 로그인 상태 확인 (정적 export 하이드레이션 안전)
   useEffect(() => {
@@ -116,39 +118,54 @@ export default function Nav() {
             </a>
           </div>
 
-          {/* 데스크톱: 호버/포커스 드롭다운 */}
+          {/* 데스크톱: 마우스 오버 시에만 드롭다운 (클릭하면 닫힘, 토글 아이콘 없음) */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <div key={item.label} className="relative group">
-                <NavLink
-                  href={item.href}
-                  external={item.external}
-                  className="inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            {navItems.map((item) => {
+              const hasChildren = !!(item.children && item.children.length > 0);
+              const isOpen = openMenu === item.label;
+              return (
+                <div
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() => setOpenMenu(item.label)}
+                  onMouseLeave={() => setOpenMenu(null)}
                 >
-                  {item.label}
-                  {item.children && item.children.length > 0 && (
-                    <ChevronDown className="w-4 h-4 transition-transform group-hover:rotate-180" />
-                  )}
-                </NavLink>
+                  <NavLink
+                    href={item.href}
+                    external={item.external}
+                    className="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                    onClick={() => setOpenMenu(null)}
+                  >
+                    {item.label}
+                  </NavLink>
 
-                {item.children && item.children.length > 0 && (
-                  <div className="absolute left-0 top-full pt-2 min-w-[14rem] opacity-0 invisible translate-y-1 transition-all duration-150 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0">
-                    <div className="rounded-lg border border-gray-100 bg-white shadow-lg py-2">
-                      {item.children.map((child) => (
-                        <NavLink
-                          key={child.label}
-                          href={child.href}
-                          external={child.external}
-                          className="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 whitespace-nowrap"
-                        >
-                          {child.label}
-                        </NavLink>
-                      ))}
+                  {hasChildren && (
+                    <div
+                      className={cn(
+                        "absolute left-0 top-full pt-2 min-w-[14rem] transition-all duration-150",
+                        isOpen
+                          ? "opacity-100 visible translate-y-0"
+                          : "opacity-0 invisible translate-y-1 pointer-events-none",
+                      )}
+                    >
+                      <div className="rounded-lg border border-gray-100 bg-white shadow-lg py-2">
+                        {item.children!.map((child) => (
+                          <NavLink
+                            key={child.label}
+                            href={child.href}
+                            external={child.external}
+                            className="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 whitespace-nowrap"
+                            onClick={() => setOpenMenu(null)}
+                          >
+                            {child.label}
+                          </NavLink>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              );
+            })}
 
             {/* 인증: 런모아 로그인/회원가입 */}
             <div className="flex items-center gap-2 pl-3 ml-1 border-l border-gray-200">
@@ -183,41 +200,23 @@ export default function Nav() {
         </div>
       </div>
 
-      {/* 모바일: 아코디언 */}
+      {/* 모바일: 전체 펼침 목록 (토글 아이콘 없음) */}
       {open && (
-        <div className="lg:hidden border-t border-gray-100 bg-white">
+        <div className="lg:hidden border-t border-gray-100 bg-white max-h-[calc(100vh-5rem)] overflow-y-auto">
           <div className="px-4 py-2 space-y-1">
             {navItems.map((item) => {
               const hasChildren = !!(item.children && item.children.length > 0);
-              const expanded = mobileExpanded === item.label;
               return (
                 <div key={item.label}>
-                  <div className="flex items-center">
-                    <NavLink
-                      href={item.href}
-                      external={item.external}
-                      className="flex-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-                      onClick={() => setOpen(false)}
-                    >
-                      {item.label}
-                    </NavLink>
-                    {hasChildren && (
-                      <button
-                        type="button"
-                        aria-label={`${item.label} 하위 메뉴`}
-                        aria-expanded={expanded}
-                        className="p-2 text-gray-500"
-                        onClick={() =>
-                          setMobileExpanded(expanded ? null : item.label)
-                        }
-                      >
-                        <ChevronDown
-                          className={`w-5 h-5 transition-transform ${expanded ? "rotate-180" : ""}`}
-                        />
-                      </button>
-                    )}
-                  </div>
-                  {hasChildren && expanded && (
+                  <NavLink
+                    href={item.href}
+                    external={item.external}
+                    className="block px-3 py-2 rounded-md text-base font-semibold text-gray-800 hover:text-blue-600 hover:bg-blue-50"
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                  {hasChildren && (
                     <div className="ml-3 border-l border-gray-100 pl-2 space-y-1 pb-1">
                       {item.children!.map((child) => (
                         <NavLink

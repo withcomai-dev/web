@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { COLLECTIONS, getOrderedCollection } from "@/lib/firestore";
 import type { HelpDoc } from "@/types/cms";
 import { HELP_CATEGORIES } from "@/lib/constants";
+import { PageBanner } from "@/components/sections/HeroSection";
 
 export default function HelpIndex() {
   const [docs, setDocs] = useState<HelpDoc[]>([]);
@@ -41,18 +42,14 @@ export default function HelpIndex() {
   }, []);
 
   return (
-    <div className="py-16 bg-slate-50 min-h-[60vh]">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="mb-12 text-center">
-          <p className="text-base font-semibold text-blue-600 uppercase tracking-wide">
-            Help Center
-          </p>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">도움말 센터</h1>
-          <p className="mt-3 text-lg text-gray-500">
-            궁금하신 점을 카테고리별로 모았습니다.
-          </p>
-        </header>
-
+    <>
+      <PageBanner
+        eyebrow="Help Center"
+        title='궁금한 점을 빠르게, <span class="text-blue-400">도움말 센터</span>'
+        subtitle="사이트 이용, 회원·로그인, 쇼핑몰, 문의·상담 — 자주 묻는 내용을 카테고리별로 모았습니다."
+      />
+      <div className="py-16 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
@@ -95,7 +92,8 @@ export default function HelpIndex() {
             })}
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

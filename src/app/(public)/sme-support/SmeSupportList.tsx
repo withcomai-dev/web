@@ -52,11 +52,9 @@ function SmeCard({ item }: { item: SmeSupportDoc }) {
           ) : (
             <span />
           )}
-          {item.applyUrl && (
-            <span className="inline-flex items-center gap-1 font-semibold text-blue-600 group-hover:gap-2 transition-all">
-              자세히 보기 <ArrowRight className="w-4 h-4" />
-            </span>
-          )}
+          <span className="inline-flex items-center gap-1 font-semibold text-blue-600 group-hover:gap-2 transition-all">
+            자세히 보기 <ArrowRight className="w-4 h-4" />
+          </span>
         </div>
       </div>
     </>
@@ -65,18 +63,11 @@ function SmeCard({ item }: { item: SmeSupportDoc }) {
   const cardClass =
     "group flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 hover:shadow-lg transition-shadow";
 
-  // 새 창으로 열기 (외부 링크)
-  return item.applyUrl ? (
-    <a
-      href={item.applyUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cardClass}
-    >
+  // 카드 클릭 → 상세 페이지 (신청 링크는 상세 페이지 안에서 제공)
+  return (
+    <Link href={`/sme-support/view?id=${item.id}`} className={cardClass}>
       {inner}
-    </a>
-  ) : (
-    <article className={cardClass}>{inner}</article>
+    </Link>
   );
 }
 

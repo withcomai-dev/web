@@ -86,8 +86,8 @@ export default function AdminContentsPage() {
   return (
     <div>
       <AdminPageHeader
-        title="콘텐츠 관리"
-        description="블로그형 게시글을 관리합니다."
+        title="업무활용 콘텐츠"
+        description="홈·업무활용 콘텐츠에 노출되는 게시글을 관리합니다."
         onRefresh={load}
         onAdd={() => setEditing({ ...EMPTY })}
         addLabel="새 글"

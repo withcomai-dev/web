@@ -6,6 +6,7 @@ import { Search, Loader2 } from "lucide-react";
 import { useRunmoaContents } from "@/hooks/useRunmoaContents";
 import { useDebounce } from "@/hooks/useDebounce";
 import { formatPrice } from "@/lib/utils";
+import { PageBanner } from "@/components/sections/HeroSection";
 
 export default function ShopPage() {
   const [search, setSearch] = useState("");
@@ -25,21 +26,14 @@ export default function ShopPage() {
   const { data, pagination, loading, error } = useRunmoaContents(params);
 
   return (
-    <div className="py-16 bg-slate-50 min-h-[60vh]">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="mb-10">
-          <p className="text-base font-semibold text-blue-600 uppercase tracking-wide">
-            Shop
-          </p>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
-            위드컴정보 쇼핑몰
-          </h1>
-          <p className="mt-2 text-lg text-gray-500">
-            비즈니스에 필요한 IT 하드웨어 및 소프트웨어. 결제는 런모아에서 안전하게
-            진행됩니다.
-          </p>
-        </header>
-
+    <>
+      <PageBanner
+        eyebrow="Shop"
+        title='비즈니스 IT의 모든 것, <span class="text-blue-400">위드컴정보 쇼핑몰</span>'
+        subtitle="업무에 필요한 IT 하드웨어와 소프트웨어를 한곳에서. 결제는 런모아에서 안전하게 진행됩니다."
+      />
+      <div className="py-16 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 max-w-md">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -124,7 +118,8 @@ export default function ShopPage() {
             )}
           </>
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

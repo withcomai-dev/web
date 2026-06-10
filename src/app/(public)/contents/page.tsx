@@ -9,6 +9,7 @@ import {
 } from "@/lib/firestore";
 import type { ContentDoc } from "@/types/cms";
 import { formatDate, htmlToPlainTextSummary } from "@/lib/utils";
+import { PageBanner } from "@/components/sections/HeroSection";
 
 export default function ContentsPage() {
   const [items, setItems] = useState<ContentDoc[]>([]);
@@ -40,15 +41,14 @@ export default function ContentsPage() {
   }, []);
 
   return (
-    <section className="py-16 bg-slate-50 min-h-[60vh]">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="mb-12">
-          <p className="text-base font-semibold text-blue-600 uppercase tracking-wide">
-            Contents
-          </p>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">업무활용 콘텐츠</h1>
-        </header>
-
+    <>
+      <PageBanner
+        eyebrow="Contents"
+        title='실무에 바로 쓰는 <span class="text-blue-400">업무활용 콘텐츠</span>'
+        subtitle="AI 활용 팁, 스마트워크 도입 사례, IT 트렌드 — 중소기업 실무에 도움되는 콘텐츠를 전합니다."
+      />
+      <section className="py-16 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
@@ -96,7 +96,8 @@ export default function ContentsPage() {
             ))}
           </div>
         )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

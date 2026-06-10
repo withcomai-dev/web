@@ -208,28 +208,66 @@ export const SEED_ABOUT: PageDoc = {
       visible: true,
       type: "hero",
       data: {
+        variant: "banner",
         eyebrow: "About Us",
-        title: "위드컴정보는 중소기업의 성장 파트너입니다",
+        title:
+          '중소기업의 성장을 함께 만드는<br class="hidden sm:block"/> <span class="text-blue-400">IT 파트너</span>, 위드컴정보',
         subtitle:
           "1999년 설립 이래, 우리는 중소기업의 IT 환경을 끊임없이 개선하며 함께 성장해 왔습니다.",
       },
     },
     {
-      id: "about-richtext",
+      id: "about-values",
       order: 2,
+      visible: true,
+      type: "cards",
+      data: {
+        eyebrow: "Our Promise",
+        title: "위드컴정보가 일하는 방식",
+        description: "기술보다 고객의 비즈니스를 먼저 이해합니다.",
+        columns: 3,
+        items: [
+          {
+            icon: "users",
+            title: "고객 비즈니스 이해",
+            body: "업종·규모·업무 흐름을 먼저 파악하고, 우리 회사에 맞는 답을 제안합니다.",
+          },
+          {
+            icon: "zap",
+            title: "실무 중심 솔루션",
+            body: "보여주기식 도입이 아니라, 실무에서 바로 쓰이는 실용적인 솔루션만 권합니다.",
+          },
+          {
+            icon: "shield-check",
+            title: "지속적인 동반 성장",
+            body: "구축으로 끝나지 않습니다. 운영·교육·지원까지 책임지는 파트너가 됩니다.",
+          },
+        ],
+      },
+    },
+    {
+      id: "about-richtext",
+      order: 3,
       visible: true,
       type: "richtext",
       data: {
         html: `
           <h2>우리의 미션</h2>
           <p>중소기업이 디지털 시대의 변화에 발맞춰 성장할 수 있도록 든든한 IT 파트너 역할을 합니다.</p>
-          <h2>우리의 가치</h2>
-          <ul>
-            <li>고객 비즈니스에 대한 깊은 이해</li>
-            <li>실무에 즉시 적용 가능한 실용적 솔루션</li>
-            <li>지속적인 기술 지원과 동반 성장</li>
-          </ul>
+          <p>위더스컴퓨터(하드웨어·인프라)와 WITHCOM AI(스마트워크·AI 컨설팅)가 함께, 장비 한 대의 구매 상담부터 전사 디지털 전환까지 끊김 없이 지원합니다.</p>
         `,
+      },
+    },
+    {
+      id: "about-cta",
+      order: 4,
+      visible: true,
+      type: "cta",
+      data: {
+        bg: "blue",
+        title: "우리 회사 이야기를 들려주세요",
+        body: "현재 업무 환경을 알려주시면, 가장 효과적인 개선 방안을 무료로 상담해 드립니다.",
+        button: { label: "상담 신청하기", href: "/contact" },
       },
     },
   ] as Section[],
@@ -245,15 +283,63 @@ export const SEED_SMARTWORK_AI: PageDoc = {
       visible: true,
       type: "hero",
       data: {
+        variant: "banner",
         eyebrow: "Smart Work & AI",
-        title: "업무의 패러다임을 바꾸는 디지털 전환의 시작",
+        title:
+          '업무의 패러다임을 바꾸는<br class="hidden sm:block"/> <span class="text-blue-400">디지털 전환</span>의 시작',
         subtitle:
           "협업 효율, AI 실무 적용, 맞춤형 도구 추천까지 — 중소기업에 최적화된 스마트워크를 제안합니다.",
+        ctas: [{ label: "도입 상담 신청", href: "/contact", variant: "primary" }],
+      },
+    },
+    {
+      id: "sw-tools",
+      order: 2,
+      visible: true,
+      type: "cards",
+      data: {
+        eyebrow: "AI Tools",
+        title: "AI TOOL 소개",
+        description:
+          "업무에 바로 적용할 수 있는 대표 AI·협업 도구를 선별해 도입을 도와드립니다.",
+        columns: 3,
+        items: [
+          {
+            icon: "bot",
+            title: "생성형 AI 어시스턴트",
+            body: "ChatGPT·Claude·Gemini 등으로 문서 작성, 요약, 번역, 아이디어 발굴을 자동화합니다.",
+          },
+          {
+            icon: "users",
+            title: "협업·메신저 도구",
+            body: "팀즈·슬랙·잔디 등 실시간 소통과 자료 공유로 회의·보고 시간을 줄입니다.",
+          },
+          {
+            icon: "cloud",
+            title: "클라우드 오피스",
+            body: "구글 워크스페이스·M365로 언제 어디서나 문서를 함께 작성하고 관리합니다.",
+          },
+          {
+            icon: "settings",
+            title: "업무 자동화",
+            body: "반복 입력·전송 업무를 자동화 도구로 연결해 사람의 실수를 줄입니다.",
+          },
+          {
+            icon: "database",
+            title: "데이터 정리·분석",
+            body: "흩어진 자료를 한곳에 모으고, AI로 검색·분석 가능한 자산으로 만듭니다.",
+          },
+          {
+            icon: "message-square",
+            title: "고객 응대 AI",
+            body: "챗봇·자동 응답으로 단순 문의를 처리하고 상담 품질을 높입니다.",
+          },
+        ],
       },
     },
     {
       id: "sw-feature",
-      order: 2,
+      order: 3,
       visible: true,
       type: "feature",
       data: {
@@ -278,6 +364,18 @@ export const SEED_SMARTWORK_AI: PageDoc = {
             body: "기업의 규모·업종에 맞는 SaaS·AI 도구를 선별하여 도입 가이드를 제공합니다.",
           },
         ],
+      },
+    },
+    {
+      id: "sw-cta",
+      order: 4,
+      visible: true,
+      type: "cta",
+      data: {
+        bg: "slate",
+        title: "어떤 도구부터 시작해야 할지 막막하신가요?",
+        body: "업무 프로세스를 진단하고, 우리 회사에 맞는 도입 순서를 제안해 드립니다.",
+        button: { label: "무료 진단 상담", href: "/contact" },
       },
     },
   ] as Section[],
@@ -480,10 +578,12 @@ export const SEED_SME_SUPPORT: PageDoc = {
       visible: true,
       type: "hero",
       data: {
+        variant: "banner",
         eyebrow: "SME Support",
-        title: "중소기업 지원사업 안내",
+        title:
+          '놓치면 아까운<br class="hidden sm:block"/> <span class="text-blue-400">중소기업 지원사업</span> 안내',
         subtitle:
-          "정부·지자체의 IT 지원사업 정보를 한눈에 확인하고, 신청 컨설팅까지 도와드립니다.",
+          "정부·지자체의 소상공인·R&D 지원사업 정보를 한눈에 확인하고, 신청 컨설팅까지 도와드립니다.",
       },
     },
     {

@@ -59,22 +59,81 @@ export default function HeroSection({ data }: { data: HeroData }) {
 }
 
 /**
- * 이미지 배너 (image03/04): 제공된 배너 이미지를 그대로 노출한다.
- * - 배경(네이비)은 화면 전체 폭으로 확장하고, 이미지는 컨테이너 폭(max-w-[1400px])에 맞춰 중앙 배치.
- * - 이미지 가장자리 색(#010c21)과 동일한 배경을 써서 넓은 화면에서도 이음매 없이 보인다.
+ * 배너 (image03/04 패밀리):
+ * - bgImage 지정 시: 제공된 배너 이미지를 그대로 노출 (배경 네이비 전체폭 + 이미지 1400px 중앙)
+ * - bgImage 없을 시: 동일 톤(네이비 #010c21 + 그리드 + 블루 글로우 + 좌측 액센트바)의
+ *   스타일드 텍스트 배너 — 모든 서브 페이지 상단이 같은 시각 언어를 갖도록 한다.
  */
 function BannerHero({ data }: { data: HeroData }) {
   const alt = (data.title || "").replace(/<[^>]+>/g, "").trim() || "배너";
 
-  // 배너 이미지가 없으면 기존 텍스트형으로 폴백
   if (!data.bgImage) {
     return (
-      <section className="bg-slate-950 py-16">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1
-            className="text-3xl sm:text-4xl font-extrabold text-white"
-            dangerouslySetInnerHTML={{ __html: data.title }}
+      <section
+        className="relative w-full overflow-hidden"
+        style={{ backgroundColor: "#010c21" }}
+      >
+        {/* 배경 장식: 그리드 + 블루 글로우 (image03/04 톤) */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-950/50" />
+          <div className="absolute -top-24 right-[12%] h-80 w-80 rounded-full bg-blue-600/25 blur-3xl" />
+          <div className="absolute -bottom-32 left-[8%] h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
+          <div
+            className="absolute inset-0 opacity-[0.05]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #6da5ff 1px, transparent 1px), linear-gradient(to bottom, #6da5ff 1px, transparent 1px)",
+              backgroundSize: "46px 46px",
+            }}
           />
+          {/* 우측 장식 링 (일러스트 영역의 추상 대체) */}
+          <div className="absolute right-[6%] top-1/2 hidden -translate-y-1/2 lg:block">
+            <div className="relative h-44 w-44">
+              <div className="absolute inset-0 rounded-3xl border border-blue-400/20 rotate-12" />
+              <div className="absolute inset-4 rounded-2xl border border-blue-400/30 -rotate-6" />
+              <div className="absolute inset-10 rounded-xl bg-blue-500/15 backdrop-blur-sm border border-blue-300/30" />
+            </div>
+          </div>
+        </div>
+
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+          <div className="max-w-3xl">
+            {data.eyebrow && (
+              <span className="inline-block px-3.5 py-1.5 mb-5 text-xs font-semibold tracking-widest text-blue-300 uppercase bg-blue-400/10 rounded-full border border-blue-400/20">
+                {data.eyebrow}
+              </span>
+            )}
+            <div className="flex gap-4">
+              <span className="mt-1.5 w-1.5 shrink-0 self-stretch rounded-full bg-gradient-to-b from-blue-400 to-blue-600" />
+              <h1
+                className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight break-keep"
+                dangerouslySetInnerHTML={{ __html: data.title }}
+              />
+            </div>
+            {data.subtitle && (
+              <p className="mt-5 max-w-2xl text-base sm:text-lg text-slate-300 leading-relaxed break-keep">
+                {data.subtitle}
+              </p>
+            )}
+            {data.ctas && data.ctas.length > 0 && (
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                {data.ctas.map((cta, i) => (
+                  <Link
+                    key={i}
+                    href={cta.href}
+                    className={cn(
+                      "inline-flex items-center justify-center px-7 py-3.5 rounded-lg font-bold transition-all",
+                      cta.variant === "ghost"
+                        ? "bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm"
+                        : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20",
+                    )}
+                  >
+                    {cta.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
     );
@@ -92,5 +151,23 @@ function BannerHero({ data }: { data: HeroData }) {
         />
       </div>
     </section>
+  );
+}
+
+/**
+ * 서브 페이지 공용 상단 배너 — CMS 외 페이지(콘텐츠·유튜브·도움말·쇼핑 등)에서
+ * hero(banner)와 동일한 시각 언어를 쓰기 위한 편의 컴포넌트.
+ */
+export function PageBanner({
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+}) {
+  return (
+    <BannerHero data={{ variant: "banner", eyebrow, title, subtitle }} />
   );
 }

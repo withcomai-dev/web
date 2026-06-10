@@ -1,7 +1,8 @@
 import { COMPANY } from "@/lib/constants";
 import { Youtube, ExternalLink, ArrowRight } from "lucide-react";
+import { PageBanner } from "@/components/sections/HeroSection";
 
-export const metadata = { title: "유튜브 자료실" };
+export const metadata = { title: "블로그 및 유튜브" };
 
 const BLOG_URL = "https://naver.me/5UV1WrvA";
 const BLOG_THUMBNAIL =
@@ -9,18 +10,14 @@ const BLOG_THUMBNAIL =
 
 export default function YoutubePage() {
   return (
-    <div className="py-16 bg-slate-50 min-h-[60vh]">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="mb-10">
-          <p className="text-base font-semibold text-rose-600 uppercase tracking-wide">
-            YouTube
-          </p>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">유튜브 자료실</h1>
-          <p className="mt-2 text-lg text-gray-500">
-            IT 트렌드 및 솔루션 활용 가이드 영상을 제공합니다.
-          </p>
-        </header>
-
+    <>
+      <PageBanner
+        eyebrow="Blog & YouTube"
+        title='영상과 글로 배우는 <span class="text-blue-400">IT 활용 노하우</span>'
+        subtitle="IT 트렌드, 솔루션 활용 가이드, 스마트워크 도입 사례를 유튜브와 블로그로 전합니다."
+      />
+      <div className="py-16 bg-slate-50 min-h-[60vh]">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <a
           href={COMPANY.youtubeUrl}
           target="_blank"
@@ -75,7 +72,8 @@ export default function YoutubePage() {
             </div>
           </a>
         </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

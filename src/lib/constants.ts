@@ -29,7 +29,7 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "홈", href: "/" },
       { label: "회사 소개", href: "/about" },
-      { label: "공지사항", href: "/contents" },
+      { label: "업무활용 콘텐츠", href: "/contents" },
     ],
   },
   {
@@ -37,7 +37,7 @@ export const NAV_ITEMS: NavItem[] = [
     href: "/smartwork-ai",
     children: [
       { label: "AI TOOL 소개", href: "/smartwork-ai" },
-      { label: "스마트워크 도입 성공사례", href: "/contents" },
+      { label: "업무활용 콘텐츠", href: "/contents" },
       { label: "블로그 및 유튜브", href: "/youtube" },
     ],
   },
@@ -79,7 +79,7 @@ export const NAV_ITEMS: NavItem[] = [
 export const ADMIN_NAV_ITEMS = [
   { label: "대시보드", href: "/admin", icon: "layout-dashboard" },
   { label: "페이지·섹션", href: "/admin/pages", icon: "layout" },
-  { label: "콘텐츠", href: "/admin/contents", icon: "file-text" },
+  { label: "업무활용 콘텐츠", href: "/admin/contents", icon: "file-text" },
   { label: "중소기업 지원", href: "/admin/sme-support", icon: "briefcase" },
   { label: "쇼핑몰(런모아)", href: "/admin/shop", icon: "shopping-bag" },
   { label: "배너", href: "/admin/banners", icon: "image" },

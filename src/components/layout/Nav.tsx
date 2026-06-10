@@ -97,7 +97,7 @@ export default function Nav() {
               <img
                 src="/withcomai_01_color.png"
                 alt="WITHCOM AI"
-                className="h-10 sm:h-12 w-auto"
+                className="h-7 sm:h-[34px] w-auto"
               />
             </a>
             <a

@@ -119,12 +119,13 @@ export default function AdminDashboard() {
   }, [inquiries]);
 
   const cards = [
-    { key: "contents", label: "콘텐츠", value: counts.contents, href: "/admin/contents", icon: FileText, color: "text-blue-600" },
+    { key: "contents", label: "업무활용 콘텐츠", value: counts.contents, href: "/admin/contents", icon: FileText, color: "text-blue-600" },
     { key: "inquiries", label: "문의", value: counts.inquiries, href: "/admin/inquiries", icon: Mail, color: "text-emerald-600" },
-    { key: "feedback", label: "버그 신고", value: counts.feedback, href: "/admin/feedback", icon: Bug, color: "text-rose-600" },
     { key: "users", label: "회원", value: counts.users, href: "/admin/users", icon: Users, color: "text-violet-600" },
-    { key: "helpDocs", label: "도움말 글", value: counts.helpDocs, href: "/admin/help", icon: HelpCircle, color: "text-amber-600" },
-    { key: "helpQuestions", label: "받은 질문", value: counts.helpQuestions, href: "/admin/help", icon: HelpCircle, color: "text-cyan-600" },
+    // 숨김 기능(버그 신고·도움말) 카드 — 사이드바 숨김과 함께 미노출, 필요 시 주석 해제
+    // { key: "feedback", label: "버그 신고", value: counts.feedback, href: "/admin/feedback", icon: Bug, color: "text-rose-600" },
+    // { key: "helpDocs", label: "도움말 글", value: counts.helpDocs, href: "/admin/help", icon: HelpCircle, color: "text-amber-600" },
+    // { key: "helpQuestions", label: "받은 질문", value: counts.helpQuestions, href: "/admin/help", icon: HelpCircle, color: "text-cyan-600" },
   ];
 
   return (
@@ -194,6 +195,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* 런모아 쇼핑몰 위젯 — 사이드바 숨김과 함께 미노출, 필요 시 주석 해제
       <div className="bg-white rounded-2xl p-6 border border-gray-100">
         <div className="flex items-center gap-2 mb-4">
           <ShoppingBag className="w-5 h-5 text-blue-600" />
@@ -209,6 +211,7 @@ export default function AdminDashboard() {
           런모아 상품 보기 →
         </Link>
       </div>
+      */}
     </div>
   );
 }

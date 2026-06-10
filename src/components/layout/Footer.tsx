@@ -86,18 +86,20 @@ export default function Footer() {
                   유튜브
                 </a>
               </li>
+              {/* 도움말 임시 숨김 — 필요 시 주석 해제
               <li>
                 <Link href="/help" className="hover:text-blue-400">
                   도움말
                 </Link>
               </li>
+              */}
             </ul>
           </div>
         </div>
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
           <p>© 1999 {SITE_NAME}. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link href="/help" className="hover:text-gray-300">도움말</Link>
+            {/* <Link href="/help" className="hover:text-gray-300">도움말</Link> */}
             <Link href="/contact" className="hover:text-gray-300">문의</Link>
             <Link href="/login" className="hover:text-gray-300">로그인</Link>
           </div>

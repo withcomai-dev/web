@@ -14,7 +14,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 export default function FeatureSection({ data }: { data: FeatureData }) {
   const isLeft = data.side === "left";
   return (
-    <section className="py-24 bg-slate-900 text-white overflow-hidden">
+    <section className="py-16 sm:py-24 bg-slate-900 text-white overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div
           className={cn(

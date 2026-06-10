@@ -7,7 +7,7 @@ export default function CTASection({ data }: { data: CTAData }) {
   return (
     <section
       className={cn(
-        "py-20",
+        "py-14 sm:py-20",
         bg === "blue" && "bg-blue-600 text-white",
         bg === "slate" && "bg-slate-900 text-white",
         bg === "white" && "bg-slate-50 text-slate-900",

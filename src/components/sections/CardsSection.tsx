@@ -51,7 +51,7 @@ export default function CardsSection({ data }: { data: CardsData }) {
 
   const cols = data.columns ?? Math.min(4, data.items.length || 1);
   return (
-    <section className="py-24 bg-white">
+    <section className="py-16 sm:py-24 bg-white">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {(data.eyebrow || data.title) && (
           <div className="text-center mb-16">

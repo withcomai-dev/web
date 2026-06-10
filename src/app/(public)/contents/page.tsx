@@ -47,7 +47,7 @@ export default function ContentsPage() {
         title='실무에 바로 쓰는<br class="hidden sm:block"/> <span class="text-blue-400">업무활용 콘텐츠</span>'
         subtitle="AI 활용 팁, 스마트워크 도입 사례, IT 트렌드 — 중소기업 실무에 도움되는 콘텐츠를 전합니다."
       />
-      <section className="py-16 bg-slate-50 min-h-[60vh]">
+      <section className="py-12 sm:py-16 bg-slate-50 min-h-[60vh]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
           <div className="flex items-center justify-center py-20">

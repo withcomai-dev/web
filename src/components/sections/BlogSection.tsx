@@ -50,9 +50,9 @@ export default function BlogSection({ data }: { data: BlogData }) {
   const items = liveItems ?? data.items;
 
   return (
-    <section className="py-24 bg-slate-50">
+    <section className="py-16 sm:py-24 bg-slate-50">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+        <div className="flex flex-col md:flex-row md:justify-between items-start md:items-end gap-2 mb-10 sm:mb-12">
           <div>
             {data.eyebrow && (
               <h2 className="text-base font-semibold text-blue-600 tracking-wide uppercase">

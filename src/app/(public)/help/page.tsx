@@ -48,7 +48,7 @@ export default function HelpIndex() {
         title='궁금한 점을 빠르게,<br class="hidden sm:block"/> <span class="text-blue-400">도움말 센터</span>'
         subtitle="사이트 이용, 회원·로그인, 쇼핑몰, 문의·상담 — 자주 묻는 내용을 카테고리별로 모았습니다."
       />
-      <div className="py-16 bg-slate-50 min-h-[60vh]">
+      <div className="py-12 sm:py-16 bg-slate-50 min-h-[60vh]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
           <div className="flex items-center justify-center py-20">

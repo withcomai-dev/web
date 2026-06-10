@@ -16,7 +16,7 @@ export default function YoutubePage() {
         title='영상과 글로 배우는<br class="hidden sm:block"/> <span class="text-blue-400">IT 활용 노하우</span>'
         subtitle="IT 트렌드, 솔루션 활용 가이드, 스마트워크 도입 사례를 유튜브와 블로그로 전합니다."
       />
-      <div className="py-16 bg-slate-50 min-h-[60vh]">
+      <div className="py-12 sm:py-16 bg-slate-50 min-h-[60vh]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <a
           href={COMPANY.youtubeUrl}

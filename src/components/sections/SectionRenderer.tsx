@@ -56,7 +56,7 @@ export default function SectionRenderer({ sections }: { sections: Section[] }) {
             return (
               <SmeSupportList
                 key={s.id}
-                sectionClassName="py-20 bg-white"
+                sectionClassName="py-16 sm:py-20 bg-white"
                 eyebrow={d.eyebrow}
                 heading={d.heading}
                 description={d.description}

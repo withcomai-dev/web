@@ -18,7 +18,7 @@ export default function ImageSection({ data }: { data: ImageBlockData }) {
     </figure>
   );
   return (
-    <section className="py-16 bg-white">
+    <section className="py-12 sm:py-16 bg-white">
       {data.href ? (
         <Link href={data.href} className="block">
           {img}

@@ -34,7 +34,7 @@ const SUBTITLE_COLOR: Record<string, string> = {
 
 export default function ServicesSection({ data }: { data: ServicesData }) {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-16 sm:py-24 bg-white">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {data.items.map((item, i) => {

@@ -48,12 +48,15 @@ export default function AdminSidebar() {
 
   return (
     <aside className="w-60 bg-slate-900 text-white flex flex-col h-screen sticky top-0">
-      <div className="p-6 border-b border-white/10">
+      <div className="p-6 border-b border-white/10 flex justify-center">
         <Link href="/" className="inline-block">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/withcom_ai_logo3.webp" alt="WITHCOM AI" className="h-8 w-auto" />
+          <img
+            src="/withcomai_02_white.png"
+            alt="WITHCOM AI"
+            className="h-[31px] w-auto"
+          />
         </Link>
-        <p className="text-xs text-gray-400 mt-1">관리자</p>
       </div>
 
       <nav className="flex-1 overflow-y-auto py-4">

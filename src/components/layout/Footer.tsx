@@ -88,6 +88,16 @@ export default function Footer() {
                   유튜브
                 </a>
               </li>
+              <li>
+                <a
+                  href={COMPANY.blogUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-400"
+                >
+                  블로그
+                </a>
+              </li>
               {/* 도움말 임시 숨김 — 필요 시 주석 해제
               <li>
                 <Link href="/help" className="hover:text-blue-400">

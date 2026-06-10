@@ -12,6 +12,7 @@ export const COMPANY = {
   remoteSupportUrl: "http://15663669.co.kr/start",
   youtubeUrl:
     "https://www.youtube.com/@%EC%9C%84%EB%8D%94%EC%8A%A4%EC%BB%B4%ED%93%A8%ED%84%B0%EC%A3%BC",
+  blogUrl: "https://blog.naver.com/withcom_ai",
 };
 
 export type NavChild = { label: string; href: string; external?: boolean };

@@ -33,6 +33,7 @@ const RESERVED_SLUGS = new Set([
   "/sme-support/rnd",
   "/contact",
   "/contents",
+  "/notice",
   "/shop",
   "/youtube",
   "/help",

@@ -18,6 +18,7 @@ import {
   LogOut,
   Activity,
   KeyRound,
+  Megaphone,
 } from "lucide-react";
 import { ADMIN_NAV_ITEMS } from "@/lib/constants";
 import { useAuth } from "@/contexts/AuthContext";
@@ -37,6 +38,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   bug: Bug,
   activity: Activity,
   settings: Settings,
+  megaphone: Megaphone,
   key: KeyRound,
 };
 

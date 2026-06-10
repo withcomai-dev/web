@@ -26,7 +26,10 @@ export const NAV_ITEMS: NavItem[] = [
   {
     label: "홈",
     href: "/",
-    children: [{ label: "회사 소개", href: "/about" }],
+    children: [
+      { label: "회사 소개", href: "/about" },
+      { label: "공지사항", href: "/notice" },
+    ],
   },
   {
     label: "스마트워크 & AI",
@@ -75,6 +78,7 @@ export const NAV_ITEMS: NavItem[] = [
 export const ADMIN_NAV_ITEMS = [
   { label: "대시보드", href: "/admin", icon: "layout-dashboard" },
   { label: "페이지·섹션", href: "/admin/pages", icon: "layout" },
+  { label: "공지사항", href: "/admin/notices", icon: "megaphone" },
   { label: "업무활용 콘텐츠", href: "/admin/contents", icon: "file-text" },
   { label: "중소기업 지원", href: "/admin/sme-support", icon: "briefcase" },
   // 숨김 처리 (페이지는 유지 — 사이드바에만 미노출, 필요 시 주석 해제)

@@ -44,6 +44,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ── 공지사항 (작성·수정·삭제는 관리자만) ──
+    match /notices/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // ── 블로그형 콘텐츠 ──
     match /contents/{id} {
       allow read: if true;

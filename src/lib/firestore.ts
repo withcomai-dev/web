@@ -178,6 +178,7 @@ export const COLLECTIONS = {
   USERS: "users",
   SETTINGS: "siteSettings",
   CONTENTS: "contents",
+  NOTICES: "notices",
   SME_SUPPORT: "smeSupport",
   HELP_DOCS: "helpDocs",
   HELP_QUESTIONS: "helpQuestions",

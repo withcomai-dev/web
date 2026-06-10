@@ -240,6 +240,19 @@ export interface ContentDoc {
   authorEmail?: string;
 }
 
+// ── 공지사항 (작성은 어드민에서만 — firestore.rules write isAdmin) ──
+export interface NoticeDoc {
+  id?: string;
+  title: string;
+  bodyHtml: string;
+  /** 중요 공지 — 목록 상단 고정 */
+  pinned?: boolean;
+  publishedAt?: string;
+  status: ContentStatus; // published=노출 / draft=숨김
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // ── 중소기업 지원사업 ──
 export type SmeCategory = "small-business" | "rnd";
 

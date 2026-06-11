@@ -2,6 +2,29 @@
 
 > Append-only. 최신 블록이 위에 오도록 추가.
 
+## [2026-06-11 17:30] 라운드2 (수정·보완) 완료 — web.app 검증 클린 패스
+
+### 현재 진행
+- 라운드2 6건 모두 라이브 검증 완료 (커밋 25bd0ff·e05543a, rollout-003·004 SUCCEEDED)
+  - 🐛 신규 초안 저장 실패 근본 원인 수정: 클라 SDK가 undefined 필드 거부(addDoc throw) + 어드민 목록 orderBy가 초안 제외 → undefined 키 제거 + 전체조회·클라정렬 (ai-tools·contents)
+  - AI TOOL 에디터: 슬러그·발행일 입력란 제거(자동화), 기존 글 데이터 정정(RHWP)
+  - Firebase Storage: REST로 기본 버킷 생성(v1alpha defaultBucket, body {location}) + rules 배포 + 서비스 에이전트 datastore.viewer 부여(cross-service) + 문의 첨부 전용 경로/read 규칙 → 썸네일·문의 첨부 업로드 검증 통과
+  - 홈 원페이지 재구성(노션 6번 정밀 재해석): 히어로→핵심역량→스마트워크 배너→AI TOOL 소개→콘텐츠→IT 배너(이미지)→WHY INFRA→하드웨어→소프트웨어→SME 배너→리스트→서비스 2×2→문의
+- mall.withcom.co.kr SSL 발급 완료 (uhost CNAME 처리 결함 → A 레코드 전환으로 해결, CN=mall.withcom.co.kr ~9/9 자동갱신)
+
+### 다음 단계
+- 구글시트 연동 키 설정 (withcomai@gmail.com 시트 + 서비스계정 — 사용자 협조 대기)
+- AI TOOL 게시판 원고 입력 (어드민에서 — 슬러그·발행일 자동)
+- /reflect 교훈 정리 및 exec-plan completed 이동
+
+### 핵심 결정사항
+- 문의 첨부 read: isAdmin → isSignedIn (업로더가 다운로드 URL 수신 필요, 경로는 UUID로 추측 불가)
+- bgImage형 배너는 이미지로 렌더(텍스트 없음) — 홈 IT 배너는 it-service와 동일 이미지 사용
+
+### 미해결 이슈
+- feedback 스크린샷 업로드도 동일 패턴(비로그인 업로드 후 read isAdmin) — 잠재 깨짐, 후속 확인 필요
+- 기존 contents 게시글 중 어드민 목록에서 안 보이던 초안이 있었다면 이제 표시됨 — 갑에게 안내
+
 ## [2026-06-11 12:20] /implement 압축 #1 — 2차 요청사항 구현 완료
 
 ### 현재 진행

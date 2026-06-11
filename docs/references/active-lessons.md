@@ -26,6 +26,21 @@
 - **차단 방법**: 충돌 에러 시 REST로 롤아웃 상태 확인(`GET https://firebaseapphosting.googleapis.com/v1beta/.../backends/withcomweb/rollouts` — firebase CLI refresh_token 토큰 교환). 최신 롤아웃이 BUILDING/SUCCEEDED면 그것을 추적, FAILED일 때만 수동 재시도.
 - **만료**: 2026-07-11
 
+## 2026-06-11 | 구현자 | 클라 SDK는 undefined 필드값에서 addDoc/setDoc throw — 신규 초안 저장 전멸
+- **패턴**: `payload = { ...doc, publishedAt: cond ? x : doc.publishedAt }` 식으로 만들면 미발행 신규 글에서 `publishedAt: undefined` 키가 생기고, **클라이언트 Firestore SDK는 undefined 값을 거부**해 저장이 통째로 실패한다 (admin SDK는 ignoreUndefinedProperties로 통과해 어드민/서버에선 재현 안 됨).
+- **차단 방법**: 클라에서 쓰기 전 undefined 키 제거(`Object.keys().forEach(k => payload[k]===undefined && delete payload[k])`). orderBy(필드)도 필드 없는 문서를 제외하므로 어드민 목록은 전체 조회 후 클라 정렬.
+- **만료**: 2026-07-11
+
+## 2026-06-11 | 구현자 | Storage rules의 firestore.get(isAdmin)은 cross-service IAM 없으면 전부 deny
+- **패턴**: storage.rules에서 `firestore.get()`으로 role을 확인하는데, Storage 서비스 에이전트(service-{N}@gcp-sa-firebasestorage)에 `roles/datastore.viewer`가 없으면 해당 규칙 평가가 모두 실패 → 업로드/조회가 unauthorized. 버킷을 콘솔 밖(REST)에서 만들면 이 권한이 자동 부여되지 않는다.
+- **차단 방법**: 버킷 신설 시 `cloudresourcemanager setIamPolicy`로 datastore.viewer 부여 확인. 또한 "업로드 직후 getDownloadURL"은 read 규칙도 통과해야 함 — 업로더가 읽을 수 없는 경로(isAdmin read)에 업로드시키면 안 됨.
+- **만료**: 2026-07-11
+
+## 2026-06-11 | 테스터 | bgImage형 BannerHero는 텍스트가 아닌 이미지(alt)로 렌더 — 텍스트 매칭 불가
+- **패턴**: `HeroSection` banner variant는 bgImage 지정 시 `<img alt={title}>`만 출력(타이틀 텍스트 노드 없음). E2E에서 `text=...` 매칭·innerText 검사가 실패하고, page 소스 grep은 RSC 페이로드에 걸려 위양성.
+- **차단 방법**: 이미지 배너 검증은 `img[alt*="..."]` + 스크린샷. 렌더 여부를 소스 grep으로 판단할 땐 출현 횟수(렌더+페이로드=2회 이상)로 구분.
+- **만료**: 2026-07-11
+
 ## 2026-06-11 | 배포자 | `npm run deploy:rules`가 storage 미설정 프로젝트에서 실패
 - **패턴**: deploy:rules 스크립트가 `firestore:rules,storage`를 함께 배포하는데 이 프로젝트는 Firebase Storage 미설정이라 storage 단계에서 전체 실패.
 - **차단 방법**: rules만 배포할 땐 `firebase deploy --only firestore:rules` 사용.

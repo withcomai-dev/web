@@ -10,7 +10,7 @@
 | 항목 | 값 |
 |------|-----|
 | 작성일 | 2026-06-11 |
-| 상태 | 구현완료 (배포·테스트 대기) |
+| 상태 | 완료 (배포·web.app 검증 클린 패스 — 잔여: 구글시트 키 설정) |
 | 규모 | XL (코드 ~25파일 + Firestore 라이브 데이터 마이그레이션) |
 | 담당 역할 | 기획자 → 구현자 → 검토자 → 테스터 |
 
@@ -256,10 +256,10 @@
 - [x] 5. WP4a: /api/inquiries/public + InquiryList + ContactSection showList
 - [x] 6. WP1: SearchOverlay + Nav
 - [x] 7. 마이그레이션 스크립트 작성 + 로컬 dry-run ✅ (변경 1건 = page_contact — page_home·smartwork-ai는 Firestore 미존재로 시드 폴백, 배포만으로 반영됨)
-- [ ] 8. 빌드 → 로컬 E2E(Playwright) → 커밋 → push → 수동 롤아웃
-- [ ] 9. `npm run deploy:rules` → 마이그레이션 실행(백업 확인) → web.app 전체 검증
+- [x] 8. 빌드 → 로컬 E2E(Playwright) → 커밋(2fe7c14) → push → 롤아웃 SUCCEEDED(rollout-2026-06-11-001, push 자동 트리거 — 수동 명령은 충돌했으나 자동 성공 확인)
+- [x] 9. rules 배포(`firebase deploy --only firestore:rules` — storage 미설정으로 deploy:rules 스크립트 대신) → 마이그레이션 실행(백업 생성, page_contact 반영) → web.app 전체 검증 26/26 클린 패스
 - [ ] 10. WP4b: 구글시트 — 사용자 협조(시트 준비) 후 어드민 키 설정 → 실문의 1건 시트 기록 확인
-- [ ] 11. 원본 지시 검증 테이블 → /reflect
+- [x] 11. 원본 지시 검증 테이블 출력 완료 (반영은 /reflect 별도)
 
 ### 사용자 협조 필요 (블로커 아님 — 10단계에서)
 
@@ -272,8 +272,8 @@
 
 > 구현·검토 후 기록
 
-- 평가일:
-- 등급:
-- A 코드 품질: /5
-- C 보안: /4
-- 미달 항목:
+- 평가일: 2026-06-11
+- 등급: 통과 (web.app E2E 26/26 클린 패스)
+- A 코드 품질: 5/5 — strict 타입(any 없음)·기존 패턴 복제(contents 게시판/cmdk)·한글 주석·하위호환 optional 필드
+- C 보안: 4/4 — 공개 문의 API는 마스킹 필드만 반환(원문 미노출), inquiries rules read:isAdmin 유지, aiTools write:isAdmin, 시크릿 로컬 파일 미보관(백업에서 integrations 제외, 임시 ADC 0600+종료시 삭제)
+- 미달 항목: 없음. 잔여 작업: 구글시트 키 설정(사용자 협조) · E2E 테스트 문의 1건 어드민에서 삭제 가능

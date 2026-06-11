@@ -73,11 +73,15 @@
 
 ---
 
-## 실행 결과 (테스트 후 기록)
+## 실행 결과 (2026-06-11 — 로컬 + web.app 배포 후)
 
-- 실행 체크리스트: {완료}/{전체}
-- EXECUTED_ACTIONS: clicks={N}, inputs={N}, form_submits={N}, navigations={N}
-- SHALLOW_PAGES: {없음 / 페이지명}
-- 발견 버그: {N}건
-- PQ 이슈: {블로커}B / {중요}M / {경미}L
-- 결과: 클린 패스 / 재테스트 필요
+- 실행 체크리스트: 26/26 ✅ (전 항목 직접 실행 — 로컬 1회 + web.app 공개/어드민 2회)
+- EXECUTED_ACTIONS: clicks=33, inputs=12, form_submits=6, navigations=22, selects=3
+- SHALLOW_PAGES: 없음 (홈·smartwork-ai·ai-tools·contents·contact·admin 4종 모두 인터랙션 임계 충족)
+- 발견 버그: 0건 (앱 버그 없음 — 테스트 스크립트 셀렉터 오류 2건은 수정 후 재검증 통과, active-lessons 기록)
+- PQ 이슈: 0B / 0M / 0L
+- 결과: **클린 패스**
+- 특이사항:
+  - 어드민 AI TOOL 테스트 글은 검증 후 삭제, 콘텐츠 고정 체크는 원복 완료
+  - E2E 문의 1건("이테스트"/기타/"E2E 자동 테스트 문의입니다. 답변 불필요")이 어드민 문의함에 남음 — 삭제 가능
+  - 구글시트 동기화는 키 미설정으로 스킵됨(설계상 정상) — 키 설정 후 재확인 필요

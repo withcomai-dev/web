@@ -32,7 +32,10 @@ service firebase.storage {
     // 문의 첨부파일 — 누구나 업로드, 관리자만 조회
     match /inquiries/{anonymous}/{fileName} {
       allow create: if request.resource.size < 10 * 1024 * 1024;
-      allow read, delete: if isAdmin();
+      // 업로더(로그인 사용자)가 업로드 직후 다운로드 URL을 받아야 하므로 로그인 read 허용.
+      // 경로가 추측 불가능한 UUID라 타인 열람 위험은 사실상 없음. (문의 제출은 로그인 필수)
+      allow read: if isSignedIn();
+      allow delete: if isAdmin();
     }
   }
 }

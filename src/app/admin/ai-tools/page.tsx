@@ -77,6 +77,10 @@ export default function AdminAiToolsPage() {
           ? doc.publishedAt ?? new Date().toISOString()
           : doc.publishedAt,
     };
+    // ⚠️ 클라이언트 SDK는 undefined 값을 거부(addDoc throw — 초안 저장 실패 원인) → 키 제거
+    (Object.keys(payload) as (keyof AiToolDoc)[]).forEach((k) => {
+      if (payload[k] === undefined) delete payload[k];
+    });
     if (doc.id) {
       await upsertDoc(COLLECTIONS.AI_TOOLS, doc.id, payload);
     } else {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Cpu,
   Zap,
@@ -18,6 +19,7 @@ import {
   Wifi,
   Laptop,
   Headphones,
+  ChevronRight,
 } from "lucide-react";
 import type { CardsData } from "@/types/cms";
 import { cn } from "@/lib/utils";
@@ -43,6 +45,31 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   laptop: Laptop,
   headphones: Headphones,
 };
+
+/** href가 있으면 내부/외부 링크로 감싸고, 없으면 기존처럼 정적 카드로 렌더링 */
+function CardWrapper({
+  href,
+  className,
+  children,
+}: {
+  href?: string;
+  className: string;
+  children: React.ReactNode;
+}) {
+  if (!href) return <div className={className}>{children}</div>;
+  if (/^https?:\/\//.test(href)) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
 
 export default function CardsSection({ data }: { data: CardsData }) {
   if (data.variant === "highlight") {
@@ -82,9 +109,10 @@ export default function CardsSection({ data }: { data: CardsData }) {
           {data.items.map((item, i) => {
             const Icon = item.icon ? ICONS[item.icon] : null;
             return (
-              <div
+              <CardWrapper
                 key={i}
-                className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-xl transition-all group"
+                href={item.href}
+                className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-xl transition-all group block"
               >
                 {Icon && (
                   <div className="mb-6 p-3 bg-white rounded-xl shadow-sm inline-block group-hover:bg-blue-600 group-hover:text-white transition-colors">
@@ -93,7 +121,12 @@ export default function CardsSection({ data }: { data: CardsData }) {
                 )}
                 <h3 className="text-xl font-bold text-gray-900 mb-4">{item.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{item.body}</p>
-              </div>
+                {item.href && (
+                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-blue-600 group-hover:gap-2 transition-all">
+                    자세히 보기 <ChevronRight className="w-4 h-4" />
+                  </span>
+                )}
+              </CardWrapper>
             );
           })}
         </div>
@@ -149,8 +182,9 @@ function HighlightCards({ data }: { data: CardsData }) {
             const Icon = item.icon ? ICONS[item.icon] : null;
             const num = String(i + 1).padStart(2, "0");
             return (
-              <div
+              <CardWrapper
                 key={i}
+                href={item.href}
                 className="group relative flex gap-5 rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8 backdrop-blur-sm transition-all hover:border-blue-400/40 hover:bg-white/[0.07]"
               >
                 {/* 번호 + 아이콘 */}
@@ -173,7 +207,7 @@ function HighlightCards({ data }: { data: CardsData }) {
                     {item.body}
                   </p>
                 </div>
-              </div>
+              </CardWrapper>
             );
           })}
         </div>

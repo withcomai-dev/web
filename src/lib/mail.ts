@@ -36,7 +36,7 @@ export async function sendMail(msg: MailMessage): Promise<void> {
   const fromUser = await getIntegration("smtpUser");
   const adminMail = await getIntegration("adminNotifyEmail");
   await transporter.sendMail({
-    from: `"위드컴정보" <${fromUser}>`,
+    from: `"WITHCOM AI" <${fromUser}>`,
     to: msg.to,
     replyTo: msg.replyTo ?? adminMail ?? fromUser,
     subject: msg.subject,
@@ -53,10 +53,10 @@ export function inquiryReplyTemplate(args: {
   const safe = (s: string) =>
     s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]!);
   return {
-    subject: `[위드컴정보] 문의에 대한 답변입니다.`,
+    subject: `[WITHCOM AI] 문의에 대한 답변입니다.`,
     html: `
       <div style="font-family:Inter,sans-serif;max-width:600px;margin:auto;padding:24px;background:#fff;color:#111">
-        <h2 style="color:#2563eb;margin:0 0 16px">위드컴정보 답변</h2>
+        <h2 style="color:#2563eb;margin:0 0 16px">WITHCOM AI 답변</h2>
         <p>${safe(args.recipientName)} 님, 안녕하세요.</p>
         <p>문의 주신 내용에 대한 답변을 드립니다.</p>
 
@@ -71,10 +71,10 @@ export function inquiryReplyTemplate(args: {
         </div>
 
         <p style="margin-top:32px;font-size:13px;color:#6b7280">
-          추가 문의사항은 이 메일에 회신하시거나, <a href="https://withcom.runmoa.com">위드컴정보 사이트</a>를 방문해 주세요.
+          추가 문의사항은 이 메일에 회신하시거나, <a href="https://withcomai-web.web.app">WITHCOM AI 사이트</a>를 방문해 주세요.
         </p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0" />
-        <p style="font-size:11px;color:#9ca3af">© 위드컴정보 · 02-841-7241 · withcom7@naver.com</p>
+        <p style="font-size:11px;color:#9ca3af">© WITHCOM AI · withcomai@gmail.com</p>
       </div>`,
   };
 }
@@ -86,10 +86,10 @@ export function helpAnswerTemplate(args: {
   const safe = (s: string) =>
     s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]!);
   return {
-    subject: `[위드컴정보] 보내주신 질문에 대한 답변입니다.`,
+    subject: `[WITHCOM AI] 보내주신 질문에 대한 답변입니다.`,
     html: `
       <div style="font-family:Inter,sans-serif;max-width:600px;margin:auto;padding:24px;background:#fff;color:#111">
-        <h2 style="color:#2563eb;margin:0 0 16px">위드컴정보 답변</h2>
+        <h2 style="color:#2563eb;margin:0 0 16px">WITHCOM AI 답변</h2>
         <p>도움말 위젯으로 보내주신 질문에 답변드립니다.</p>
         <div style="margin:16px 0;padding:16px;background:#f3f4f6;border-radius:8px">
           <p style="font-size:12px;color:#6b7280;margin:0 0 8px">질문</p>
@@ -100,7 +100,7 @@ export function helpAnswerTemplate(args: {
           <div class="answer-body">${args.answer.replace(/\n/g, "<br>")}</div>
         </div>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0" />
-        <p style="font-size:11px;color:#9ca3af">© 위드컴정보</p>
+        <p style="font-size:11px;color:#9ca3af">© WITHCOM AI</p>
       </div>`,
   };
 }
@@ -112,7 +112,7 @@ export function feedbackResolvedTemplate(args: {
   const safe = (s: string) =>
     s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]!);
   return {
-    subject: `[위드컴정보] 신고하신 내용이 처리되었습니다.`,
+    subject: `[WITHCOM AI] 신고하신 내용이 처리되었습니다.`,
     html: `
       <div style="font-family:Inter,sans-serif;max-width:600px;margin:auto;padding:24px">
         <h2 style="color:#10b981;margin:0 0 16px">처리 완료</h2>

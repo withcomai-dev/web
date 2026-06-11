@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Globe,
   Sparkles,
+  BookOpen,
 } from "lucide-react";
 import type { ServicesData } from "@/types/cms";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   youtube: Youtube,
   globe: Globe,
   sparkles: Sparkles,
+  "book-open": BookOpen,
 };
 
 const BG: Record<string, string> = {
@@ -36,7 +38,8 @@ export default function ServicesSection({ data }: { data: ServicesData }) {
   return (
     <section className="py-16 sm:py-24 bg-white">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* 4개 카드 기준 2×2 배치 (모바일 1열) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {data.items.map((item, i) => {
             const Icon = ICONS[item.icon] ?? ShoppingBag;
             const inner = (

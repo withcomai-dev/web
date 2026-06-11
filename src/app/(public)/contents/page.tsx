@@ -26,7 +26,13 @@ export default function ContentsPage() {
           "publishedAt",
           "desc",
         );
-        docs = all.filter((d) => d.status === "published");
+        // 고정(항상 노출) 글 먼저, 그다음 최신순
+        docs = all
+          .filter((d) => d.status === "published")
+          .sort((a, b) => {
+            if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+            return (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "");
+          });
       } catch {
         docs = [];
       }
@@ -78,10 +84,15 @@ export default function ContentsPage() {
                       이미지 준비중
                     </div>
                   )}
-                  <div className="absolute top-4 left-4">
+                  <div className="absolute top-4 left-4 flex items-center gap-1.5">
                     <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
                       {item.category}
                     </span>
+                    {item.pinned && (
+                      <span className="px-3 py-1 bg-slate-900/80 text-white text-xs font-bold rounded-full">
+                        고정
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="p-6">

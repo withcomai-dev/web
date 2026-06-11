@@ -1,19 +1,68 @@
-export const SITE_NAME = "위드컴정보";
+import type { AiToolCategory } from "@/types/cms";
+
+export const SITE_NAME = "WITHCOM AI";
 export const SITE_TAGLINE = "중소기업의 스마트워크와 생성형 AI 활용을 지원하는 파트너";
 
 export const COMPANY = {
-  name: "주식회사 위드컴정보",
+  name: "WITHCOM AI",
   ceo: "유충식",
   bizNo: "118-81-21310",
   address: "서울특별시 동작구 여의대방로 28, 103동 903호 (신대방동, 현대아파트)",
   phone: "02-841-7241",
-  email: "withcom7@naver.com",
+  email: "withcomai@gmail.com",
   shopUrl: "https://withcom.runmoa.com",
   remoteSupportUrl: "http://15663669.co.kr/start",
   youtubeUrl:
     "https://www.youtube.com/@%EC%9C%84%EB%8D%94%EC%8A%A4%EC%BB%B4%ED%93%A8%ED%84%B0%EC%A3%BC",
   blogUrl: "https://blog.naver.com/withcom_ai",
 };
+
+/** AI TOOL 소개 게시판 카테고리 — 스마트워크&AI 페이지 6개 카드와 1:1 매핑 */
+export const AI_TOOL_CATEGORIES: {
+  slug: AiToolCategory;
+  label: string;
+  description: string;
+}[] = [
+  {
+    slug: "ai-assistant",
+    label: "생성형 AI 어시스턴트",
+    description:
+      "ChatGPT·Claude·Gemini 등으로 문서 작성, 요약, 번역, 아이디어 발굴을 자동화합니다.",
+  },
+  {
+    slug: "collaboration",
+    label: "협업·메신저 도구",
+    description:
+      "팀즈·슬랙·잔디 등 실시간 소통과 자료 공유로 회의·보고 시간을 줄입니다.",
+  },
+  {
+    slug: "cloud-office",
+    label: "클라우드 오피스",
+    description:
+      "구글 워크스페이스·M365로 언제 어디서나 문서를 함께 작성하고 관리합니다.",
+  },
+  {
+    slug: "automation",
+    label: "업무 자동화",
+    description: "반복 입력·전송 업무를 자동화 도구로 연결해 사람의 실수를 줄입니다.",
+  },
+  {
+    slug: "data-analysis",
+    label: "데이터 정리·분석",
+    description:
+      "흩어진 자료를 한곳에 모으고, AI로 검색·분석 가능한 자산으로 만듭니다.",
+  },
+  {
+    slug: "customer-ai",
+    label: "고객 응대 AI",
+    description: "챗봇·자동 응답으로 단순 문의를 처리하고 상담 품질을 높입니다.",
+  },
+];
+
+export const AI_TOOL_CATEGORY_LABELS: Record<AiToolCategory, string> =
+  Object.fromEntries(
+    AI_TOOL_CATEGORIES.map((c) => [c.slug, c.label]),
+  ) as Record<AiToolCategory, string>;
 
 export type NavChild = { label: string; href: string; external?: boolean };
 export type NavItem = {
@@ -81,6 +130,7 @@ export const ADMIN_NAV_ITEMS = [
   { label: "페이지·섹션", href: "/admin/pages", icon: "layout" },
   { label: "공지사항", href: "/admin/notices", icon: "megaphone" },
   { label: "업무활용 콘텐츠", href: "/admin/contents", icon: "file-text" },
+  { label: "AI TOOL 소개", href: "/admin/ai-tools", icon: "bot" },
   { label: "중소기업 지원", href: "/admin/sme-support", icon: "briefcase" },
   // 숨김 처리 (페이지는 유지 — 사이드바에만 미노출, 필요 시 주석 해제)
   // { label: "쇼핑몰(런모아)", href: "/admin/shop", icon: "shopping-bag" },

@@ -18,31 +18,32 @@ import {
 import RichEditor from "@/components/admin/RichEditor";
 import ImageUploader from "@/components/admin/ImageUploader";
 import { useAuth } from "@/contexts/AuthContext";
-import type { ContentDoc } from "@/types/cms";
+import { AI_TOOL_CATEGORIES, AI_TOOL_CATEGORY_LABELS } from "@/lib/constants";
+import type { AiToolDoc } from "@/types/cms";
 import { formatDate, slugify } from "@/lib/utils";
 
-const EMPTY: ContentDoc = {
+const EMPTY: AiToolDoc = {
+  category: AI_TOOL_CATEGORIES[0].slug,
   title: "",
   slug: "",
-  category: "AI 활용 팁",
   thumbnail: "",
   bodyHtml: "",
   summary: "",
   status: "draft",
 };
 
-export default function AdminContentsPage() {
+export default function AdminAiToolsPage() {
   const { profile } = useAuth();
-  const [items, setItems] = useState<ContentDoc[]>([]);
+  const [items, setItems] = useState<AiToolDoc[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<ContentDoc | null>(null);
+  const [editing, setEditing] = useState<AiToolDoc | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      invalidateCache(COLLECTIONS.CONTENTS);
-      const data = await getOrderedCollection<ContentDoc>(
-        COLLECTIONS.CONTENTS,
+      invalidateCache(COLLECTIONS.AI_TOOLS);
+      const data = await getOrderedCollection<AiToolDoc>(
+        COLLECTIONS.AI_TOOLS,
         "publishedAt",
         "desc",
       );
@@ -58,13 +59,13 @@ export default function AdminContentsPage() {
 
   const remove = async (id: string) => {
     if (!confirm("삭제하시겠습니까?")) return;
-    await removeDoc(COLLECTIONS.CONTENTS, id);
+    await removeDoc(COLLECTIONS.AI_TOOLS, id);
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  const save = async (doc: ContentDoc) => {
+  const save = async (doc: AiToolDoc) => {
     const slug = doc.slug || slugify(doc.title);
-    const payload: Partial<ContentDoc> = {
+    const payload: Partial<AiToolDoc> = {
       ...doc,
       slug,
       authorEmail: profile?.email,
@@ -74,9 +75,9 @@ export default function AdminContentsPage() {
           : doc.publishedAt,
     };
     if (doc.id) {
-      await upsertDoc(COLLECTIONS.CONTENTS, doc.id, payload);
+      await upsertDoc(COLLECTIONS.AI_TOOLS, doc.id, payload);
     } else {
-      const newId = await createDoc(COLLECTIONS.CONTENTS, payload);
+      const newId = await createDoc(COLLECTIONS.AI_TOOLS, payload);
       payload.id = newId;
     }
     setEditing(null);
@@ -86,8 +87,8 @@ export default function AdminContentsPage() {
   return (
     <div>
       <AdminPageHeader
-        title="업무활용 콘텐츠"
-        description="홈·업무활용 콘텐츠에 노출되는 게시글을 관리합니다."
+        title="AI TOOL 소개"
+        description="스마트워크&AI 페이지의 6개 카드와 연결되는 게시판 글을 관리합니다."
         onRefresh={load}
         onAdd={() => setEditing({ ...EMPTY })}
         addLabel="새 글"
@@ -113,17 +114,12 @@ export default function AdminContentsPage() {
               {items.map((it) => (
                 <tr key={it.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      {it.pinned && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-bold shrink-0">
-                          고정
-                        </span>
-                      )}
-                      {it.title}
-                    </p>
+                    <p className="font-semibold text-gray-900">{it.title}</p>
                     <p className="text-xs text-gray-500">/{it.slug}</p>
                   </td>
-                  <td className="px-4 py-3">{it.category}</td>
+                  <td className="px-4 py-3">
+                    {AI_TOOL_CATEGORY_LABELS[it.category] ?? it.category}
+                  </td>
                   <td className="px-4 py-3">
                     <span
                       className={
@@ -160,7 +156,7 @@ export default function AdminContentsPage() {
       )}
 
       {editing && (
-        <ContentEditor
+        <AiToolEditor
           doc={editing}
           onClose={() => setEditing(null)}
           onSave={save}
@@ -170,19 +166,19 @@ export default function AdminContentsPage() {
   );
 }
 
-function ContentEditor({
+function AiToolEditor({
   doc,
   onClose,
   onSave,
 }: {
-  doc: ContentDoc;
+  doc: AiToolDoc;
   onClose: () => void;
-  onSave: (d: ContentDoc) => Promise<void>;
+  onSave: (d: AiToolDoc) => Promise<void>;
 }) {
-  const [form, setForm] = useState<ContentDoc>(doc);
+  const [form, setForm] = useState<AiToolDoc>(doc);
   const [saving, setSaving] = useState(false);
 
-  const update = (k: keyof ContentDoc, v: unknown) =>
+  const update = (k: keyof AiToolDoc, v: unknown) =>
     setForm((s) => ({ ...s, [k]: v }));
 
   const submit = async () => {
@@ -199,7 +195,7 @@ function ContentEditor({
       <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl">
         <div className="sticky top-0 bg-white border-b border-gray-100 p-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">
-            {doc.id ? "콘텐츠 수정" : "새 콘텐츠"}
+            {doc.id ? "소개 글 수정" : "새 소개 글"}
           </h2>
           <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded">
             <X className="w-5 h-5" />
@@ -224,18 +220,25 @@ function ContentEditor({
                 className="w-full px-3 py-2 rounded border border-gray-200"
               />
             </Field>
-            <Field label="카테고리">
-              <input
-                type="text"
+            <Field label="카테고리 (연결될 카드)">
+              <select
                 value={form.category}
-                onChange={(e) => update("category", e.target.value)}
+                onChange={(e) =>
+                  update("category", e.target.value as AiToolDoc["category"])
+                }
                 className="w-full px-3 py-2 rounded border border-gray-200"
-              />
+              >
+                {AI_TOOL_CATEGORIES.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
             </Field>
           </div>
           <ImageUploader
             label="썸네일"
-            folder="contents"
+            folder="ai-tools"
             value={form.thumbnail ?? ""}
             onChange={(url) => update("thumbnail", url)}
             height={140}
@@ -252,26 +255,16 @@ function ContentEditor({
             <RichEditor
               value={form.bodyHtml}
               onChange={(html) => update("bodyHtml", html)}
-              folder="contents"
+              folder="ai-tools"
               minHeight={320}
             />
           </Field>
-          <label className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-700">
-            <input
-              type="checkbox"
-              checked={form.pinned ?? false}
-              onChange={(e) => update("pinned", e.target.checked)}
-            />
-            <span>
-              <b>항상 노출 (고정)</b> — 홈·목록에서 최신글보다 먼저 표시됩니다
-            </span>
-          </label>
           <div className="grid grid-cols-2 gap-3">
             <Field label="상태">
               <select
                 value={form.status}
                 onChange={(e) =>
-                  update("status", e.target.value as ContentDoc["status"])
+                  update("status", e.target.value as AiToolDoc["status"])
                 }
                 className="w-full px-3 py-2 rounded border border-gray-200"
               >
@@ -279,7 +272,7 @@ function ContentEditor({
                 <option value="published">게시</option>
               </select>
             </Field>
-            <Field label="발행 일시 (예약 가능 — 미래 시각 시 cron이 자동 게시)">
+            <Field label="발행 일시">
               <input
                 type="datetime-local"
                 value={

@@ -56,6 +56,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ── AI TOOL 소개 게시판 ──
+    match /aiTools/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // ── 중소기업 지원사업 ──
     match /smeSupport/{id} {
       allow read: if true;

@@ -5,7 +5,7 @@ import ImageUploader from "./ImageUploader";
 import { cn } from "@/lib/utils";
 
 type ItemSchema =
-  | "card" // {icon?, title, body}
+  | "card" // {icon?, title, body, href?}
   | "blog" // {category, date, title, summary, thumbnail, href?}
   | "service" // {icon, title, body, href, external?, bg, ctaLabel?}
   | "cta"; // {label, href, variant?}
@@ -29,6 +29,11 @@ const ICON_OPTIONS = [
   "youtube",
   "globe",
   "sparkles",
+  "book-open",
+  "bot",
+  "cloud",
+  "database",
+  "settings",
 ];
 
 const BG_OPTIONS = ["blue", "slate", "rose", "emerald"];
@@ -154,6 +159,15 @@ function ItemFields({
               value={(item.body as string) ?? ""}
               onChange={(e) => onUpdate({ body: e.target.value })}
               rows={2}
+              className="w-full px-3 py-2 rounded border border-gray-200 text-sm bg-white"
+            />
+          </Row>
+          <Row label="링크 (선택 — 입력 시 카드가 클릭됩니다)">
+            <input
+              type="text"
+              value={(item.href as string) ?? ""}
+              onChange={(e) => onUpdate({ href: e.target.value })}
+              placeholder="/ai-tools?cat=ai-assistant"
               className="w-full px-3 py-2 rounded border border-gray-200 text-sm bg-white"
             />
           </Row>

@@ -19,6 +19,7 @@ import {
   Activity,
   KeyRound,
   Megaphone,
+  Bot,
 } from "lucide-react";
 import { ADMIN_NAV_ITEMS } from "@/lib/constants";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,6 +41,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   settings: Settings,
   megaphone: Megaphone,
   key: KeyRound,
+  bot: Bot,
 };
 
 export default function AdminSidebar() {

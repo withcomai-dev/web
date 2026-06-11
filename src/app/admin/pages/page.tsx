@@ -815,23 +815,22 @@ function SectionForm({
             onChange={(v) => onChange({ description: v })}
           />
           <p className="text-xs text-gray-500">
-            아래 3개 필드를 비우면 회사 기본 연락처(constants)를 사용합니다.
+            이메일을 비우면 회사 기본 이메일(constants)을 사용합니다. 전화·주소는
+            노출하지 않습니다.
           </p>
-          <Input
-            label="전화 (선택)"
-            value={(d.phone as string) ?? ""}
-            onChange={(v) => onChange({ phone: v })}
-          />
           <Input
             label="이메일 (선택)"
             value={(d.email as string) ?? ""}
             onChange={(v) => onChange({ email: v })}
           />
-          <Input
-            label="주소 (선택)"
-            value={(d.address as string) ?? ""}
-            onChange={(v) => onChange({ address: v })}
-          />
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={(d.showList as boolean) ?? false}
+              onChange={(e) => onChange({ showList: e.target.checked })}
+            />
+            하단에 문의 내역 리스트 표시 (작성자명 마스킹·내용 비공개)
+          </label>
         </div>
       );
     case "sme":

@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   try {
     const data = await generateJSON(text, {
       schema: SCHEMA,
-      systemInstruction: `위드컴정보 사이트의 SEO 메타데이터를 생성한다.
+      systemInstruction: `WITHCOM AI 사이트의 SEO 메타데이터를 생성한다.
 - title: 60자 이내, 한국어, 키워드 포함
 - description: 120-160자, 한국어, 행동 유도
 - ogTitle: title보다 짧게, 클릭 유도

@@ -29,7 +29,7 @@ export default function ShopPage() {
     <>
       <PageBanner
         eyebrow="Shop"
-        title='비즈니스 IT의 모든 것,<br class="hidden sm:block"/> <span class="text-blue-400">위드컴정보 쇼핑몰</span>'
+        title='비즈니스 IT의 모든 것,<br class="hidden sm:block"/> <span class="text-blue-400">WITHCOM AI 쇼핑몰</span>'
         subtitle="업무에 필요한 IT 하드웨어와 소프트웨어를 한곳에서. 결제는 런모아에서 안전하게 진행됩니다."
       />
       <div className="py-12 sm:py-16 bg-slate-50 min-h-[60vh]">

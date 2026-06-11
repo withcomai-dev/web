@@ -39,8 +39,7 @@ export default function Footer() {
             </p>
             <div className="text-sm text-gray-400 space-y-1">
               <p>대표 {COMPANY.ceo} | 사업자등록번호 {COMPANY.bizNo}</p>
-              <p>{COMPANY.address}</p>
-              <p>전화 {COMPANY.phone} | 이메일 {COMPANY.email}</p>
+              <p>이메일 {COMPANY.email}</p>
             </div>
           </div>
           <div>

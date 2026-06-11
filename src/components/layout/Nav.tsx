@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, LogIn, LogOut } from "lucide-react";
+import { Menu, X, LogIn, LogOut, Search } from "lucide-react";
+import SearchOverlay from "@/components/layout/SearchOverlay";
 import { NAV_ITEMS, type NavItem } from "@/lib/constants";
 import {
   COLLECTIONS,
@@ -55,6 +56,20 @@ export default function Nav() {
   const [loggedIn, setLoggedIn] = useState(false);
   // 데스크톱 드롭다운: 마우스 오버 중인 메뉴만 연다 (클릭 시 즉시 닫힘)
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  // 통합 검색 오버레이
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Cmd/Ctrl + K 로도 검색 열기
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   // 클라이언트에서만 로그인 상태 확인 (정적 export 하이드레이션 안전)
   useEffect(() => {
@@ -165,8 +180,17 @@ export default function Nav() {
               );
             })}
 
-            {/* 인증: 런모아 로그인/회원가입 */}
+            {/* 검색 + 인증 */}
             <div className="flex items-center gap-2 pl-3 ml-1 border-l border-gray-200">
+              <button
+                type="button"
+                aria-label="사이트 검색"
+                title="검색 (⌘K)"
+                onClick={() => setSearchOpen(true)}
+                className="p-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              >
+                <Search className="w-5 h-5" />
+              </button>
               {loggedIn ? (
                 <button
                   type="button"
@@ -187,14 +211,25 @@ export default function Nav() {
             </div>
           </div>
 
-          <button
-            type="button"
-            className="lg:hidden p-2 text-gray-700"
-            aria-label="메뉴 열기"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* 모바일: 검색 + 햄버거 */}
+          <div className="lg:hidden flex items-center gap-1">
+            <button
+              type="button"
+              aria-label="사이트 검색"
+              onClick={() => setSearchOpen(true)}
+              className="p-2 text-gray-700"
+            >
+              <Search className="w-6 h-6" />
+            </button>
+            <button
+              type="button"
+              className="p-2 text-gray-700"
+              aria-label="메뉴 열기"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -259,6 +294,9 @@ export default function Nav() {
           </div>
         </div>
       )}
+
+      {/* 통합 검색 오버레이 */}
+      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
     </nav>
   );
 }

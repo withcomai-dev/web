@@ -17,3 +17,6 @@ serviceAccountKey.json
 .idea/
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# 마이그레이션 백업 (라이브 콘텐츠 스냅샷 — 커밋 금지)
+scripts/backups/

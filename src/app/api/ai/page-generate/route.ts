@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   } as const;
   const tone = toneMap[body.tone ?? "professional"];
 
-  const sysInstruction = `너는 위드컴정보(중소기업 IT/AI 솔루션 회사)의 웹사이트 페이지 빌더다.
+  const sysInstruction = `너는 WITHCOM AI(중소기업 IT/AI 솔루션 회사)의 웹사이트 페이지 빌더다.
 사용자 요청을 받아 Hero, Cards, Feature, RichText, CTA, Blog, Services, Contact 중 적절한 섹션을 4-7개 생성한다.
 
 규칙:

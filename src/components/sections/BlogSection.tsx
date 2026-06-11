@@ -7,14 +7,18 @@ import { COLLECTIONS, getCollection } from "@/lib/firestore";
 import { formatDate } from "@/lib/utils";
 import type { BlogData, BlogPostItem, ContentDoc } from "@/types/cms";
 
+/** 노출 슬롯 수 — 고정글 우선 + 최신순으로 채운다 (3×2 그리드) */
+const MAX_ITEMS = 6;
+
 /**
  * 업무활용 콘텐츠 섹션.
- * - source "auto"(기본): 어드민 [콘텐츠]의 최신 게시글 3개를 자동 표시 (재배포 불필요)
+ * - source "auto"(기본): 어드민 [콘텐츠]의 게시글을 자동 표시 (재배포 불필요)
+ *   고정(항상 노출) 글 우선, 나머지는 최신순으로 총 6개까지
  * - source "manual": 페이지·섹션 에디터에서 직접 구성한 항목 표시
  * - 자동 모드에서 게시글이 없으면 구성된 항목(시드)을 예비로 표시
  */
 export default function BlogSection({ data }: { data: BlogData }) {
-  const [liveItems, setLiveItems] = useState<BlogPostItem[] | null>(null);
+  const [liveItems, setLiveItems] = useState<(BlogPostItem & { pinned?: boolean })[] | null>(null);
 
   useEffect(() => {
     if (data.source === "manual") {
@@ -25,18 +29,23 @@ export default function BlogSection({ data }: { data: BlogData }) {
     void (async () => {
       try {
         const docs = await getCollection<ContentDoc>(COLLECTIONS.CONTENTS);
-        const latest = docs
-          .filter((d) => d.status === "published")
-          .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""))
-          .slice(0, 3)
-          .map<BlogPostItem>((d) => ({
-            category: d.category,
-            date: d.publishedAt ? formatDate(d.publishedAt) : "",
-            title: d.title,
-            summary: d.summary ?? "",
-            thumbnail: d.thumbnail ?? "",
-            href: `/contents/view?slug=${encodeURIComponent(d.slug)}`,
-          }));
+        const published = docs.filter((d) => d.status === "published");
+        const byDateDesc = (a: ContentDoc, b: ContentDoc) =>
+          (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "");
+        // 고정글 우선 노출, 남은 슬롯은 최신순으로 채움
+        const ordered = [
+          ...published.filter((d) => d.pinned).sort(byDateDesc),
+          ...published.filter((d) => !d.pinned).sort(byDateDesc),
+        ];
+        const latest = ordered.slice(0, MAX_ITEMS).map((d) => ({
+          category: d.category,
+          date: d.publishedAt ? formatDate(d.publishedAt) : "",
+          title: d.title,
+          summary: d.summary ?? "",
+          thumbnail: d.thumbnail ?? "",
+          href: `/contents/view?slug=${encodeURIComponent(d.slug)}`,
+          pinned: d.pinned,
+        }));
         if (alive && latest.length > 0) setLiveItems(latest);
       } catch {
         // Firestore 미접속 시 구성 항목 유지
@@ -47,7 +56,7 @@ export default function BlogSection({ data }: { data: BlogData }) {
     };
   }, [data.source]);
 
-  const items = liveItems ?? data.items;
+  const items: (BlogPostItem & { pinned?: boolean })[] = liveItems ?? data.items;
 
   return (
     <section className="py-16 sm:py-24 bg-slate-50">
@@ -98,10 +107,15 @@ export default function BlogSection({ data }: { data: BlogData }) {
                       이미지 준비중
                     </div>
                   )}
-                  <div className="absolute top-4 left-4">
+                  <div className="absolute top-4 left-4 flex items-center gap-1.5">
                     <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
                       {item.category}
                     </span>
+                    {item.pinned && (
+                      <span className="px-3 py-1 bg-slate-900/80 text-white text-xs font-bold rounded-full">
+                        고정
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="p-6">

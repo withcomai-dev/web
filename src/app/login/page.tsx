@@ -64,7 +64,7 @@ function LoginInner() {
         )}
 
         <p className="mt-8 text-xs text-gray-400">
-          로그인하시면 위드컴정보의 이용약관과 개인정보처리방침에 동의하는 것으로 간주됩니다.
+          로그인하시면 WITHCOM AI의 이용약관과 개인정보처리방침에 동의하는 것으로 간주됩니다.
         </p>
       </div>
     </main>

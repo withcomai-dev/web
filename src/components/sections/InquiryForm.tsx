@@ -149,6 +149,8 @@ export default function InquiryForm() {
       } catch {
         // ignore
       }
+      // 하단 문의 내역 리스트(InquiryList)에 즉시 반영
+      window.dispatchEvent(new CustomEvent("inquiry:submitted"));
       setPhase("done");
       setForm({
         type: INQUIRY_TYPES[0],
@@ -216,7 +218,7 @@ export default function InquiryForm() {
           value={form.company}
           onChange={onChange("company")}
           className="w-full px-4 py-3 rounded-lg border border-gray-200 outline-none focus:border-blue-500"
-          placeholder="(주)위드컴정보"
+          placeholder="WITHCOM AI"
         />
       </div>
       <div>

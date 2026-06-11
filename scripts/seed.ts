@@ -60,10 +60,10 @@ async function seedHelpDocs(db: FirebaseFirestore.Firestore) {
   const docs = [
     {
       category: "사이트 이용",
-      title: "위드컴정보 사이트 사용 안내",
+      title: "WITHCOM AI 사이트 사용 안내",
       slug: "site-usage",
       bodyHtml:
-        "<p>위드컴정보 사이트의 주요 기능과 사용법을 안내합니다.</p><ul><li>홈에서 회사 소개 확인</li><li>콘텐츠 메뉴에서 IT/AI 정보 열람</li><li>쇼핑몰에서 상품 구매</li><li>문의하기에서 상담 신청</li></ul>",
+        "<p>WITHCOM AI 사이트의 주요 기능과 사용법을 안내합니다.</p><ul><li>홈에서 회사 소개 확인</li><li>콘텐츠 메뉴에서 IT/AI 정보 열람</li><li>쇼핑몰에서 상품 구매</li><li>문의하기에서 상담 신청</li></ul>",
       audience: "public",
       order: 1,
       status: "published",
@@ -73,7 +73,7 @@ async function seedHelpDocs(db: FirebaseFirestore.Firestore) {
       title: "Google 로그인 방법",
       slug: "google-login",
       bodyHtml:
-        "<p>위드컴정보는 Google 계정으로 로그인합니다.</p><ol><li>우상단 또는 푸터의 [로그인] 클릭</li><li>Google 계정 선택</li><li>최초 로그인 시 자동 가입됩니다.</li></ol>",
+        "<p>WITHCOM AI는 Google 계정으로 로그인합니다.</p><ol><li>우상단 또는 푸터의 [로그인] 클릭</li><li>Google 계정 선택</li><li>최초 로그인 시 자동 가입됩니다.</li></ol>",
       audience: "public",
       order: 2,
       status: "published",

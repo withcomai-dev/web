@@ -6,9 +6,9 @@ import type { PageDoc, Section } from "@/types/cms";
 export const SEED_HOME: PageDoc = {
   key: "home",
   title: "홈",
-  seoTitle: "위드컴정보 — 중소기업 디지털 전환 파트너",
+  seoTitle: "WITHCOM AI — 중소기업 디지털 전환 파트너",
   seoDescription:
-    "위드컴정보는 IT 인프라 구축부터 최신 AI 기술 도입까지, 중소기업의 업무 효율 향상을 위한 최적의 솔루션을 제안합니다.",
+    "WITHCOM AI는 IT 인프라 구축부터 최신 AI 기술 도입까지, 중소기업의 업무 효율 향상을 위한 최적의 솔루션을 제안합니다.",
   sections: [
     {
       id: "home-hero",
@@ -154,6 +154,7 @@ export const SEED_HOME: PageDoc = {
       type: "services",
       data: {
         items: [
+          // 2×2 배치: 1행 [공식 쇼핑몰 · 네이버 블로그] / 2행 [원격 지원 · 유튜브]
           {
             icon: "shopping-bag",
             title: "공식 쇼핑몰",
@@ -162,6 +163,15 @@ export const SEED_HOME: PageDoc = {
             external: true,
             bg: "blue",
             ctaLabel: "바로가기",
+          },
+          {
+            icon: "book-open",
+            title: "공식 네이버 블로그",
+            body: "스마트워크·AI 활용 노하우와 도입 사례를 글로 전합니다",
+            href: "https://blog.naver.com/withcom_ai",
+            external: true,
+            bg: "emerald",
+            ctaLabel: "블로그 바로가기",
           },
           {
             icon: "headphones",
@@ -211,7 +221,7 @@ export const SEED_ABOUT: PageDoc = {
         variant: "banner",
         eyebrow: "About Us",
         title:
-          '중소기업의 성장을 함께 만드는<br class="hidden sm:block"/> <span class="text-blue-400">IT 파트너</span>, 위드컴정보',
+          '중소기업의 성장을 함께 만드는<br class="hidden sm:block"/> <span class="text-blue-400">IT 파트너</span>, WITHCOM AI',
         subtitle:
           "1999년 설립 이래, 우리는 중소기업의 IT 환경을 끊임없이 개선하며 함께 성장해 왔습니다.",
       },
@@ -223,7 +233,7 @@ export const SEED_ABOUT: PageDoc = {
       type: "cards",
       data: {
         eyebrow: "Our Promise",
-        title: "위드컴정보가 일하는 방식",
+        title: "WITHCOM AI가 일하는 방식",
         description: "기술보다 고객의 비즈니스를 먼저 이해합니다.",
         columns: 3,
         items: [
@@ -321,35 +331,42 @@ export const SEED_SMARTWORK_AI: PageDoc = {
           "업무에 바로 적용할 수 있는 대표 AI·협업 도구를 선별해 도입을 도와드립니다.",
         columns: 3,
         items: [
+          // 각 카드는 AI TOOL 소개 게시판(/ai-tools)의 해당 카테고리로 연결
           {
             icon: "bot",
             title: "생성형 AI 어시스턴트",
             body: "ChatGPT·Claude·Gemini 등으로 문서 작성, 요약, 번역, 아이디어 발굴을 자동화합니다.",
+            href: "/ai-tools?cat=ai-assistant",
           },
           {
             icon: "users",
             title: "협업·메신저 도구",
             body: "팀즈·슬랙·잔디 등 실시간 소통과 자료 공유로 회의·보고 시간을 줄입니다.",
+            href: "/ai-tools?cat=collaboration",
           },
           {
             icon: "cloud",
             title: "클라우드 오피스",
             body: "구글 워크스페이스·M365로 언제 어디서나 문서를 함께 작성하고 관리합니다.",
+            href: "/ai-tools?cat=cloud-office",
           },
           {
             icon: "settings",
             title: "업무 자동화",
             body: "반복 입력·전송 업무를 자동화 도구로 연결해 사람의 실수를 줄입니다.",
+            href: "/ai-tools?cat=automation",
           },
           {
             icon: "database",
             title: "데이터 정리·분석",
             body: "흩어진 자료를 한곳에 모으고, AI로 검색·분석 가능한 자산으로 만듭니다.",
+            href: "/ai-tools?cat=data-analysis",
           },
           {
             icon: "message-square",
             title: "고객 응대 AI",
             body: "챗봇·자동 응답으로 단순 문의를 처리하고 상담 품질을 높입니다.",
+            href: "/ai-tools?cat=customer-ai",
           },
         ],
       },

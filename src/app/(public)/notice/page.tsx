@@ -44,8 +44,8 @@ export default function NoticePage() {
     <>
       <PageBanner
         eyebrow="Notice"
-        title='위드컴정보의 새로운 소식,<br class="hidden sm:block"/> <span class="text-blue-400">공지사항</span>'
-        subtitle="서비스 안내, 점검 일정, 행사 소식 등 위드컴정보의 공식 공지를 전해드립니다."
+        title='WITHCOM AI의 새로운 소식,<br class="hidden sm:block"/> <span class="text-blue-400">공지사항</span>'
+        subtitle="서비스 안내, 점검 일정, 행사 소식 등 WITHCOM AI의 공식 공지를 전해드립니다."
       />
       <section className="py-12 sm:py-16 bg-slate-50 min-h-[60vh]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">

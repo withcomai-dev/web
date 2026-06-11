@@ -9,6 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "seed": "tsx scripts/seed.ts",
+    "migrate:rev2": "tsx scripts/migrate-revision2.ts",
     "deploy:rules": "firebase deploy --only firestore:rules,storage"
   },
   "dependencies": {

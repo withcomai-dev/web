@@ -26,6 +26,8 @@ export interface CardItem {
   icon?: string;
   title: string;
   body: string;
+  /** 카드 클릭 시 이동할 링크 (선택 — 없으면 클릭 불가 카드) */
+  href?: string;
 }
 
 export interface CardsData {
@@ -102,6 +104,8 @@ export interface ContactSectionData {
   phone?: string;
   email?: string;
   address?: string;
+  /** 섹션 하단에 공개 문의 내역 리스트 노출 여부 (이름 마스킹·내용 비공개) */
+  showList?: boolean;
 }
 
 /** 중소기업 지원사업 목록 섹션 (Firestore smeSupport 컬렉션을 카테고리별로 노출) */
@@ -234,6 +238,31 @@ export interface ContentDoc {
   bodyHtml: string;
   summary?: string;
   tags?: string[];
+  publishedAt?: string;
+  status: ContentStatus;
+  viewCount?: number;
+  authorEmail?: string;
+  /** 항상 노출(고정) — 홈·목록에서 최신글보다 우선 표시 */
+  pinned?: boolean;
+}
+
+// ── AI TOOL 소개 게시판 (스마트워크&AI 페이지 6개 카드와 연결) ──
+export type AiToolCategory =
+  | "ai-assistant"
+  | "collaboration"
+  | "cloud-office"
+  | "automation"
+  | "data-analysis"
+  | "customer-ai";
+
+export interface AiToolDoc {
+  id?: string;
+  category: AiToolCategory;
+  title: string;
+  slug: string;
+  thumbnail?: string;
+  bodyHtml: string;
+  summary?: string;
   publishedAt?: string;
   status: ContentStatus;
   viewCount?: number;

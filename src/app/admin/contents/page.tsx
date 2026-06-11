@@ -5,7 +5,7 @@ import { Edit2, Trash2, X, Save } from "lucide-react";
 import {
   COLLECTIONS,
   createDoc,
-  getOrderedCollection,
+  getCollection,
   invalidateCache,
   removeDoc,
   upsertDoc,
@@ -41,10 +41,11 @@ export default function AdminContentsPage() {
     setLoading(true);
     try {
       invalidateCache(COLLECTIONS.CONTENTS);
-      const data = await getOrderedCollection<ContentDoc>(
-        COLLECTIONS.CONTENTS,
-        "publishedAt",
-        "desc",
+      // ⚠️ Firestore orderBy는 정렬 필드가 없는 문서를 제외하므로(초안이 목록에서 증발)
+      // 전체를 받아 클라이언트에서 정렬한다 — 발행일 없는 초안이 맨 위.
+      const data = await getCollection<ContentDoc>(COLLECTIONS.CONTENTS);
+      data.sort((a, b) =>
+        (b.publishedAt ?? "9999").localeCompare(a.publishedAt ?? "9999"),
       );
       setItems(data);
     } finally {

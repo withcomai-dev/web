@@ -61,39 +61,76 @@ export const SEED_HOME: PageDoc = {
         ],
       },
     },
+    // 홈 원페이지 구성(2차 요청 6번): 스마트워크 배너 + AI TOOL 소개를 홈에 노출
     {
-      id: "home-smartwork",
+      id: "home-sw-banner",
       order: 3,
       visible: true,
-      type: "feature",
+      type: "hero",
       data: {
+        variant: "banner",
         eyebrow: "Smart Work & AI",
-        title: "업무의 패러다임을 바꾸는 디지털 전환의 시작",
-        image:
-          "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1000",
-        side: "right",
+        title:
+          '업무의 패러다임을 바꾸는<br class="hidden sm:block"/> <span class="text-blue-400">디지털 전환</span>의 시작',
+        subtitle:
+          "협업 효율, AI 실무 적용, 맞춤형 도구 추천까지 — 중소기업에 최적화된 스마트워크를 제안합니다.",
+        ctas: [{ label: "도입 상담 신청", href: "/contact", variant: "primary" }],
+      },
+    },
+    {
+      id: "home-ai-tools",
+      order: 4,
+      visible: true,
+      type: "cards",
+      data: {
+        eyebrow: "AI Tools",
+        title: "AI TOOL 소개",
+        description:
+          "업무에 바로 적용할 수 있는 대표 AI·협업 도구를 선별해 도입을 도와드립니다.",
+        columns: 3,
         items: [
           {
+            icon: "bot",
+            title: "생성형 AI 어시스턴트",
+            body: "ChatGPT·Claude·Gemini 등으로 문서 작성, 요약, 번역, 아이디어 발굴을 자동화합니다.",
+            href: "/ai-tools?cat=ai-assistant",
+          },
+          {
             icon: "users",
-            title: "협업 효율 극대화",
-            body: "분산된 업무 환경에서도 실시간 소통과 문서 공유가 가능한 스마트워크 시스템을 구축합니다.",
+            title: "협업·메신저 도구",
+            body: "팀즈·슬랙·잔디 등 실시간 소통과 자료 공유로 회의·보고 시간을 줄입니다.",
+            href: "/ai-tools?cat=collaboration",
           },
           {
-            icon: "cpu",
-            title: "생성형 AI 실무 적용",
-            body: "단순 반복 업무는 AI에게 맡기고, 임직원들은 더 창의적이고 핵심적인 업무에 집중할 수 있습니다.",
+            icon: "cloud",
+            title: "클라우드 오피스",
+            body: "구글 워크스페이스·M365로 언제 어디서나 문서를 함께 작성하고 관리합니다.",
+            href: "/ai-tools?cat=cloud-office",
           },
           {
-            icon: "monitor",
-            title: "맞춤형 도구 추천",
-            body: "기업의 규모와 업종에 맞는 최적의 SaaS 및 AI 도구를 선별하여 도입 가이드를 제공합니다.",
+            icon: "settings",
+            title: "업무 자동화",
+            body: "반복 입력·전송 업무를 자동화 도구로 연결해 사람의 실수를 줄입니다.",
+            href: "/ai-tools?cat=automation",
+          },
+          {
+            icon: "database",
+            title: "데이터 정리·분석",
+            body: "흩어진 자료를 한곳에 모으고, AI로 검색·분석 가능한 자산으로 만듭니다.",
+            href: "/ai-tools?cat=data-analysis",
+          },
+          {
+            icon: "message-square",
+            title: "고객 응대 AI",
+            body: "챗봇·자동 응답으로 단순 문의를 처리하고 상담 품질을 높입니다.",
+            href: "/ai-tools?cat=customer-ai",
           },
         ],
       },
     },
     {
       id: "home-blog",
-      order: 4,
+      order: 5,
       visible: true,
       type: "blog",
       data: {
@@ -134,22 +171,165 @@ export const SEED_HOME: PageDoc = {
         ],
       },
     },
+    // 홈 원페이지 구성: IT 인프라(배너→소개→하드웨어→소프트웨어) 블록
+    {
+      id: "home-it-banner",
+      order: 6,
+      visible: true,
+      type: "hero",
+      data: {
+        variant: "banner",
+        bgImage: "/banner-it-service.webp",
+        title: "기업의 업무 효율을 높이는 안정적인 IT 인프라 구축",
+      },
+    },
+    {
+      id: "home-it-why",
+      order: 7,
+      visible: true,
+      type: "feature",
+      data: {
+        eyebrow: "Why Infra Matters",
+        title: "안정적인 IT 환경이 곧 비즈니스 경쟁력입니다",
+        image:
+          "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=1000",
+        side: "right",
+        items: [
+          {
+            icon: "zap",
+            title: "생산성 향상",
+            body: "업무에 최적화된 장비와 소프트웨어로 임직원의 업무 효율을 높입니다.",
+          },
+          {
+            icon: "shield-check",
+            title: "업무 중단 최소화",
+            body: "안정적으로 설계된 인프라와 상시 지원으로 장애와 다운타임을 줄입니다.",
+          },
+          {
+            icon: "cpu",
+            title: "디지털 전환의 기초",
+            body: "탄탄한 IT 환경은 스마트워크·AI 도입 등 디지털 전환의 토대가 됩니다.",
+          },
+        ],
+      },
+    },
+    {
+      id: "home-it-hardware",
+      order: 8,
+      visible: true,
+      type: "cards",
+      data: {
+        eyebrow: "Hardware",
+        title: "하드웨어 구축",
+        description: "업무 환경에 필요한 모든 장비를 진단·설계·구축합니다.",
+        columns: 3,
+        items: [
+          {
+            icon: "laptop",
+            title: "업무용 PC 및 노트북",
+            body: "업무 특성과 예산에 맞는 데스크톱·노트북을 선정하고 세팅합니다.",
+          },
+          {
+            icon: "server",
+            title: "서버 구축",
+            body: "파일·업무·백업 서버를 안정적으로 구성하고 운영을 지원합니다.",
+          },
+          {
+            icon: "network",
+            title: "네트워크 장비 구축",
+            body: "유무선 네트워크, 스위치·공유기 등 통신 환경을 최적화합니다.",
+          },
+          {
+            icon: "lock",
+            title: "보안 장비 구축",
+            body: "방화벽, CCTV, 출입 통제 등 물리·네트워크 보안 장비를 구축합니다.",
+          },
+          {
+            icon: "printer",
+            title: "프린터 및 주변기기",
+            body: "복합기, 스캐너 등 사무용 주변기기를 설치하고 연동합니다.",
+          },
+          {
+            icon: "cpu",
+            title: "사무실 IT 장비 세팅",
+            body: "신규 사무실 이전·확장 시 IT 장비 전반을 일괄 세팅합니다.",
+          },
+        ],
+      },
+    },
+    {
+      id: "home-it-software",
+      order: 9,
+      visible: true,
+      type: "cards",
+      data: {
+        eyebrow: "Software",
+        title: "소프트웨어 구축",
+        description: "업무에 필요한 소프트웨어와 솔루션을 도입·연동합니다.",
+        columns: 3,
+        items: [
+          {
+            icon: "monitor",
+            title: "업무용 소프트웨어",
+            body: "오피스, 회계, 그룹웨어 등 업무에 필요한 소프트웨어를 도입합니다.",
+          },
+          {
+            icon: "shield-check",
+            title: "보안 솔루션",
+            body: "백신, 문서 보안, 망 분리 등 기업 보안 솔루션을 적용합니다.",
+          },
+          {
+            icon: "users",
+            title: "협업 도구",
+            body: "메신저, 화상회의, 일정·문서 공유 등 협업 환경을 구축합니다.",
+          },
+          {
+            icon: "cloud",
+            title: "클라우드 기반 서비스",
+            body: "클라우드 스토리지·SaaS로 언제 어디서나 일할 수 있게 지원합니다.",
+          },
+          {
+            icon: "database",
+            title: "백업 및 데이터 관리",
+            body: "정기 백업과 복구 체계로 중요한 데이터를 안전하게 보호합니다.",
+          },
+          {
+            icon: "bot",
+            title: "업무 자동화 솔루션",
+            body: "반복 업무를 줄이는 자동화·AI 도구로 생산성을 높입니다.",
+          },
+        ],
+      },
+    },
+    // 홈 원페이지 구성: 중소기업 지원사업 배너 + 카테고리별 리스트
+    {
+      id: "home-sme-banner",
+      order: 10,
+      visible: true,
+      type: "hero",
+      data: {
+        variant: "banner",
+        eyebrow: "SME Support",
+        title:
+          '놓치면 아까운<br class="hidden sm:block"/> <span class="text-blue-400">중소기업 지원사업</span> 안내',
+        subtitle:
+          "정부·지자체의 소상공인·R&D 지원사업 정보를 한눈에 확인하고, 신청 컨설팅까지 도와드립니다.",
+      },
+    },
     {
       id: "home-sme",
-      order: 5,
+      order: 11,
       visible: true,
       type: "sme",
       data: {
-        eyebrow: "SME Support",
-        heading: "중소기업 지원사업",
-        description: "소상공인·R&D 지원사업 정보를 한눈에 확인하세요.",
+        // 배너(home-sme-banner)가 제목 역할을 하므로 자체 헤딩은 생략
         limitPerCategory: 3,
         showViewAll: true,
       },
     },
     {
       id: "home-services",
-      order: 6,
+      order: 12,
       visible: true,
       type: "services",
       data: {
@@ -196,7 +376,7 @@ export const SEED_HOME: PageDoc = {
     },
     {
       id: "home-contact",
-      order: 7,
+      order: 13,
       visible: true,
       type: "contact",
       data: {

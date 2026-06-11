@@ -58,6 +58,31 @@ export async function uploadAsset(
   return { url, path, size: working.size, name: file.name };
 }
 
+/**
+ * 문의 첨부 전용 업로드.
+ * assets/* 는 관리자만 쓰기 가능 + 공개 읽기라서 일반 사용자의 문의 첨부에 부적합 —
+ * storage.rules 의 전용 경로(/inquiries/{folder}/{file}: 누구나 업로드, 관리자만 조회)를 쓴다.
+ */
+export async function uploadInquiryAttachment(file: File): Promise<UploadResult> {
+  if (!isFirebaseConfigured()) {
+    throw new Error("Firebase가 설정되지 않아 업로드할 수 없습니다 (DEV 모드).");
+  }
+  let working: File = file;
+  if (file.type.startsWith("image/") && !file.type.includes("svg")) {
+    try {
+      working = await imageCompression(file, DEFAULT_OPTS);
+    } catch {
+      working = file;
+    }
+  }
+  const ext = extOf(working) || extOf(file);
+  const path = `inquiries/${uuid()}/file${ext}`;
+  const ref = storageRef(storage, path);
+  await uploadBytes(ref, working, { contentType: working.type || file.type });
+  const url = await getDownloadURL(ref);
+  return { url, path, size: working.size, name: file.name };
+}
+
 export interface AssetItem {
   url: string;
   path: string;

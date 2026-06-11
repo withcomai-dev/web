@@ -5,7 +5,7 @@ import { Edit2, Trash2, X, Save } from "lucide-react";
 import {
   COLLECTIONS,
   createDoc,
-  getOrderedCollection,
+  getCollection,
   invalidateCache,
   removeDoc,
   upsertDoc,
@@ -42,10 +42,11 @@ export default function AdminAiToolsPage() {
     setLoading(true);
     try {
       invalidateCache(COLLECTIONS.AI_TOOLS);
-      const data = await getOrderedCollection<AiToolDoc>(
-        COLLECTIONS.AI_TOOLS,
-        "publishedAt",
-        "desc",
+      // ⚠️ Firestore orderBy는 정렬 필드가 없는 문서를 제외하므로(초안이 목록에서 증발)
+      // 전체를 받아 클라이언트에서 정렬한다 — 발행일 없는 초안이 맨 위.
+      const data = await getCollection<AiToolDoc>(COLLECTIONS.AI_TOOLS);
+      data.sort((a, b) =>
+        (b.publishedAt ?? "9999").localeCompare(a.publishedAt ?? "9999"),
       );
       setItems(data);
     } finally {
@@ -64,7 +65,9 @@ export default function AdminAiToolsPage() {
   };
 
   const save = async (doc: AiToolDoc) => {
-    const slug = doc.slug || slugify(doc.title);
+    // 슬러그·발행일은 자동 — 신규 글은 제목으로 슬러그 생성, 기존 글은 링크 보존을 위해 유지.
+    // 발행일은 "게시" 상태로 처음 저장되는 시점에 자동 기록된다.
+    const slug = (doc.id && doc.slug) || slugify(doc.title) || `tool-${Date.now().toString(36)}`;
     const payload: Partial<AiToolDoc> = {
       ...doc,
       slug,
@@ -210,32 +213,21 @@ function AiToolEditor({
               className="w-full px-3 py-2 rounded border border-gray-200"
             />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="슬러그 (URL)">
-              <input
-                type="text"
-                value={form.slug}
-                onChange={(e) => update("slug", e.target.value)}
-                placeholder="자동 생성됨"
-                className="w-full px-3 py-2 rounded border border-gray-200"
-              />
-            </Field>
-            <Field label="카테고리 (연결될 카드)">
-              <select
-                value={form.category}
-                onChange={(e) =>
-                  update("category", e.target.value as AiToolDoc["category"])
-                }
-                className="w-full px-3 py-2 rounded border border-gray-200"
-              >
-                {AI_TOOL_CATEGORIES.map((c) => (
-                  <option key={c.slug} value={c.slug}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </Field>
-          </div>
+          <Field label="카테고리 (연결될 카드)">
+            <select
+              value={form.category}
+              onChange={(e) =>
+                update("category", e.target.value as AiToolDoc["category"])
+              }
+              className="w-full px-3 py-2 rounded border border-gray-200"
+            >
+              {AI_TOOL_CATEGORIES.map((c) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </Field>
           <ImageUploader
             label="썸네일"
             folder="ai-tools"
@@ -259,37 +251,18 @@ function AiToolEditor({
               minHeight={320}
             />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="상태">
-              <select
-                value={form.status}
-                onChange={(e) =>
-                  update("status", e.target.value as AiToolDoc["status"])
-                }
-                className="w-full px-3 py-2 rounded border border-gray-200"
-              >
-                <option value="draft">초안</option>
-                <option value="published">게시</option>
-              </select>
-            </Field>
-            <Field label="발행 일시">
-              <input
-                type="datetime-local"
-                value={
-                  form.publishedAt
-                    ? new Date(form.publishedAt).toISOString().slice(0, 16)
-                    : ""
-                }
-                onChange={(e) =>
-                  update(
-                    "publishedAt",
-                    e.target.value ? new Date(e.target.value).toISOString() : "",
-                  )
-                }
-                className="w-full px-3 py-2 rounded border border-gray-200"
-              />
-            </Field>
-          </div>
+          <Field label="상태 (게시 시 발행일이 자동 기록됩니다)">
+            <select
+              value={form.status}
+              onChange={(e) =>
+                update("status", e.target.value as AiToolDoc["status"])
+              }
+              className="w-full px-3 py-2 rounded border border-gray-200"
+            >
+              <option value="draft">초안 (사이트 미노출)</option>
+              <option value="published">게시 (사이트 노출)</option>
+            </select>
+          </Field>
 
           <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
             <button

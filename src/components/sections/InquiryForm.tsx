@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Send, Loader2, Check, Paperclip, X, LogIn, Lock } from "lucide-react";
 import { INQUIRY_TYPES } from "@/lib/constants";
-import { uploadAsset } from "@/lib/storage-upload";
+import { uploadInquiryAttachment } from "@/lib/storage-upload";
 import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
 import { startRunmoa } from "@/lib/runmoa-auth";
 import { auth } from "@/lib/firebase";
@@ -91,7 +91,7 @@ export default function InquiryForm() {
           setErrMsg(`${f.name}이 너무 큽니다 (최대 10MB)`);
           continue;
         }
-        const res = await uploadAsset(f, "inquiries");
+        const res = await uploadInquiryAttachment(f);
         newOnes.push({ url: res.url, name: f.name, size: res.size });
       }
       setAttachments((s) => [...s, ...newOnes]);

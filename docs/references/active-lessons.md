@@ -24,6 +24,7 @@
 ## 2026-06-11 | 배포자 | push 직후 수동 롤아웃이 자동 롤아웃과 충돌(Conflict for resource)
 - **패턴**: ABIU(자동 빌드) 활성 백엔드에서 `git push` 직후 `apphosting:rollouts:create` 실행 시 "version ... was specified but current version is ..." 충돌 — push가 트리거한 자동 롤아웃이 이미 진행 중. 수동 롤아웃 실패가 곧 배포 실패는 아님.
 - **차단 방법**: 충돌 에러 시 REST로 롤아웃 상태 확인(`GET https://firebaseapphosting.googleapis.com/v1beta/.../backends/withcomweb/rollouts` — firebase CLI refresh_token 토큰 교환). 최신 롤아웃이 BUILDING/SUCCEEDED면 그것을 추적, FAILED일 때만 수동 재시도.
+- **보완(2026-06-12)**: rollouts/builds **목록 API의 기본 정렬은 최신순이 아니다** — `pageSize=1`로 첫 항목만 보면 옛 롤아웃이 반환돼 "자동 롤아웃 누락"으로 오판한다(실제 de560da는 02:40 자동 롤아웃 성공). 반드시 `pageSize=200`으로 받아 createTime 정렬 후 판단. 수동 롤아웃은 이름이 `build-YYYY-…` 형식으로 생성되니 이름 패턴 매칭도 주의.
 - **만료**: 2026-07-11
 
 ## 2026-06-11 | 구현자 | 클라 SDK는 undefined 필드값에서 addDoc/setDoc throw — 신규 초안 저장 전멸

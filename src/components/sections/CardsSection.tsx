@@ -20,6 +20,8 @@ import {
   Laptop,
   Headphones,
   ChevronRight,
+  Store,
+  FlaskConical,
 } from "lucide-react";
 import type { CardsData } from "@/types/cms";
 import { cn } from "@/lib/utils";
@@ -44,6 +46,8 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   wifi: Wifi,
   laptop: Laptop,
   headphones: Headphones,
+  store: Store,
+  flask: FlaskConical,
 };
 
 /** href가 있으면 내부/외부 링크로 감싸고, 없으면 기존처럼 정적 카드로 렌더링 */

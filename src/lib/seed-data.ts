@@ -317,14 +317,27 @@ export const SEED_HOME: PageDoc = {
       },
     },
     {
+      // AI TOOL 소개와 동일 구조: 카드 2개 → 카테고리별 리스트 → 썸네일 클릭 시 지원사업 사이트로
       id: "home-sme",
       order: 11,
       visible: true,
-      type: "sme",
+      type: "cards",
       data: {
-        // 배너(home-sme-banner)가 제목 역할을 하므로 자체 헤딩은 생략
-        limitPerCategory: 3,
-        showViewAll: true,
+        columns: 2,
+        items: [
+          {
+            icon: "store",
+            title: "소상공인 지원사업",
+            body: "정부·지자체의 소상공인 대상 지원사업을 골라 안내합니다. 카드를 누르면 진행 중인 사업 목록을 볼 수 있습니다.",
+            href: "/sme-support/small-business",
+          },
+          {
+            icon: "flask",
+            title: "R&D 지원사업",
+            body: "기술 개발·신제품을 위한 R&D 자금 지원사업을 안내합니다. 카드를 누르면 진행 중인 사업 목록을 볼 수 있습니다.",
+            href: "/sme-support/rnd",
+          },
+        ],
       },
     },
     {
@@ -801,8 +814,32 @@ export const SEED_SME_SUPPORT: PageDoc = {
       },
     },
     {
-      id: "sme-howto",
+      // 진입 카드 2개 — 카테고리별 리스트 페이지로 연결 (AI TOOL 소개 구조)
+      id: "sme-categories",
       order: 2,
+      visible: true,
+      type: "cards",
+      data: {
+        columns: 2,
+        items: [
+          {
+            icon: "store",
+            title: "소상공인 지원사업",
+            body: "정부·지자체의 소상공인 대상 지원사업을 골라 안내합니다. 카드를 누르면 진행 중인 사업 목록을 볼 수 있습니다.",
+            href: "/sme-support/small-business",
+          },
+          {
+            icon: "flask",
+            title: "R&D 지원사업",
+            body: "기술 개발·신제품을 위한 R&D 자금 지원사업을 안내합니다. 카드를 누르면 진행 중인 사업 목록을 볼 수 있습니다.",
+            href: "/sme-support/rnd",
+          },
+        ],
+      },
+    },
+    {
+      id: "sme-howto",
+      order: 3,
       visible: true,
       type: "cards",
       data: {
@@ -862,7 +899,7 @@ export const SEED_SME_SMALL: PageDoc = {
       data: {
         category: "small-business",
         heading: "진행 중인 소상공인 지원사업",
-        description: "노출 중인 사업만 표시됩니다. 카드를 누르면 상세 안내를 볼 수 있습니다.",
+        description: "노출 중인 사업만 표시됩니다. 카드를 누르면 해당 지원사업 사이트로 이동합니다.",
       },
     },
     {
@@ -909,7 +946,7 @@ export const SEED_SME_RND: PageDoc = {
       data: {
         category: "rnd",
         heading: "진행 중인 R&D 지원사업",
-        description: "노출 중인 사업만 표시됩니다. 카드를 누르면 상세 안내를 볼 수 있습니다.",
+        description: "노출 중인 사업만 표시됩니다. 카드를 누르면 해당 지원사업 사이트로 이동합니다.",
       },
     },
     {

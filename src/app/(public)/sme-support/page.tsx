@@ -1,17 +1,14 @@
 import LivePageRenderer from "@/components/sections/LivePageRenderer";
 import { loadPage } from "@/lib/page-loader";
-import SmeSupportList from "./SmeSupportList";
 
+// 중소기업 지원사업 허브 — 카테고리 진입 카드 2개(소상공인·R&D)는 CMS 섹션으로 구성.
+// 개별 사업 리스트는 카테고리 페이지(/sme-support/small-business·rnd)에서 노출한다.
 export default async function SmeSupportPage() {
   const page = await loadPage("sme-support");
   return (
-    <>
-      <LivePageRenderer pageKey="sme-support" initialSections={page?.sections ?? []} />
-      <section className="py-16 sm:py-20 bg-slate-50">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <SmeSupportList />
-        </div>
-      </section>
-    </>
+    <LivePageRenderer
+      pageKey="sme-support"
+      initialSections={page?.sections ?? []}
+    />
   );
 }

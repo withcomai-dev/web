@@ -34,6 +34,8 @@ const ICON_OPTIONS = [
   "cloud",
   "database",
   "settings",
+  "store",
+  "flask",
 ];
 
 const BG_OPTIONS = ["blue", "slate", "rose", "emerald"];

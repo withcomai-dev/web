@@ -280,7 +280,7 @@ function SmeEditor({
               minHeight={280}
             />
           </Field>
-          <Field label="신청 URL">
+          <Field label="지원사업 사이트 URL (카드 클릭 시 이동)">
             <input
               type="url"
               value={form.applyUrl ?? ""}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, ExternalLink } from "lucide-react";
 import { COLLECTIONS, getCollection } from "@/lib/firestore";
 import {
   SME_CATEGORY_LABELS,
@@ -20,6 +20,10 @@ function sortByOrder(list: SmeSupportDoc[]): SmeSupportDoc[] {
 }
 
 function SmeCard({ item }: { item: SmeSupportDoc }) {
+  // 지원사업 사이트 URL이 있으면 카드(썸네일) 클릭 시 외부 사이트로 새 탭 이동,
+  // 없으면 기존 내부 상세 페이지로 폴백
+  const external = !!item.applyUrl && /^https?:\/\//.test(item.applyUrl);
+
   const inner = (
     <>
       <div className="aspect-[16/10] overflow-hidden bg-slate-100">
@@ -53,7 +57,15 @@ function SmeCard({ item }: { item: SmeSupportDoc }) {
             <span />
           )}
           <span className="inline-flex items-center gap-1 font-semibold text-blue-600 group-hover:gap-2 transition-all">
-            자세히 보기 <ArrowRight className="w-4 h-4" />
+            {external ? (
+              <>
+                사이트 바로가기 <ExternalLink className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                자세히 보기 <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </span>
         </div>
       </div>
@@ -63,7 +75,18 @@ function SmeCard({ item }: { item: SmeSupportDoc }) {
   const cardClass =
     "group flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 hover:shadow-lg transition-shadow";
 
-  // 카드 클릭 → 상세 페이지 (신청 링크는 상세 페이지 안에서 제공)
+  if (external) {
+    return (
+      <a
+        href={item.applyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cardClass}
+      >
+        {inner}
+      </a>
+    );
+  }
   return (
     <Link href={`/sme-support/view?id=${item.id}`} className={cardClass}>
       {inner}

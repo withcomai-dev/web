@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Send, Loader2, Check, Paperclip, X, LogIn, Lock } from "lucide-react";
 import { INQUIRY_TYPES } from "@/lib/constants";
 import { uploadInquiryAttachment } from "@/lib/storage-upload";
-import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
+import { isRunmoaLoggedIn, getRunmoaUser } from "@/lib/runmoa-session";
 import { startRunmoa } from "@/lib/runmoa-auth";
 import { auth } from "@/lib/firebase";
 
@@ -33,10 +33,31 @@ export default function InquiryForm() {
   // 로그인 상태(null=확인 전) + 로그인 요구 모달
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  // 로그인 사용자 이름 (자동 입력 안내문에 표시)
+  const [userName, setUserName] = useState<string>("");
 
-  // 마운트 시: 로그인 상태 확인 + 보관해 둔 작성 내용 복원
+  // 마운트 시: 로그인 상태 확인 + 로그인 정보 자동 입력 + 보관해 둔 작성 내용 복원
   useEffect(() => {
-    setLoggedIn(isRunmoaLoggedIn());
+    const isIn = isRunmoaLoggedIn();
+    setLoggedIn(isIn);
+
+    // 1) 로그인 사용자 정보로 성함·연락처·이메일 자동 입력 (빈 값은 채우지 않음)
+    let prefill: Partial<typeof form> = {};
+    if (isIn) {
+      const u = getRunmoaUser();
+      if (u) {
+        setUserName(u.user_name ?? "");
+        prefill = {
+          ...(u.user_name ? { name: u.user_name } : {}),
+          ...(u.user_phone ? { phone: u.user_phone } : {}),
+          ...(u.user_email ? { email: u.user_email } : {}),
+        };
+      }
+    }
+
+    // 2) 보관해 둔 작성 내용(draft) 복원 — 직접 작성한 값이 자동 입력보다 우선
+    let draftForm: Partial<typeof form> = {};
+    let draftAtts: { url: string; name: string; size: number }[] | null = null;
     try {
       const raw = sessionStorage.getItem(DRAFT_KEY);
       if (raw) {
@@ -44,12 +65,19 @@ export default function InquiryForm() {
           form?: Partial<typeof form>;
           attachments?: { url: string; name: string; size: number }[];
         };
-        if (d.form) setForm((s) => ({ ...s, ...d.form }));
-        if (Array.isArray(d.attachments)) setAttachments(d.attachments);
+        if (d.form) draftForm = d.form;
+        if (Array.isArray(d.attachments)) draftAtts = d.attachments;
       }
     } catch {
       // 복원 실패는 무시 (새로 작성)
     }
+    // draft의 빈 문자열 값은 제거 — 자동 입력값을 덮어쓰지 않도록
+    const draftNonEmpty = Object.fromEntries(
+      Object.entries(draftForm).filter(([, v]) => v !== undefined && v !== ""),
+    );
+
+    setForm((s) => ({ ...s, ...prefill, ...draftNonEmpty }));
+    if (draftAtts) setAttachments(draftAtts);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -196,6 +224,17 @@ export default function InquiryForm() {
           >
             <LogIn className="w-4 h-4" /> 간편 로그인
           </button>
+        </div>
+      )}
+
+      {/* 로그인 시 — 회원 정보 자동 입력 안내 */}
+      {loggedIn === true && (
+        <div className="mb-6 flex items-start gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+          <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" />
+          <p className="text-sm text-emerald-900 leading-relaxed">
+            {userName ? `${userName}님의 정보로 ` : "로그인 정보로 "}
+            성함·연락처·이메일을 자동 입력했습니다. 필요하면 수정해 주세요.
+          </p>
         </div>
       )}
 

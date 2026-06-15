@@ -16,6 +16,12 @@
 
 -->
 
+## 2026-06-15 | 배포자 | 커스텀 도메인 추가/삭제는 legacy domains API 불가 → customDomains API
+- **패턴**: `DELETE .../sites/{site}/domains/{domain}`(legacy)는 500 "Domains deletion approach ... not supported"로 실패.
+- **차단 방법**: `DELETE .../projects/{projectNumber}/sites/{site}/customDomains/{domain}?allowMissing=true`(삭제) / `POST .../customDomains?customDomainId={domain}` body `{}`(추가). 추가 후 `GET .../customDomains/{domain}`의 `requiredDnsUpdates.desired`에서 필요 레코드 산출. customDomains 경로는 `projects/-`가 아닌 **projectNumber(345857326079)** 필요.
+- **이 프로젝트 apex DNS**: A=199.36.158.100(단일) + TXT `hosting-site=withcomai-web`, www는 CNAME→withcomai-web.web.app.
+- **만료**: 2026-07-15
+
 ## 2026-06-11 | 테스터 | E2E 셀렉터: `has-text` 부분일치가 헤더 드롭다운·푸터 동명 링크를 오염 매칭
 - **패턴**: `a:has-text("공식 쇼핑몰")` 같은 전역 로케이터가 GNB 드롭다운의 "공식 쇼핑몰 바로가기"(visibility:hidden — boundingBox는 반환됨)나 푸터 링크를 first()로 잡아 위양성/위음성 발생. 모바일에선 데스크톱용 숨김 버튼(`hidden lg:flex` 내부)이 매칭돼 click 타임아웃.
 - **차단 방법**: 항상 섹션 스코프(`section:has(...)`) 또는 `:visible` 한정으로 매칭. nav 검증은 `page.locator('nav')` 범위 한정.

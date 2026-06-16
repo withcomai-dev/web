@@ -2,6 +2,22 @@
 
 > Append-only. 최신 블록이 위에 오도록 추가.
 
+## [2026-06-16] 도메인 전환 완료 — withcom.co.kr + www
+
+### 완료
+- mall.withcom.co.kr 삭제(Firebase customDomains 분리 — 사용자 다른 용도)
+- withcom.co.kr(apex: A 199.36.158.100 + TXT hosting-site=withcomai-web) + www.withcom.co.kr(A+TXT, 기존 깃허브 CNAME 삭제) 연결 → SSL 발급 완료
+- 헤더·푸터 로고 링크 mall.withcom.co.kr → 내부 홈(/)
+- 문의 폼 로그인 자동입력(런모아 user_name/phone/email, draft 우선)
+
+### 핵심 교훈 (active-lessons 기록)
+- own/host/cert 전부 ACTIVE인데 "Site Not Found" → `firebase deploy --only hosting` 재배포로 release를 새 도메인에 재바인딩 (apex 해결책)
+- 커스텀 도메인 추가/삭제는 legacy domains API(500) 불가 → customDomains API(projectNumber 경로)
+- uhost DNS 전파 느림·ns1 불안정 — apex/www 모두 A+TXT 방식이 CNAME보다 안정
+
+### 잔여 (사용자 작업)
+- 런모아 콘솔 redirect_uri 등록: https://withcom.co.kr/auth/callback, https://www.withcom.co.kr/auth/callback
+
 ## [2026-06-12 12:50] 지원사업 구조 개편 완료 — AI TOOL 소개식
 
 ### 현재 진행

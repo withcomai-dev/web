@@ -16,6 +16,11 @@
 
 -->
 
+## 2026-06-15 | 배포자 | 커스텀 도메인 검증 전부 ACTIVE인데 "Site Not Found" → `firebase deploy --only hosting` 재배포
+- **패턴**: customDomain이 ownership/host/cert 모두 ACTIVE인데도 실제 접속 시 Firebase "Site Not Found"(404). web.app는 정상. 엣지 전파 지연으로 오판하기 쉬우나 30분+ 지속.
+- **원인/차단**: Firebase Hosting이 새 커스텀 도메인에 현재 release를 바인딩하지 않은 상태. `firebase deploy --only hosting`로 release를 다시 내면 모든 연결 도메인에 즉시 적용되어 해결(이 프로젝트는 rewrites만 있는 hosting이라 비파괴적). 사용자 브라우저엔 이전 404가 캐시될 수 있으니 강력 새로고침 안내.
+- **만료**: 2026-07-15
+
 ## 2026-06-15 | 배포자 | 커스텀 도메인 추가/삭제는 legacy domains API 불가 → customDomains API
 - **패턴**: `DELETE .../sites/{site}/domains/{domain}`(legacy)는 500 "Domains deletion approach ... not supported"로 실패.
 - **차단 방법**: `DELETE .../projects/{projectNumber}/sites/{site}/customDomains/{domain}?allowMissing=true`(삭제) / `POST .../customDomains?customDomainId={domain}` body `{}`(추가). 추가 후 `GET .../customDomains/{domain}`의 `requiredDnsUpdates.desired`에서 필요 레코드 산출. customDomains 경로는 `projects/-`가 아닌 **projectNumber(345857326079)** 필요.

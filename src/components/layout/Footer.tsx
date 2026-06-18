@@ -16,19 +16,6 @@ export default function Footer() {
                   className="h-[31px] w-auto"
                 />
               </Link>
-              <a
-                href="https://withuspc.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WITHUS 홈페이지"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/withus_logo_002.png"
-                  alt="WITHUS COMPUTER"
-                  className="h-10 w-auto"
-                />
-              </a>
             </div>
             <p className="text-gray-400 max-w-md mb-6 leading-relaxed">
               우리는 중소기업이 디지털 시대의 변화에 발맞춰 성장할 수 있도록 돕는 든든한 IT
@@ -49,6 +36,16 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link href="/about" className="hover:text-blue-400 transition-colors">
+                  회사 소개
+                </Link>
+              </li>
+              <li>
+                <Link href="/notice" className="hover:text-blue-400 transition-colors">
+                  공지사항
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

@@ -35,6 +35,8 @@ export default function InquiryForm() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   // 로그인 사용자 이름 (자동 입력 안내문에 표시)
   const [userName, setUserName] = useState<string>("");
+  // 개인정보 수집·이용 동의 (필수) — 제출 시마다 새로 동의받는다(draft에 보관하지 않음)
+  const [agreed, setAgreed] = useState(false);
 
   // 마운트 시: 로그인 상태 확인 + 로그인 정보 자동 입력 + 보관해 둔 작성 내용 복원
   useEffect(() => {
@@ -138,6 +140,12 @@ export default function InquiryForm() {
     e?.preventDefault();
     if (phase === "submitting") return;
 
+    // 개인정보 수집·이용 동의 필수 — 미동의 시 제출 차단
+    if (!agreed) {
+      setErrMsg("개인정보 수집·이용에 동의해 주세요.");
+      return;
+    }
+
     // 로그인 필수: 비로그인 시 내용을 보관하고 로그인 안내 모달
     if (!isRunmoaLoggedIn()) {
       saveDraft();
@@ -189,6 +197,7 @@ export default function InquiryForm() {
         message: "",
       });
       setAttachments([]);
+      setAgreed(false);
     } catch (err) {
       setErrMsg(err instanceof Error ? err.message : "전송 실패");
       setPhase("error");
@@ -350,6 +359,36 @@ export default function InquiryForm() {
               </button>
             </div>
           ))}
+        </div>
+      </div>
+      {/* 개인정보 수집·이용 동의 (필수) */}
+      <div className="md:col-span-2">
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <p className="mb-2 text-sm font-semibold text-gray-800">
+            개인정보 수집·이용 동의 <span className="text-rose-500">(필수)</span>
+          </p>
+          <ul className="mb-3 space-y-0.5 text-xs leading-relaxed text-gray-500">
+            <li>· 수집 항목: 성함, 연락처, 이메일, 회사명(선택)</li>
+            <li>· 이용 목적: 문의 접수 및 답변, 상담 진행</li>
+            <li>· 보유·이용 기간: 문의 처리 완료 후 1년(관련 법령에 따라 보관)</li>
+          </ul>
+          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => {
+                setAgreed(e.target.checked);
+                if (e.target.checked) setErrMsg(null);
+              }}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span>
+              위 개인정보 수집·이용에 동의합니다.{" "}
+              <span className="text-gray-400">
+                (동의를 거부할 수 있으나, 거부 시 문의 접수가 제한됩니다.)
+              </span>
+            </span>
+          </label>
         </div>
       </div>
       {errMsg && (

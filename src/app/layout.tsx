@@ -2,17 +2,75 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import DevBypassBanner from "@/components/DevBypassBanner";
-import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
+import { SITE_NAME, SITE_TAGLINE, COMPANY } from "@/lib/constants";
+
+/** 사이트 공식 도메인 — OG/canonical 절대경로 기준 */
+const SITE_URL = "https://withcom.co.kr";
+
+/** 검색엔진 소유확인 코드 (Google Search Console / 네이버 서치어드바이저) */
+const GOOGLE_SITE_VERIFICATION = "OojlUOJgtLlh5X5fAj73rayfTIMgNO9giT6HNIUhmKI";
+const NAVER_SITE_VERIFICATION = "d4f51386e3b6822b581cc5b758fe0472909ce711";
+
+const SITE_DESCRIPTION =
+  "WITHCOM AI는 스마트워크 및 생성형 AI 정보 제공, 비즈니스 자동화, IT 시스템 개발·공급, 웹사이트 제작을 지원하는 중소기업 IT 파트너입니다.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: { default: `${SITE_NAME} | ${SITE_TAGLINE}`, template: `%s | ${SITE_NAME}` },
-  description: SITE_TAGLINE,
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "AI 솔루션",
+    "스마트워크",
+    "생성형 AI",
+    "IT 시스템 개발",
+    "비즈니스 자동화",
+    "웹사이트 제작",
+    "소프트웨어 공급",
+    "중소기업 IT",
+    "위드컴",
+    "WITHCOM AI",
+  ],
+  alternates: { canonical: "/" },
   openGraph: {
     title: `${SITE_NAME} | ${SITE_TAGLINE}`,
-    description: SITE_TAGLINE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     type: "website",
     locale: "ko_KR",
+    images: [{ url: "/withcomai_01_color.png", alt: SITE_NAME }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    images: ["/withcomai_01_color.png"],
+  },
+  verification: {
+    google: GOOGLE_SITE_VERIFICATION,
+    other: { "naver-site-verification": NAVER_SITE_VERIFICATION },
+  },
+};
+
+/** 검색엔진 구조화 데이터 (schema.org Organization) */
+const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE_NAME,
+  alternateName: "위드컴정보",
+  url: SITE_URL,
+  logo: `${SITE_URL}/withcomai_01_color.png`,
+  description: SITE_DESCRIPTION,
+  email: COMPANY.email,
+  telephone: COMPANY.phone,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: COMPANY.address,
+    addressLocality: "동작구",
+    addressRegion: "서울특별시",
+    addressCountry: "KR",
+  },
+  sameAs: [COMPANY.blogUrl, COMPANY.youtubeUrl, "https://withuspc.com"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +80,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
         />
       </head>
       <body className="bg-white text-slate-900 antialiased">

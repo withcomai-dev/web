@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, LogIn, LogOut, Search } from "lucide-react";
+import { Menu, X, LogIn, User, Search } from "lucide-react";
 import SearchOverlay from "@/components/layout/SearchOverlay";
 import { NAV_ITEMS, type NavItem } from "@/lib/constants";
 import {
@@ -13,7 +13,6 @@ import {
 import type { GlobalSettings } from "@/types/cms";
 import { startRunmoa } from "@/lib/runmoa-auth";
 import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
-import { fullLogout } from "@/lib/logout";
 import { cn } from "@/lib/utils";
 
 /** 외부 링크는 새 탭, 내부 링크는 Next Link로 렌더링 */
@@ -75,12 +74,6 @@ export default function Nav() {
   useEffect(() => {
     setLoggedIn(isRunmoaLoggedIn());
   }, []);
-
-  const handleLogout = () => {
-    setOpen(false);
-    // 런모아·Firebase·모든 저장소 정리 후 로그인 화면으로 이동(페이지 리로드).
-    void fullLogout();
-  };
 
   useEffect(() => {
     void (async () => {
@@ -188,13 +181,12 @@ export default function Nav() {
                 <Search className="w-5 h-5" />
               </button>
               {loggedIn ? (
-                <button
-                  type="button"
-                  onClick={handleLogout}
+                <Link
+                  href="/mypage"
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                 >
-                  <LogOut className="w-4 h-4" /> 로그아웃
-                </button>
+                  <User className="w-4 h-4" /> 마이페이지
+                </Link>
               ) : (
                 <button
                   type="button"
@@ -267,13 +259,13 @@ export default function Nav() {
             {/* 인증: 런모아 로그인/회원가입 (모바일) */}
             <div className="pt-2 mt-2 border-t border-gray-100 space-y-2">
               {loggedIn ? (
-                <button
-                  type="button"
-                  onClick={handleLogout}
+                <Link
+                  href="/mypage"
+                  onClick={() => setOpen(false)}
                   className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-base font-medium text-gray-700 border border-gray-200 hover:bg-gray-50"
                 >
-                  <LogOut className="w-5 h-5" /> 로그아웃
-                </button>
+                  <User className="w-5 h-5" /> 마이페이지
+                </Link>
               ) : (
                 <button
                   type="button"

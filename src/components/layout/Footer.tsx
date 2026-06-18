@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { COMPANY, NAV_ITEMS, SITE_NAME } from "@/lib/constants";
+import FooterAuthLink from "@/components/layout/FooterAuthLink";
 
 export default function Footer() {
   return (
@@ -106,7 +107,7 @@ export default function Footer() {
           <div className="flex gap-6">
             {/* <Link href="/help" className="hover:text-gray-300">도움말</Link> */}
             <Link href="/contact" className="hover:text-gray-300">문의</Link>
-            <Link href="/login" className="hover:text-gray-300">로그인</Link>
+            <FooterAuthLink />
           </div>
         </div>
       </div>

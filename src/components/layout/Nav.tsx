@@ -99,9 +99,9 @@ export default function Nav() {
             <Link href="/" aria-label="WITHCOM AI 홈페이지" className="shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/withcomai_01_color.png"
+                src="/withcomai_header.png"
                 alt="WITHCOM AI"
-                className="h-[25px] sm:h-[31px] w-auto"
+                className="h-[28px] sm:h-[34px] w-auto"
               />
             </Link>
             <a

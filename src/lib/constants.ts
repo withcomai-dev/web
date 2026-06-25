@@ -10,7 +10,7 @@ export const COMPANY = {
   address: "서울특별시 동작구 여의대방로 28, 103동 903호 (신대방동, 현대아파트)",
   phone: "02-841-7241",
   email: "withcomai@gmail.com",
-  shopUrl: "https://withcom.runmoa.com",
+  shopUrl: "https://mall.withcom.co.kr",
   remoteSupportUrl: "http://15663669.co.kr/start",
   youtubeUrl:
     "https://www.youtube.com/@%EC%9C%84%EB%8D%94%EC%8A%A4%EC%BB%B4%ED%93%A8%ED%84%B0%EC%A3%BC",
@@ -98,7 +98,7 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "상담 신청하기", href: "/contact" },
       {
         label: "공식 쇼핑몰 바로가기",
-        href: "https://withcom.runmoa.com/",
+        href: "https://mall.withcom.co.kr",
         external: true,
       },
     ],

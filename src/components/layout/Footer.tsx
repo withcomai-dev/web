@@ -12,9 +12,9 @@ export default function Footer() {
               <Link href="/" aria-label="WITHCOM AI 홈페이지">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/withcomai_02_white.png"
+                  src="/withcomai_footer.png"
                   alt="WITHCOM AI"
-                  className="h-[31px] w-auto"
+                  className="h-[34px] w-auto"
                 />
               </Link>
             </div>

@@ -352,7 +352,7 @@ export const SEED_HOME: PageDoc = {
             icon: "shopping-bag",
             title: "공식 쇼핑몰",
             body: "비즈니스에 필요한 IT 하드웨어 및 소프트웨어",
-            href: "https://withcom.runmoa.com",
+            href: "https://mall.withcom.co.kr",
             external: true,
             bg: "blue",
             ctaLabel: "바로가기",

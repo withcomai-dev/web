@@ -7,6 +7,8 @@ import { COLLECTIONS, getCollection } from "@/lib/firestore";
 import type { NoticeDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
 import { PageBanner } from "@/components/sections/HeroSection";
+import { useAuth } from "@/contexts/AuthContext";
+import { canViewContent } from "@/lib/grades";
 
 /** 고정 공지 먼저, 그다음 게시일 내림차순 */
 function sortNotices(list: NoticeDoc[]): NoticeDoc[] {
@@ -19,6 +21,7 @@ function sortNotices(list: NoticeDoc[]): NoticeDoc[] {
 export default function NoticePage() {
   const [items, setItems] = useState<NoticeDoc[]>([]);
   const [loading, setLoading] = useState(true);
+  const { profile, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
     let alive = true;
@@ -40,6 +43,13 @@ export default function NoticePage() {
     };
   }, []);
 
+  // 등급별 노출 필터 (요청 20260701 권한확장) — 로딩 중엔 전체(fail-open)
+  const visible = authLoading
+    ? items
+    : items.filter((it) =>
+        canViewContent(it.allowedGrades, profile?.grade, isAdmin),
+      );
+
   return (
     <>
       <PageBanner
@@ -53,13 +63,13 @@ export default function NoticePage() {
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
             </div>
-          ) : items.length === 0 ? (
+          ) : visible.length === 0 ? (
             <p className="text-center text-gray-500 py-20">
               등록된 공지사항이 없습니다.
             </p>
           ) : (
             <ul className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100 overflow-hidden">
-              {items.map((it) => (
+              {visible.map((it) => (
                 <li key={it.id}>
                   <Link
                     href={`/notice/view?id=${it.id}`}

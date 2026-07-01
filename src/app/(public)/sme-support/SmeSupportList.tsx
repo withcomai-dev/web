@@ -9,6 +9,8 @@ import {
   SME_CATEGORY_ORDER,
 } from "@/lib/constants";
 import type { SmeSupportDoc, SmeCategory } from "@/types/cms";
+import { useAuth } from "@/contexts/AuthContext";
+import { canViewContent } from "@/lib/grades";
 
 function sortByOrder(list: SmeSupportDoc[]): SmeSupportDoc[] {
   return [...list].sort((a, b) => {
@@ -121,6 +123,7 @@ export default function SmeSupportList({
 } = {}) {
   const [items, setItems] = useState<SmeSupportDoc[]>([]);
   const [loading, setLoading] = useState(true);
+  const { profile, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
     let alive = true;
@@ -187,13 +190,20 @@ export default function SmeSupportList({
     );
   }
 
+  // 등급별 노출 필터 (요청 20260701 권한확장) — 로딩 중엔 전체(fail-open)
+  const visibleItems = authLoading
+    ? items
+    : items.filter((i) =>
+        canViewContent(i.allowedGrades, profile?.grade, isAdmin),
+      );
+
   // category 지정 시 해당 카테고리만 대상으로 한다 (카테고리 전용 페이지)
   const targetCategories = category ? [category] : SME_CATEGORY_ORDER;
 
   const grouped: { category: SmeCategory; list: SmeSupportDoc[] }[] =
     targetCategories.map((cat) => {
       let list = sortByOrder(
-        items.filter((i) => (i.category ?? "small-business") === cat),
+        visibleItems.filter((i) => (i.category ?? "small-business") === cat),
       );
       if (limitPerCategory) list = list.slice(0, limitPerCategory);
       return { category: cat, list };

@@ -16,6 +16,7 @@ import {
   AdminPageHeader,
 } from "@/components/admin/AdminTableShell";
 import RichEditor from "@/components/admin/RichEditor";
+import GradeAccessSelect from "@/components/admin/GradeAccessSelect";
 import type { NoticeDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
 
@@ -247,6 +248,15 @@ function NoticeEditor({
                 <option value="published">게시</option>
               </select>
             </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">
+              열람 허용 등급 (회원 등급별 노출)
+            </label>
+            <GradeAccessSelect
+              value={form.allowedGrades}
+              onChange={(v) => setForm({ ...form, allowedGrades: v })}
+            />
           </div>
           <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">
             <button

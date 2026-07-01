@@ -7,11 +7,15 @@ import { COLLECTIONS, getDocById } from "@/lib/firestore";
 import { SME_CATEGORY_LABELS } from "@/lib/constants";
 import type { SmeSupportDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { canViewContent } from "@/lib/grades";
+import AccessDenied from "@/components/sections/AccessDenied";
 
 /** 중소기업 지원사업 상세 — /sme-support/view?id={문서ID} */
 export default function SmeSupportViewPage() {
   const [item, setItem] = useState<SmeSupportDoc | null>(null);
   const [loading, setLoading] = useState(true);
+  const { profile, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
     let alive = true;
@@ -61,6 +65,11 @@ export default function SmeSupportViewPage() {
         </Link>
       </div>
     );
+  }
+
+  // 등급 게이팅 (요청 20260701 권한확장)
+  if (!authLoading && !canViewContent(item.allowedGrades, profile?.grade, isAdmin)) {
+    return <AccessDenied />;
   }
 
   return (

@@ -162,6 +162,8 @@ export interface PageDoc {
   seoDescription?: string;
   ogImage?: string;
   updatedAt?: string;
+  /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) — 요청 20260701 권한확장 */
+  allowedGrades?: string[];
 }
 
 /** 등록된 페이지 메타. 갑이 어드민에서 신규 페이지를 추가·삭제·이름변경할 수 있도록 한다. */
@@ -191,7 +193,13 @@ export interface GlobalSettings {
     label: string;
     href: string;
     external?: boolean;
-    children?: { label: string; href: string; external?: boolean }[];
+    allowedGrades?: string[];
+    children?: {
+      label: string;
+      href: string;
+      external?: boolean;
+      allowedGrades?: string[];
+    }[];
   }[];
   footerText?: string;
   contactPhone?: string;
@@ -296,6 +304,8 @@ export interface NoticeDoc {
   status: ContentStatus; // published=노출 / draft=숨김
   createdAt?: string;
   updatedAt?: string;
+  /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) — 요청 20260701 권한확장 */
+  allowedGrades?: string[];
 }
 
 // ── 중소기업 지원사업 ──
@@ -313,6 +323,8 @@ export interface SmeSupportDoc {
   thumbnail?: string;
   sortOrder?: number; // 정렬 순서 (작을수록 먼저)
   status: ContentStatus; // 노출 여부 (published=노출, draft=숨김)
+  /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) — 요청 20260701 권한확장 */
+  allowedGrades?: string[];
 }
 
 // ── 도움말 ──

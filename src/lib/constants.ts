@@ -64,12 +64,20 @@ export const AI_TOOL_CATEGORY_LABELS: Record<AiToolCategory, string> =
     AI_TOOL_CATEGORIES.map((c) => [c.slug, c.label]),
   ) as Record<AiToolCategory, string>;
 
-export type NavChild = { label: string; href: string; external?: boolean };
+export type NavChild = {
+  label: string;
+  href: string;
+  external?: boolean;
+  /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) — 요청 20260701 권한확장 */
+  allowedGrades?: string[];
+};
 export type NavItem = {
   label: string;
   href: string;
   external?: boolean;
   children?: NavChild[];
+  /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) */
+  allowedGrades?: string[];
 };
 
 export const NAV_ITEMS: NavItem[] = [

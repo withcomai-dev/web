@@ -6,11 +6,15 @@ import { Loader2, Pin } from "lucide-react";
 import { COLLECTIONS, getDocById } from "@/lib/firestore";
 import type { NoticeDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { canViewContent } from "@/lib/grades";
+import AccessDenied from "@/components/sections/AccessDenied";
 
 /** 공지사항 상세 — /notice/view?id={문서ID} */
 export default function NoticeViewPage() {
   const [item, setItem] = useState<NoticeDoc | null>(null);
   const [loading, setLoading] = useState(true);
+  const { profile, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
     let alive = true;
@@ -60,6 +64,11 @@ export default function NoticeViewPage() {
         </Link>
       </div>
     );
+  }
+
+  // 등급 게이팅 (요청 20260701 권한확장)
+  if (!authLoading && !canViewContent(item.allowedGrades, profile?.grade, isAdmin)) {
+    return <AccessDenied />;
   }
 
   return (

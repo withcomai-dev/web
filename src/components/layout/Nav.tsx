@@ -24,6 +24,8 @@ import {
 } from "@/lib/firestore";
 import type { GlobalSettings } from "@/types/cms";
 import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
+import { useAuth } from "@/contexts/AuthContext";
+import { canViewContent } from "@/lib/grades";
 import { cn } from "@/lib/utils";
 
 /** 상단 메뉴 라벨 → 아이콘 매핑 (요청 20260701: 아이콘+텍스트 버튼) */
@@ -78,6 +80,7 @@ export default function Nav() {
   // 통합 검색 오버레이
   const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
+  const { profile, isAdmin, loading: authLoading } = useAuth();
 
   // Cmd/Ctrl + K 로도 검색 열기
   useEffect(() => {
@@ -112,6 +115,16 @@ export default function Nav() {
     })();
   }, []);
 
+  // 등급별 메뉴 필터 (요청 20260701 권한확장) — 로딩 중엔 전체 노출(fail-open), 어드민 전체 노출
+  const canSee = (allowedGrades?: string[]) =>
+    authLoading || canViewContent(allowedGrades, profile?.grade, isAdmin);
+  const visibleNav = navItems
+    .filter((item) => canSee(item.allowedGrades))
+    .map((item) => ({
+      ...item,
+      children: item.children?.filter((c) => canSee(c.allowedGrades)),
+    }));
+
   return (
     <nav className="fixed w-full z-40 bg-white/95 backdrop-blur shadow-sm py-2">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -143,7 +156,7 @@ export default function Nav() {
 
           {/* 데스크톱: 마우스 오버 시에만 드롭다운 (클릭하면 닫힘, 토글 아이콘 없음) */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navItems.map((item) => {
+            {visibleNav.map((item) => {
               const hasChildren = !!(item.children && item.children.length > 0);
               const isOpen = openMenu === item.label;
               const Icon = MENU_ICONS[item.label];
@@ -250,7 +263,7 @@ export default function Nav() {
       {open && (
         <div className="lg:hidden border-t border-gray-100 bg-white max-h-[calc(100vh-5rem)] overflow-y-auto">
           <div className="px-4 py-2 space-y-1">
-            {navItems.map((item) => {
+            {visibleNav.map((item) => {
               const hasChildren = !!(item.children && item.children.length > 0);
               return (
                 <div key={item.label}>

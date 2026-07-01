@@ -44,6 +44,7 @@ import { cn } from "@/lib/utils";
 import RichEditor from "@/components/admin/RichEditor";
 import ImageUploader from "@/components/admin/ImageUploader";
 import SectionItemsEditor from "@/components/admin/SectionItemsEditor";
+import GradeAccessSelect from "@/components/admin/GradeAccessSelect";
 
 // PAGE_KEYS는 더 이상 하드코딩하지 않습니다 — Firestore page-registry에서 로드.
 
@@ -206,6 +207,7 @@ export default function AdminPagesEditor() {
         sections: page.sections,
         seoTitle: page.seoTitle ?? "",
         seoDescription: page.seoDescription ?? "",
+        allowedGrades: page.allowedGrades ?? [],
       });
       setSavedAt(Date.now());
       setTimeout(() => setSavedAt(null), 2500);
@@ -451,6 +453,21 @@ export default function AdminPagesEditor() {
           onClose={() => setPageOps("none")}
           onSubmit={handleRenamePage}
         />
+      )}
+
+      {page && (
+        <div className="bg-white rounded-xl border border-gray-100 p-4 mb-4 max-w-2xl">
+          <label className="block text-sm font-bold text-gray-800 mb-2">
+            페이지 접근 등급{" "}
+            <span className="font-normal text-gray-400">
+              (선택한 등급만 열람 · 미선택=전체공개 · 관리자 항상 열람)
+            </span>
+          </label>
+          <GradeAccessSelect
+            value={page.allowedGrades}
+            onChange={(v) => setPage({ ...page, allowedGrades: v })}
+          />
+        </div>
       )}
 
       {page && (
@@ -847,9 +864,10 @@ function SectionForm({
               }
               className="w-full px-3 py-2 rounded border border-gray-200 text-sm"
             >
-              <option value="">전체 (소상공인 + R&D)</option>
+              <option value="">전체 (소상공인 + R&D + 진행중)</option>
               <option value="small-business">소상공인 지원사업만</option>
               <option value="rnd">R&D 지원사업만</option>
+              <option value="ongoing">진행중인 지원사업 소개만</option>
             </select>
           </div>
           <Input

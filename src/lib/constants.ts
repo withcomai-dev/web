@@ -139,6 +139,7 @@ export const ADMIN_NAV_ITEMS = [
   { label: "문의", href: "/admin/inquiries", icon: "mail" },
   { label: "관리자 권한", href: "/admin/users", icon: "users" },
   { label: "회원", href: "/admin/members", icon: "user-check" },
+  { label: "회원 등급", href: "/admin/grades", icon: "award" },
   // { label: "도움말", href: "/admin/help", icon: "help-circle" },
   // { label: "버그 신고", href: "/admin/feedback", icon: "bug" },
   { label: "활동 로그", href: "/admin/audit", icon: "activity" },

@@ -17,6 +17,8 @@ import {
   type ContentSort,
   type ListView,
 } from "@/components/sections/ListToolbar";
+import { useAuth } from "@/contexts/AuthContext";
+import { canViewContent } from "@/lib/grades";
 
 export default function ContentsPage() {
   const [items, setItems] = useState<ContentDoc[]>([]);
@@ -25,6 +27,8 @@ export default function ContentsPage() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<ContentSort>("latest");
   const [view, setView] = useState<ListView>("grid");
+  // 회원 등급 게이팅 (요청 20260701 #8) — 로딩 중엔 필터 생략(fail-open)
+  const { profile, isAdmin, loading: authLoading } = useAuth();
 
   useEffect(() => {
     let alive = true;
@@ -51,8 +55,13 @@ export default function ContentsPage() {
     };
   }, []);
 
-  // 검색·정렬 적용. 최신순일 때는 고정(pinned) 글을 항상 먼저.
-  const base = processList(items, query, sort);
+  // 등급 게이팅 → 검색·정렬. 최신순일 때는 고정(pinned) 글을 항상 먼저.
+  const visible = authLoading
+    ? items
+    : items.filter((it) =>
+        canViewContent(it.allowedGrades, profile?.grade, isAdmin),
+      );
+  const base = processList(visible, query, sort);
   const processed =
     sort === "latest"
       ? [...base].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned))

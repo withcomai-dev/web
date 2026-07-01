@@ -17,6 +17,7 @@ import {
 } from "@/components/admin/AdminTableShell";
 import RichEditor from "@/components/admin/RichEditor";
 import ImageUploader from "@/components/admin/ImageUploader";
+import GradeAccessSelect from "@/components/admin/GradeAccessSelect";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ContentDoc } from "@/types/cms";
 import { formatDate, slugify } from "@/lib/utils";
@@ -271,6 +272,12 @@ function ContentEditor({
               <b>항상 노출 (고정)</b> — 홈·목록에서 최신글보다 먼저 표시됩니다
             </span>
           </label>
+          <Field label="열람 허용 등급 (회원 등급별 노출)">
+            <GradeAccessSelect
+              value={form.allowedGrades}
+              onChange={(v) => update("allowedGrades", v)}
+            />
+          </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="상태">
               <select

@@ -17,6 +17,7 @@ import {
 } from "@/components/admin/AdminTableShell";
 import RichEditor from "@/components/admin/RichEditor";
 import ImageUploader from "@/components/admin/ImageUploader";
+import GradeAccessSelect from "@/components/admin/GradeAccessSelect";
 import { useAuth } from "@/contexts/AuthContext";
 import { AI_TOOL_CATEGORIES, AI_TOOL_CATEGORY_LABELS } from "@/lib/constants";
 import type { AiToolDoc } from "@/types/cms";
@@ -266,6 +267,12 @@ function AiToolEditor({
               <option value="draft">초안 (사이트 미노출)</option>
               <option value="published">게시 (사이트 노출)</option>
             </select>
+          </Field>
+          <Field label="열람 허용 등급 (회원 등급별 노출)">
+            <GradeAccessSelect
+              value={form.allowedGrades}
+              onChange={(v) => update("allowedGrades", v)}
+            />
           </Field>
 
           <div className="flex justify-end gap-2 pt-4 border-t border-gray-100">

@@ -213,6 +213,16 @@ export interface GlobalSettings {
 export type UserRole = "user" | "admin" | "superadmin";
 export type UserStatus = "active" | "suspended";
 
+/** 회원 등급 (요청 20260701 #8) — 런모아 등급과 무관한 자체 등급 체계 */
+export interface MemberGrade {
+  id: string;
+  label: string;
+}
+/** siteSettings/memberGrades 문서 형태 */
+export interface MemberGradesDoc {
+  grades: MemberGrade[];
+}
+
 export interface UserProfile {
   id: string;
   email: string;
@@ -224,6 +234,8 @@ export interface UserProfile {
   lastLoginAt?: string;
   /** 관리자 메모 (관리자만 작성·열람) */
   adminNote?: string;
+  /** 회원 등급 id (요청 20260701 #8) — 관리자가 지정, 런모아 등급과 무관 */
+  grade?: string;
 }
 
 // ── 콘텐츠 (블로그형 게시판) ──
@@ -244,6 +256,8 @@ export interface ContentDoc {
   authorEmail?: string;
   /** 항상 노출(고정) — 홈·목록에서 최신글보다 우선 표시 */
   pinned?: boolean;
+  /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) — 요청 20260701 #8 */
+  allowedGrades?: string[];
 }
 
 // ── AI TOOL 소개 게시판 (스마트워크&AI 페이지 6개 카드와 연결) ──
@@ -267,6 +281,8 @@ export interface AiToolDoc {
   status: ContentStatus;
   viewCount?: number;
   authorEmail?: string;
+  /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) — 요청 20260701 #8 */
+  allowedGrades?: string[];
 }
 
 // ── 공지사항 (작성은 어드민에서만 — firestore.rules write isAdmin) ──

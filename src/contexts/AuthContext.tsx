@@ -97,6 +97,8 @@ async function ensureUserProfile(fbUser: FirebaseUser): Promise<UserProfile> {
     photoURL: fbUser.photoURL ?? existing?.photoURL ?? "",
     role,
     status: existing?.status ?? "active",
+    // 회원 등급은 관리자만 지정 → 로그인 시 절대 덮어쓰지 않고 기존 값 유지 (요청 20260701 #8)
+    grade: existing?.grade,
     createdAt: existing?.createdAt,
     lastLoginAt: new Date().toISOString(),
   };

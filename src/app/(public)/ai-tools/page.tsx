@@ -15,6 +15,8 @@ import {
   type ContentSort,
   type ListView,
 } from "@/components/sections/ListToolbar";
+import { useAuth } from "@/contexts/AuthContext";
+import { canViewContent } from "@/lib/grades";
 
 const DEFAULT_CATEGORY: AiToolCategory = AI_TOOL_CATEGORIES[0].slug;
 
@@ -34,6 +36,8 @@ export default function AiToolsPage() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<ContentSort>("latest");
   const [view, setView] = useState<ListView>("grid");
+  // 회원 등급 게이팅 (요청 20260701 #8) — 로딩 중엔 필터 생략(fail-open)
+  const { profile, isAdmin, loading: authLoading } = useAuth();
 
   // URL ?cat= 에서 초기 카테고리 결정 (useSearchParams 대신 — Suspense 불필요)
   useEffect(() => {
@@ -68,7 +72,11 @@ export default function AiToolsPage() {
   };
 
   const active = AI_TOOL_CATEGORIES.find((c) => c.slug === cat) ?? AI_TOOL_CATEGORIES[0];
-  const inCategory = items.filter((d) => d.category === cat);
+  const inCategory = items.filter(
+    (d) =>
+      d.category === cat &&
+      (authLoading || canViewContent(d.allowedGrades, profile?.grade, isAdmin)),
+  );
   const processed = processList(inCategory, query, sort);
 
   return (

@@ -188,7 +188,7 @@ export default function AdminGradesPage() {
           어느 등급이 어떤 상단 메뉴·페이지를 볼 수 있는지 한눈에 설정합니다. (개별 글은
           각 글 편집 화면의 “열람 허용 등급”에서)
         </p>
-        <AccessMatrix />
+        <AccessMatrix grades={grades} />
       </div>
     </div>
   );

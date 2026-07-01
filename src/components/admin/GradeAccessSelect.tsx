@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { loadMemberGrades, gradesWithGuest } from "@/lib/grades";
+import {
+  loadMemberGrades,
+  gradesWithGuest,
+  isGradeChecked,
+  toggleGrade,
+} from "@/lib/grades";
 import type { MemberGrade } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
@@ -27,21 +32,16 @@ export default function GradeAccessSelect({
     });
   }, []);
 
-  const selected = value ?? [];
-  const toggle = (id: string) =>
-    onChange(
-      selected.includes(id)
-        ? selected.filter((x) => x !== id)
-        : [...selected, id],
-    );
-
+  // 기본 전체공개는 '전부 체크'로 표시, 체크 해제로 특정 등급 제한 (요청 20260701)
   const options = gradesWithGuest(grades);
+  const allIds = options.map((o) => o.id);
+  const toggle = (id: string) => onChange(toggleGrade(value, id, allIds));
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
         {options.map((g) => {
-          const on = selected.includes(g.id);
+          const on = isGradeChecked(value, g.id);
           return (
             <button
               key={g.id}
@@ -69,9 +69,9 @@ export default function GradeAccessSelect({
         </p>
       )}
       <p className="text-xs text-gray-400">
-        {selected.length === 0
-          ? "선택 안 함 = 전체 공개 (비회원 포함 모든 방문자에게 노출)"
-          : "선택한 등급에게만 노출됩니다. (관리자는 항상 열람)"}
+        {!value || value.length === 0
+          ? "전부 체크 = 전체 공개 (비회원 포함 전원 열람). 숨기려면 해당 등급 체크를 해제하세요"
+          : "체크한 등급에게만 노출됩니다. (관리자는 항상 열람)"}
       </p>
     </div>
   );

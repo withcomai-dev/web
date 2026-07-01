@@ -10,7 +10,7 @@ import {
   setSingletonDoc,
   updateDocFields,
 } from "@/lib/firestore";
-import { loadMemberGrades, gradesWithGuest } from "@/lib/grades";
+import { gradesWithGuest, isGradeChecked, toggleGrade } from "@/lib/grades";
 import { loadRegistry } from "@/lib/page-registry";
 import { ALL_PAGE_SEEDS } from "@/lib/seed-data";
 import type { MemberGrade, GlobalSettings, PageDoc } from "@/types/cms";
@@ -18,19 +18,13 @@ import { cn } from "@/lib/utils";
 
 type NavItems = NonNullable<GlobalSettings["navItems"]>;
 
-/** id 토글 헬퍼 */
-function toggleId(arr: string[] | undefined, id: string): string[] {
-  const a = arr ?? [];
-  return a.includes(id) ? a.filter((x) => x !== id) : [...a, id];
-}
-
 /**
- * 등급별 접근 매트릭스 (요청 20260701 권한확장 ①):
- * 행=상단 메뉴(+서브메뉴)·페이지 / 열=회원 등급. 체크한 등급만 열람.
- * 아무것도 체크 안 하면 전체공개. 관리자는 항상 열람.
+ * 등급별 접근 매트릭스 (요청 20260701):
+ * 행=상단 메뉴(+서브메뉴)·페이지 / 열=비회원(기본)+회원 등급.
+ * 기본 전체공개는 '전부 체크'로 표시하고, 체크를 해제하면 그 등급만 노출을 막는다.
+ * 등급 목록은 부모(회원 등급 페이지)에서 prop 으로 받아 추가·삭제가 즉시 반영된다.
  */
-export default function AccessMatrix() {
-  const [grades, setGrades] = useState<MemberGrade[]>([]);
+export default function AccessMatrix({ grades }: { grades: MemberGrade[] }) {
   const [nav, setNav] = useState<NavItems>([]);
   const [pages, setPages] = useState<
     { key: string; title: string; allowed: string[] }[]
@@ -43,15 +37,13 @@ export default function AccessMatrix() {
 
   useEffect(() => {
     void (async () => {
-      const [g, settings, reg] = await Promise.all([
-        loadMemberGrades(),
+      const [settings, reg] = await Promise.all([
         getSingletonDoc<GlobalSettings>(
           COLLECTIONS.SETTINGS,
           GLOBAL_SETTINGS_DOC_ID,
         ),
         loadRegistry(),
       ]);
-      setGrades(g);
       setNav(settings?.navItems ?? []);
       const pageDocs = await Promise.all(
         reg.map(async (r) => {
@@ -67,10 +59,16 @@ export default function AccessMatrix() {
     })();
   }, []);
 
+  // 컬럼 = 비회원(기본) + 정의된 회원 등급 (prop 이라 추가·삭제 즉시 반영)
+  const cols = gradesWithGuest(grades);
+  const allIds = cols.map((c) => c.id);
+
   const toggleTop = (i: number, gid: string) => {
     setNav((prev) =>
       prev.map((it, idx) =>
-        idx === i ? { ...it, allowedGrades: toggleId(it.allowedGrades, gid) } : it,
+        idx === i
+          ? { ...it, allowedGrades: toggleGrade(it.allowedGrades, gid, allIds) }
+          : it,
       ),
     );
     setNavDirty(true);
@@ -83,7 +81,7 @@ export default function AccessMatrix() {
               ...it,
               children: it.children?.map((c, cj) =>
                 cj === j
-                  ? { ...c, allowedGrades: toggleId(c.allowedGrades, gid) }
+                  ? { ...c, allowedGrades: toggleGrade(c.allowedGrades, gid, allIds) }
                   : c,
               ),
             }
@@ -95,7 +93,9 @@ export default function AccessMatrix() {
   const togglePage = (key: string, gid: string) => {
     setPages((prev) =>
       prev.map((p) =>
-        p.key === key ? { ...p, allowed: toggleId(p.allowed, gid) } : p,
+        p.key === key
+          ? { ...p, allowed: toggleGrade(p.allowed, gid, allIds) }
+          : p,
       ),
     );
     setDirtyPages((prev) => new Set(prev).add(key));
@@ -121,7 +121,6 @@ export default function AccessMatrix() {
             allowedGrades: p.allowed,
           });
         } else {
-          // Firestore 문서가 아직 없으면 시드 본문 + 등급으로 생성
           const seed = ALL_PAGE_SEEDS.find((s) => s.key === key);
           await setSingletonDoc(COLLECTIONS.SETTINGS, PAGE_DOC_ID(key), {
             key,
@@ -149,8 +148,6 @@ export default function AccessMatrix() {
       </div>
     );
 
-  // 컬럼 = 비회원(기본) + 정의된 회원 등급
-  const cols = gradesWithGuest(grades);
   const dirty = navDirty || dirtyPages.size > 0;
 
   const Cell = ({
@@ -193,7 +190,7 @@ export default function AccessMatrix() {
       )}
     >
       {children}
-      {allowed.length === 0 && (
+      {(!allowed || allowed.length === 0) && (
         <span className="ml-2 text-[11px] text-gray-400">전체공개</span>
       )}
     </td>
@@ -203,8 +200,8 @@ export default function AccessMatrix() {
     <div>
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs text-gray-500">
-          체크한 등급만 해당 메뉴·페이지를 볼 수 있습니다. 아무것도 체크하지 않으면
-          전체공개. (관리자는 항상 열람)
+          기본은 전부 체크(전체공개)입니다. 특정 등급에게 숨기려면 그 등급의 체크를
+          해제하세요. (관리자는 항상 열람)
         </p>
         <div className="flex items-center gap-2">
           {savedAt && (
@@ -262,7 +259,7 @@ export default function AccessMatrix() {
                   {cols.map((g) => (
                     <Cell
                       key={g.id}
-                      checked={(item.allowedGrades ?? []).includes(g.id)}
+                      checked={isGradeChecked(item.allowedGrades, g.id)}
                       onToggle={() => toggleTop(i, g.id)}
                     />
                   ))}
@@ -275,7 +272,7 @@ export default function AccessMatrix() {
                     {cols.map((g) => (
                       <Cell
                         key={g.id}
-                        checked={(c.allowedGrades ?? []).includes(g.id)}
+                        checked={isGradeChecked(c.allowedGrades, g.id)}
                         onToggle={() => toggleChild(i, j, g.id)}
                       />
                     ))}
@@ -298,7 +295,7 @@ export default function AccessMatrix() {
                 {cols.map((g) => (
                   <Cell
                     key={g.id}
-                    checked={p.allowed.includes(g.id)}
+                    checked={isGradeChecked(p.allowed, g.id)}
                     onToggle={() => togglePage(p.key, g.id)}
                   />
                 ))}

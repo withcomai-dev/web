@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, LogIn, User, Search } from "lucide-react";
+import { Menu, X, User, Search } from "lucide-react";
 import SearchOverlay from "@/components/layout/SearchOverlay";
 import { NAV_ITEMS, type NavItem } from "@/lib/constants";
 import {
@@ -11,7 +11,6 @@ import {
   getSingletonDoc,
 } from "@/lib/firestore";
 import type { GlobalSettings } from "@/types/cms";
-import { startRunmoa } from "@/lib/runmoa-auth";
 import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
 import { cn } from "@/lib/utils";
 
@@ -180,21 +179,14 @@ export default function Nav() {
               >
                 <Search className="w-5 h-5" />
               </button>
-              {loggedIn ? (
+              {/* 로그인 버튼은 상단에서 제거(클라이언트 요청 20260701) — 로그인은 푸터에서. 마이페이지는 로그인 시에만 노출 */}
+              {loggedIn && (
                 <Link
                   href="/mypage"
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                 >
                   <User className="w-4 h-4" /> 마이페이지
                 </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => startRunmoa("login")}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-                >
-                  <LogIn className="w-4 h-4" /> 로그인
-                </button>
               )}
             </div>
           </div>
@@ -256,9 +248,9 @@ export default function Nav() {
               );
             })}
 
-            {/* 인증: 런모아 로그인/회원가입 (모바일) */}
-            <div className="pt-2 mt-2 border-t border-gray-100 space-y-2">
-              {loggedIn ? (
+            {/* 로그인은 푸터에서 (상단 로그인 버튼 제거, 클라이언트 요청 20260701). 마이페이지는 로그인 시에만 */}
+            {loggedIn && (
+              <div className="pt-2 mt-2 border-t border-gray-100 space-y-2">
                 <Link
                   href="/mypage"
                   onClick={() => setOpen(false)}
@@ -266,19 +258,8 @@ export default function Nav() {
                 >
                   <User className="w-5 h-5" /> 마이페이지
                 </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpen(false);
-                    startRunmoa("login");
-                  }}
-                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-md text-base font-semibold text-white bg-blue-600 hover:bg-blue-700"
-                >
-                  <LogIn className="w-5 h-5" /> 로그인
-                </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}

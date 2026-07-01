@@ -9,10 +9,11 @@ export default function ContactSection({ data }: { data: ContactSectionData }) {
   return (
     <section id="contact" className="py-16 sm:py-24 bg-slate-50">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+        {/* lg:items-start — 파란 안내 패널이 폼 높이만큼 늘어나 하단에 큰 공백이 생기던 문제 해결(클라이언트 요청 20260701): 텍스트 높이까지만 */}
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row lg:items-start">
           <div className="lg:w-1/3 bg-blue-600 p-8 sm:p-10 lg:p-12 text-white">
             <h2 className="text-3xl font-bold mb-6">{data.title ?? "문의하기"}</h2>
-            <p className="text-blue-100 mb-12">
+            <p className="text-blue-100 mb-8">
               {data.description ??
                 "스마트워크 도입, AI 컨설팅, IT 인프라 구축 등 궁금하신 점을 남겨주시면 전문가가 신속히 답변해 드립니다."}
             </p>

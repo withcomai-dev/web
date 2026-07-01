@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { loadMemberGrades } from "@/lib/grades";
+import { loadMemberGrades, gradesWithGuest } from "@/lib/grades";
 import type { MemberGrade } from "@/types/cms";
 import { cn } from "@/lib/utils";
 
@@ -35,22 +35,12 @@ export default function GradeAccessSelect({
         : [...selected, id],
     );
 
-  if (loaded && grades.length === 0) {
-    return (
-      <p className="text-sm text-gray-400">
-        등록된 회원 등급이 없습니다.{" "}
-        <Link href="/admin/grades" className="text-blue-600 underline">
-          회원 등급
-        </Link>{" "}
-        메뉴에서 먼저 등급을 만들어 주세요.
-      </p>
-    );
-  }
+  const options = gradesWithGuest(grades);
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
-        {grades.map((g) => {
+        {options.map((g) => {
           const on = selected.includes(g.id);
           return (
             <button
@@ -69,10 +59,19 @@ export default function GradeAccessSelect({
           );
         })}
       </div>
+      {loaded && grades.length === 0 && (
+        <p className="text-xs text-gray-400">
+          아직 만든 회원 등급이 없습니다.{" "}
+          <Link href="/admin/grades" className="text-blue-600 underline">
+            회원 등급
+          </Link>{" "}
+          메뉴에서 등급을 추가하면 여기에 나타납니다. (비회원 기본등급은 항상 사용 가능)
+        </p>
+      )}
       <p className="text-xs text-gray-400">
         {selected.length === 0
-          ? "선택 안 함 = 전체 공개 (모든 방문자에게 노출)"
-          : "선택한 등급의 회원에게만 노출됩니다. (관리자는 항상 열람)"}
+          ? "선택 안 함 = 전체 공개 (비회원 포함 모든 방문자에게 노출)"
+          : "선택한 등급에게만 노출됩니다. (관리자는 항상 열람)"}
       </p>
     </div>
   );

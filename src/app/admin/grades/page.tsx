@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Save, Loader2, Plus, Trash2, ArrowUp, ArrowDown, Info } from "lucide-react";
+import { Loader2, Plus, Trash2, ArrowUp, ArrowDown, Info } from "lucide-react";
 import {
   COLLECTIONS,
   getSingletonDoc,
@@ -28,27 +28,12 @@ export default function AdminGradesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const add = () => setGrades((g) => [...g, { id: newId(), label: "새 등급" }]);
-  const update = (idx: number, label: string) =>
-    setGrades((g) => g.map((it, i) => (i === idx ? { ...it, label } : it)));
-  const remove = (idx: number) => {
-    if (!confirm("이 등급을 삭제하시겠습니까? 이 등급으로 지정된 회원·콘텐츠 설정은 전체 공개로 처리됩니다.")) return;
-    setGrades((g) => g.filter((_, i) => i !== idx));
-  };
-  const move = (idx: number, dir: -1 | 1) => {
-    const t = idx + dir;
-    if (t < 0 || t >= grades.length) return;
-    setGrades((g) => {
-      const next = [...g];
-      [next[idx], next[t]] = [next[t], next[idx]];
-      return next;
-    });
-  };
-
-  const save = async () => {
+  // 모든 등급 변경(추가·삭제·순서)은 즉시 저장 (요청 20260701 — 삭제가 저장 안 되던 문제 해결)
+  const persist = async (next: MemberGrade[]) => {
+    setGrades(next);
     setSaving(true);
     try {
-      const clean = grades
+      const clean = next
         .map((g) => ({ id: g.id, label: g.label.trim() }))
         .filter((g) => g.label.length > 0);
       await setSingletonDoc<MemberGradesDoc>(
@@ -56,12 +41,32 @@ export default function AdminGradesPage() {
         MEMBER_GRADES_DOC_ID,
         { grades: clean },
       );
-      setGrades(clean);
       setSavedAt(Date.now());
-      setTimeout(() => setSavedAt(null), 2500);
+      setTimeout(() => setSavedAt(null), 1500);
     } finally {
       setSaving(false);
     }
+  };
+
+  const add = () => void persist([...grades, { id: newId(), label: "새 등급" }]);
+  const updateLabel = (idx: number, label: string) =>
+    setGrades((g) => g.map((it, i) => (i === idx ? { ...it, label } : it)));
+  const commit = () => void persist(grades); // 라벨 편집 후 포커스 아웃 시 저장
+  const remove = (idx: number) => {
+    if (
+      !confirm(
+        "이 등급을 삭제하시겠습니까? 이 등급으로 지정된 회원·콘텐츠·페이지 접근 설정에서는 해당 등급이 사라집니다.",
+      )
+    )
+      return;
+    void persist(grades.filter((_, i) => i !== idx));
+  };
+  const move = (idx: number, dir: -1 | 1) => {
+    const t = idx + dir;
+    if (t < 0 || t >= grades.length) return;
+    const next = [...grades];
+    [next[idx], next[t]] = [next[t], next[idx]];
+    void persist(next);
   };
 
   if (loading)
@@ -125,7 +130,8 @@ export default function AdminGradesPage() {
               <input
                 type="text"
                 value={g.label}
-                onChange={(e) => update(idx, e.target.value)}
+                onChange={(e) => updateLabel(idx, e.target.value)}
+                onBlur={commit}
                 placeholder="등급 이름"
                 className="flex-1 px-3 py-2 rounded border border-gray-200 text-sm bg-white"
               />
@@ -163,19 +169,14 @@ export default function AdminGradesPage() {
           </button>
         </div>
 
-        <div className="flex justify-end pt-5 mt-4 border-t border-gray-100">
-          <button
-            onClick={save}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold"
-          >
-            {saving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
-            저장
-          </button>
+        <div className="flex justify-end items-center pt-4 mt-4 border-t border-gray-100 text-xs text-gray-400">
+          {saving ? (
+            <span className="inline-flex items-center gap-1.5">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> 저장 중…
+            </span>
+          ) : (
+            <span>변경하면 자동 저장됩니다</span>
+          )}
         </div>
       </div>
 

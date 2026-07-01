@@ -10,7 +10,7 @@ import {
   setSingletonDoc,
   updateDocFields,
 } from "@/lib/firestore";
-import { loadMemberGrades } from "@/lib/grades";
+import { loadMemberGrades, gradesWithGuest } from "@/lib/grades";
 import { loadRegistry } from "@/lib/page-registry";
 import { ALL_PAGE_SEEDS } from "@/lib/seed-data";
 import type { MemberGrade, GlobalSettings, PageDoc } from "@/types/cms";
@@ -149,13 +149,8 @@ export default function AccessMatrix() {
       </div>
     );
 
-  if (grades.length === 0)
-    return (
-      <p className="text-sm text-gray-400 py-4">
-        먼저 위에서 회원 등급을 만들고 저장하면, 등급별 접근 설정표가 나타납니다.
-      </p>
-    );
-
+  // 컬럼 = 비회원(기본) + 정의된 회원 등급
+  const cols = gradesWithGuest(grades);
   const dirty = navDirty || dirtyPages.size > 0;
 
   const Cell = ({
@@ -239,7 +234,7 @@ export default function AccessMatrix() {
               <th className="px-3 py-2 text-left text-xs font-bold text-gray-600">
                 메뉴 · 페이지
               </th>
-              {grades.map((g) => (
+              {cols.map((g) => (
                 <th
                   key={g.id}
                   className="px-2 py-2 text-xs font-bold text-gray-600 whitespace-nowrap"
@@ -252,7 +247,7 @@ export default function AccessMatrix() {
           <tbody className="divide-y divide-gray-100">
             <tr>
               <td
-                colSpan={grades.length + 1}
+                colSpan={cols.length + 1}
                 className="px-3 py-1.5 bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wide"
               >
                 상단 메뉴
@@ -264,7 +259,7 @@ export default function AccessMatrix() {
                   <RowLabel allowed={item.allowedGrades ?? []}>
                     {item.label}
                   </RowLabel>
-                  {grades.map((g) => (
+                  {cols.map((g) => (
                     <Cell
                       key={g.id}
                       checked={(item.allowedGrades ?? []).includes(g.id)}
@@ -277,7 +272,7 @@ export default function AccessMatrix() {
                     <RowLabel depth={1} allowed={c.allowedGrades ?? []}>
                       ↳ {c.label}
                     </RowLabel>
-                    {grades.map((g) => (
+                    {cols.map((g) => (
                       <Cell
                         key={g.id}
                         checked={(c.allowedGrades ?? []).includes(g.id)}
@@ -291,7 +286,7 @@ export default function AccessMatrix() {
 
             <tr>
               <td
-                colSpan={grades.length + 1}
+                colSpan={cols.length + 1}
                 className="px-3 py-1.5 bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wide"
               >
                 페이지
@@ -300,7 +295,7 @@ export default function AccessMatrix() {
             {pages.map((p) => (
               <tr key={`p-${p.key}`} className="hover:bg-blue-50/40">
                 <RowLabel allowed={p.allowed}>{p.title}</RowLabel>
-                {grades.map((g) => (
+                {cols.map((g) => (
                   <Cell
                     key={g.id}
                     checked={p.allowed.includes(g.id)}

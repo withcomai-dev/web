@@ -283,11 +283,11 @@ export interface NoticeDoc {
 }
 
 // ── 중소기업 지원사업 ──
-export type SmeCategory = "small-business" | "rnd";
+export type SmeCategory = "small-business" | "rnd" | "ongoing";
 
 export interface SmeSupportDoc {
   id?: string;
-  category?: SmeCategory; // 소상공인지원사업 / R&D지원사업
+  category?: SmeCategory; // 소상공인지원사업 / R&D지원사업 / 진행중인 지원사업 소개
   title: string;
   agency?: string;
   deadline?: string;

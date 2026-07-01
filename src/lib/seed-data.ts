@@ -964,6 +964,54 @@ export const SEED_SME_RND: PageDoc = {
   ] as Section[],
 };
 
+export const SEED_SME_ONGOING: PageDoc = {
+  key: "sme-ongoing",
+  title: "진행중인 지원사업 소개",
+  seoTitle: "진행중인 지원사업 소개 — WITHCOM AI",
+  seoDescription:
+    "지금 신청할 수 있는 정부·지자체 지원사업을 한곳에서 확인하세요. 진행 중인 사업만 모아 안내합니다.",
+  sections: [
+    {
+      id: "sme-ongoing-hero",
+      order: 1,
+      visible: true,
+      type: "hero",
+      data: {
+        variant: "banner",
+        eyebrow: "진행중",
+        title:
+          '지금 신청 가능한,<br class="hidden sm:block"/> <span class="text-blue-400">진행중인 지원사업</span>',
+        subtitle:
+          "마감 전 사업만 모아 소개합니다. 카드를 누르면 해당 지원사업 사이트로 이동합니다.",
+      },
+    },
+    {
+      id: "sme-ongoing-list",
+      order: 2,
+      visible: true,
+      type: "sme",
+      data: {
+        category: "ongoing",
+        heading: "진행중인 지원사업",
+        description:
+          "노출 중인 사업만 표시됩니다. 카드를 누르면 해당 지원사업 사이트로 이동합니다.",
+      },
+    },
+    {
+      id: "sme-ongoing-cta",
+      order: 3,
+      visible: true,
+      type: "cta",
+      data: {
+        bg: "slate",
+        title: "어떤 사업이 우리 회사에 맞을까요?",
+        body: "업종·규모에 맞는 지원사업을 함께 찾아 신청까지 안내해 드립니다.",
+        button: { label: "지원사업 상담 문의", href: "/contact" },
+      },
+    },
+  ] as Section[],
+};
+
 export const SEED_CONTACT: PageDoc = {
   key: "contact",
   title: "문의하기",
@@ -1004,5 +1052,6 @@ export const ALL_PAGE_SEEDS: PageDoc[] = [
   SEED_SME_SUPPORT,
   SEED_SME_SMALL,
   SEED_SME_RND,
+  SEED_SME_ONGOING,
   SEED_CONTACT,
 ];

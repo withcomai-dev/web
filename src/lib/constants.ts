@@ -109,6 +109,7 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "소상공인 지원사업", href: "/sme-support/small-business" },
       { label: "R&D 지원사업", href: "/sme-support/rnd" },
+      { label: "진행중인 지원사업 소개", href: "/sme-support/ongoing" },
     ],
   },
   {
@@ -191,11 +192,13 @@ export const FEEDBACK_STATUS_COLORS: Record<string, string> = {
 export const SME_CATEGORY_LABELS: Record<string, string> = {
   "small-business": "소상공인 지원사업",
   rnd: "R&D 지원사업",
+  ongoing: "진행중인 지원사업 소개",
 };
 
-export const SME_CATEGORY_ORDER: ("small-business" | "rnd")[] = [
+export const SME_CATEGORY_ORDER: ("small-business" | "rnd" | "ongoing")[] = [
   "small-business",
   "rnd",
+  "ongoing",
 ];
 
 export const INQUIRY_TYPES = [

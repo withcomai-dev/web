@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, User, Search } from "lucide-react";
+import { usePathname } from "next/navigation";
+import {
+  Menu,
+  X,
+  User,
+  Search,
+  Home,
+  BrainCircuit,
+  Monitor,
+  Building2,
+  Headset,
+  type LucideIcon,
+} from "lucide-react";
 import SearchOverlay from "@/components/layout/SearchOverlay";
 import { NAV_ITEMS, type NavItem } from "@/lib/constants";
 import {
@@ -13,6 +25,15 @@ import {
 import type { GlobalSettings } from "@/types/cms";
 import { isRunmoaLoggedIn } from "@/lib/runmoa-session";
 import { cn } from "@/lib/utils";
+
+/** 상단 메뉴 라벨 → 아이콘 매핑 (요청 20260701: 아이콘+텍스트 버튼) */
+const MENU_ICONS: Record<string, LucideIcon> = {
+  홈: Home,
+  "스마트워크 & AI": BrainCircuit,
+  "IT 서비스": Monitor,
+  "중소기업 지원사업": Building2,
+  "고객 서비스": Headset,
+};
 
 /** 외부 링크는 새 탭, 내부 링크는 Next Link로 렌더링 */
 function NavLink({
@@ -56,6 +77,7 @@ export default function Nav() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   // 통합 검색 오버레이
   const [searchOpen, setSearchOpen] = useState(false);
+  const pathname = usePathname();
 
   // Cmd/Ctrl + K 로도 검색 열기
   useEffect(() => {
@@ -124,6 +146,11 @@ export default function Nav() {
             {navItems.map((item) => {
               const hasChildren = !!(item.children && item.children.length > 0);
               const isOpen = openMenu === item.label;
+              const Icon = MENU_ICONS[item.label];
+              const active =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
               return (
                 <div
                   key={item.label}
@@ -134,9 +161,15 @@ export default function Nav() {
                   <NavLink
                     href={item.href}
                     external={item.external}
-                    className="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                    className={cn(
+                      "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-base font-bold transition-colors",
+                      active
+                        ? "bg-slate-900 text-white"
+                        : "text-slate-800 hover:bg-blue-50 hover:text-blue-600",
+                    )}
                     onClick={() => setOpenMenu(null)}
                   >
+                    {Icon && <Icon className="w-[18px] h-[18px]" />}
                     {item.label}
                   </NavLink>
 

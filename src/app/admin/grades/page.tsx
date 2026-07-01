@@ -10,6 +10,7 @@ import {
 import { MEMBER_GRADES_DOC_ID } from "@/lib/grades";
 import { AdminPageHeader } from "@/components/admin/AdminTableShell";
 import type { MemberGrade, MemberGradesDoc } from "@/types/cms";
+import AccessMatrix from "@/components/admin/AccessMatrix";
 
 function newId(): string {
   return `g_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
@@ -176,6 +177,17 @@ export default function AdminGradesPage() {
             저장
           </button>
         </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mt-6 max-w-5xl">
+        <h2 className="font-bold text-gray-900 mb-1">
+          등급별 접근 설정 (메뉴 · 페이지)
+        </h2>
+        <p className="text-sm text-gray-500 mb-4">
+          어느 등급이 어떤 상단 메뉴·페이지를 볼 수 있는지 한눈에 설정합니다. (개별 글은
+          각 글 편집 화면의 “열람 허용 등급”에서)
+        </p>
+        <AccessMatrix />
       </div>
     </div>
   );

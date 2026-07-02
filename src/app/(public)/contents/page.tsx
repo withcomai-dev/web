@@ -59,7 +59,7 @@ export default function ContentsPage() {
   const visible = authLoading
     ? items
     : items.filter((it) =>
-        canViewContent(it.allowedGrades, profile?.grade, isAdmin),
+        canViewContent(it.allowedGrades, profile?.grade, isAdmin, !!profile),
       );
   const base = processList(visible, query, sort);
   const processed =

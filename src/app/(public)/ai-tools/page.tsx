@@ -75,7 +75,7 @@ export default function AiToolsPage() {
   const inCategory = items.filter(
     (d) =>
       d.category === cat &&
-      (authLoading || canViewContent(d.allowedGrades, profile?.grade, isAdmin)),
+      (authLoading || canViewContent(d.allowedGrades, profile?.grade, isAdmin, !!profile)),
   );
   const processed = processList(inCategory, query, sort);
 

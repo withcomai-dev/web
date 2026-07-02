@@ -120,13 +120,15 @@ export default function AdminMembersPage() {
                     <td className="px-4 py-3 text-gray-600">{m.loginId || "—"}</td>
                     <td className="px-4 py-3 text-gray-600">{m.email || "—"}</td>
                     <td className="px-4 py-3">
-                      {g ? (
-                        <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">
-                          {gradeLabel(grades, g)}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
+                      <span
+                        className={
+                          g
+                            ? "px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold"
+                            : "px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-bold"
+                        }
+                      >
+                        {g ? gradeLabel(grades, g) : "일반(회원)"}
+                      </span>
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-500">
                       {fmt(m.lastLoginAt)}
@@ -165,12 +167,10 @@ export default function AdminMembersPage() {
                   <select
                     value={gradeMap[memberUid(selected)] ?? ""}
                     onChange={(e) => setGrade(selected, e.target.value)}
-                    disabled={
-                      grades.length === 0 || savingUid === memberUid(selected)
-                    }
+                    disabled={savingUid === memberUid(selected)}
                     className="w-full px-3 py-2 rounded border border-gray-200 bg-white disabled:opacity-60"
                   >
-                    <option value="">— 없음 (전체 공개 콘텐츠만) —</option>
+                    <option value="">일반(회원) — 기본</option>
                     {grades.map((g) => (
                       <option key={g.id} value={g.id}>
                         {g.label}

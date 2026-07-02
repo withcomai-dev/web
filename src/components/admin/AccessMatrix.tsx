@@ -10,7 +10,7 @@ import {
   setSingletonDoc,
   updateDocFields,
 } from "@/lib/firestore";
-import { gradesWithGuest, isGradeChecked, toggleGrade } from "@/lib/grades";
+import { gradesWithBuiltins, isGradeChecked, toggleGrade } from "@/lib/grades";
 import { loadRegistry } from "@/lib/page-registry";
 import { ALL_PAGE_SEEDS } from "@/lib/seed-data";
 import type { MemberGrade, GlobalSettings, PageDoc } from "@/types/cms";
@@ -60,7 +60,7 @@ export default function AccessMatrix({ grades }: { grades: MemberGrade[] }) {
   }, []);
 
   // 컬럼 = 비회원(기본) + 정의된 회원 등급 (prop 이라 추가·삭제 즉시 반영)
-  const cols = gradesWithGuest(grades);
+  const cols = gradesWithBuiltins(grades);
   const allIds = cols.map((c) => c.id);
 
   const toggleTop = (i: number, gid: string) => {

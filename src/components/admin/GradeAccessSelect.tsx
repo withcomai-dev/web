@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   loadMemberGrades,
-  gradesWithGuest,
+  gradesWithBuiltins,
   isGradeChecked,
   toggleGrade,
 } from "@/lib/grades";
@@ -33,7 +33,7 @@ export default function GradeAccessSelect({
   }, []);
 
   // 기본 전체공개는 '전부 체크'로 표시, 체크 해제로 특정 등급 제한 (요청 20260701)
-  const options = gradesWithGuest(grades);
+  const options = gradesWithBuiltins(grades);
   const allIds = options.map((o) => o.id);
   const toggle = (id: string) => onChange(toggleGrade(value, id, allIds));
 

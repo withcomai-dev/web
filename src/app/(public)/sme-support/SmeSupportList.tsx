@@ -194,7 +194,7 @@ export default function SmeSupportList({
   const visibleItems = authLoading
     ? items
     : items.filter((i) =>
-        canViewContent(i.allowedGrades, profile?.grade, isAdmin),
+        canViewContent(i.allowedGrades, profile?.grade, isAdmin, !!profile),
       );
 
   // category 지정 시 해당 카테고리만 대상으로 한다 (카테고리 전용 페이지)

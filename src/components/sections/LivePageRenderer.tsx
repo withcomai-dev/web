@@ -45,7 +45,7 @@ export default function LivePageRenderer({
   }, [pageKey]);
 
   // 등급 게이팅 (fail-open: 인증 로딩 중엔 통과)
-  if (!authLoading && !canViewContent(allowedGrades, profile?.grade, isAdmin)) {
+  if (!authLoading && !canViewContent(allowedGrades, profile?.grade, isAdmin, !!profile)) {
     return <AccessDenied />;
   }
 

@@ -68,7 +68,7 @@ export default function SmeSupportViewPage() {
   }
 
   // 등급 게이팅 (요청 20260701 권한확장)
-  if (!authLoading && !canViewContent(item.allowedGrades, profile?.grade, isAdmin)) {
+  if (!authLoading && !canViewContent(item.allowedGrades, profile?.grade, isAdmin, !!profile)) {
     return <AccessDenied />;
   }
 

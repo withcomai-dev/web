@@ -47,7 +47,7 @@ export default function NoticePage() {
   const visible = authLoading
     ? items
     : items.filter((it) =>
-        canViewContent(it.allowedGrades, profile?.grade, isAdmin),
+        canViewContent(it.allowedGrades, profile?.grade, isAdmin, !!profile),
       );
 
   return (

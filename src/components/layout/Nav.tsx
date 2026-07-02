@@ -117,7 +117,7 @@ export default function Nav() {
 
   // 등급별 메뉴 필터 (요청 20260701 권한확장) — 로딩 중엔 전체 노출(fail-open), 어드민 전체 노출
   const canSee = (allowedGrades?: string[]) =>
-    authLoading || canViewContent(allowedGrades, profile?.grade, isAdmin);
+    authLoading || canViewContent(allowedGrades, profile?.grade, isAdmin, !!profile);
   const visibleNav = navItems
     .filter((item) => canSee(item.allowedGrades))
     .map((item) => ({

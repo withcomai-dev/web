@@ -177,7 +177,7 @@ export default function Nav() {
                     className={cn(
                       "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-base font-bold transition-colors",
                       active
-                        ? "bg-slate-900 text-white"
+                        ? "bg-blue-600 text-white"
                         : "text-slate-800 hover:bg-blue-50 hover:text-blue-600",
                     )}
                     onClick={() => setOpenMenu(null)}

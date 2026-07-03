@@ -3,6 +3,8 @@ import { getAuth } from "firebase-admin/auth";
 import { adminDb, FieldValue } from "@/lib/firebase-admin";
 import { appendInquiryRow } from "@/lib/sheets";
 import { COLLECTIONS } from "@/lib/firestore";
+import { sendMail, inquiryNotifyTemplate } from "@/lib/mail";
+import { getIntegration } from "@/lib/integrations";
 import type { InquiryDoc } from "@/types/cms";
 
 export const runtime = "nodejs";
@@ -131,6 +133,29 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     console.error("Google Sheets 동기화 실패:", e);
     // Firestore 저장은 성공했으므로 사용자에겐 성공 응답.
+  }
+
+  // 관리자 알림 메일 — 실패해도 접수 자체는 성공 처리 (요청 20260702)
+  try {
+    const notifyTo =
+      (await getIntegration("adminNotifyEmail")) || "withcomai@gmail.com";
+    const tpl = inquiryNotifyTemplate({
+      type: inquiry.type,
+      name: inquiry.name,
+      company: inquiry.company,
+      phone: inquiry.phone,
+      email: inquiry.email,
+      message: inquiry.message,
+      createdAt,
+    });
+    await sendMail({
+      to: notifyTo,
+      subject: tpl.subject,
+      html: tpl.html,
+      replyTo: inquiry.email,
+    });
+  } catch (e) {
+    console.error("문의 접수 관리자 알림 메일 실패:", e);
   }
 
   return NextResponse.json({ id: docId, sheetSyncedAt });

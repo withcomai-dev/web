@@ -27,7 +27,7 @@ import {
   FEEDBACK_STATUS_LABELS,
 } from "@/lib/constants";
 import type { FeedbackReport, FeedbackStatus } from "@/types/cms";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 
 export default function AdminFeedbackPage() {
   const [items, setItems] = useState<FeedbackReport[]>([]);
@@ -145,7 +145,7 @@ export default function AdminFeedbackPage() {
                   {FEEDBACK_STATUS_LABELS[r.status]}
                 </span>
                 <span className="text-xs text-gray-400">
-                  {new Date(r.createdAt).toLocaleString("ko-KR")}
+                  {formatDateTime(r.createdAt)}
                 </span>
               </div>
               <p className="font-semibold text-gray-900 line-clamp-2">{r.message}</p>
@@ -320,7 +320,7 @@ function FeedbackDetail({
               </div>
             </Field>
             <Field label="시각">
-              <p>{new Date(report.createdAt).toLocaleString("ko-KR")}</p>
+              <p>{formatDateTime(report.createdAt)}</p>
             </Field>
             <Field label="신고자">
               <p>{report.reporterEmail ?? "(비로그인)"}</p>

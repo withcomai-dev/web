@@ -17,7 +17,7 @@ import {
 } from "@/components/admin/AdminTableShell";
 import RichEditor from "@/components/admin/RichEditor";
 import type { InquiryDoc, InquiryStatus } from "@/types/cms";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 
 const STATUS_LABEL: Record<InquiryStatus, string> = {
   new: "신규",
@@ -97,7 +97,7 @@ export default function AdminInquiriesPage() {
                   className="hover:bg-blue-50/50 cursor-pointer"
                 >
                   <td className="px-4 py-3 text-xs text-gray-500">
-                    {it.createdAt ? new Date(it.createdAt).toLocaleString("ko-KR") : "—"}
+                    {formatDateTime(it.createdAt)}
                   </td>
                   <td className="px-4 py-3">{it.type}</td>
                   <td className="px-4 py-3 font-semibold">{it.name}</td>
@@ -152,7 +152,7 @@ export default function AdminInquiriesPage() {
               <Detail label="회사" value={selected.company || "—"} />
               <Detail label="연락처" value={selected.phone || "—"} />
               <Detail label="이메일" value={selected.email} />
-              <Detail label="시각" value={selected.createdAt ?? "—"} />
+              <Detail label="시각" value={formatDateTime(selected.createdAt)} />
 
               <div>
                 <p className="text-xs font-semibold text-gray-500 mb-1">문의 내용</p>

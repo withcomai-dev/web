@@ -14,6 +14,28 @@ export function formatDate(input: string | Date | number): string {
   return d.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
 }
 
+/** Firestore Timestamp·ISO 문자열·숫자·Date 어떤 형태든 Date로 정규화. 깨진 값은 null. */
+export function toDateSafe(value: unknown): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
+  if (typeof value === "string" || typeof value === "number") {
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof value === "object") {
+    const v = value as { toDate?: () => Date; seconds?: number };
+    if (typeof v.toDate === "function") return v.toDate();
+    if (typeof v.seconds === "number") return new Date(v.seconds * 1000);
+  }
+  return null;
+}
+
+/** 접수·기록 시각 표시용 — serverTimestamp(Timestamp 객체)로 저장된 문서도 안전하게 일시 문자열로. */
+export function formatDateTime(value: unknown): string {
+  const d = toDateSafe(value);
+  return d ? d.toLocaleString("ko-KR") : "—";
+}
+
 export function htmlToPlainTextSummary(html: string, max = 140): string {
   const text = html
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")

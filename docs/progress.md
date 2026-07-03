@@ -2,6 +2,20 @@
 
 > Append-only. 최신 블록이 위에 오도록 추가.
 
+## [2026-07-03] 수정요청 20260702(노션) 반영 — 배포·검증 완료
+
+### 완료 (커밋 f71c3eb, 롤아웃 rollout-2026-07-03-001 SUCCEEDED)
+- **가**: 상단 메뉴 활성(반전) 색상 검정(slate-900)→블루(blue-600) — 라이브 픽셀 검증 PASS
+- **나-1a**: 어드민 문의·피드백 "Invalid Date" 수정 — `formatDateTime()`(lib/utils.ts) 신설, serverTimestamp(Timestamp 객체) 정규화. 문의 상세 모달 객체 직접 렌더 크래시 위험도 제거
+- **나-1b**: 문의 접수 시 관리자 알림 메일(`inquiryNotifyTemplate`, api/inquiries) — 수신자 adminNotifyEmail(기본 withcomai@gmail.com), replyTo=문의자. **코드 배포 완료, 단 SMTP 자격증명 미설정으로 실제 발송은 대기** (아래 미해결)
+- **나-2**: 관리자 권한 변경 동작 확인(superadmin 드롭다운 → 저장·유지) + **csyoo22@gmail.com(유충식) admin→superadmin 변경 완료** (라이브 어드민 UI 경유, 새로고침 후 유지 확인. requireAdmin·AuthContext 모두 users 문서 role 참조라 재로그인 불필요)
+- 테스트 문의 3건([자동검증] 메일알림) Firestore 삭제 완료
+
+### 미해결 이슈
+- **SMTP 미설정** — siteSettings/integrations에 Google Sheets 키만 존재. withcomai@gmail.com의 Gmail 앱 비밀번호 발급 후 어드민 → 외부 서비스 키에 `smtpUser`/`smtpAppPassword` 입력해야 문의 알림 메일 + 기존 답변 메일 기능이 동작 (기존 답변 메일도 동일 사유로 계속 실패 중이었음)
+- **다(쇼핑몰 상품설명 HTML)**: 런모아 플랫폼(외부) 소관 — 에디터에 코드뷰(<>) 버튼은 있으나 플랫폼이 XSS 방지로 본문 '<','>' 입력 차단 안내를 표시. 런모아 측 문의 필요
+- Google Sheets에 동기화된 [자동검증] 테스트 행은 시트에 잔존(수동 삭제 가능)
+
 ## [2026-06-16] 도메인 전환 완료 — withcom.co.kr + www
 
 ### 완료

@@ -16,6 +16,26 @@
 
 -->
 
+## 2026-07-03 | 테스터 | Playwright 헤드풀에서 폼 submit 버튼 click()이 디스패치 후 행업 — 그런데 제출은 성공함
+- **패턴**: web.app 문의 폼에서 `locator.click()`이 클릭 자체는 성공시키고도 리턴하지 않아 워치독까지 행업. 행업을 실패로 보고 재시도하면 **중복 제출**됨(실제 3건 쌓임).
+- **차단 방법**: ① 제출은 `page.evaluate(() => btn.click())`(JS 클릭)으로. ② 응답 확인은 `waitForResponse` await 대신 `page.on('response')` 리스너 + 성공 UI 문구("전송 완료") 폴링. ③ 행업/타임아웃 후 재시도 전 **서버 로그·DB에서 이전 시도가 실제 실패했는지 확인**.
+- **만료**: 2026-08-02
+
+## 2026-07-03 | 테스터 | Tailwind v4 색상 검증은 rgb 문자열 비교 불가 — lab()/oklch 반환 + v3 hex와 값 자체가 다름
+- **패턴**: `getComputedStyle().backgroundColor`가 `lab(...)`으로 나오고, v4 blue-600을 캔버스로 픽셀화하면 [21,93,252]로 v3 hex #2563eb=[37,99,235]와 다름 → 정확값 비교는 항상 FAIL.
+- **차단 방법**: 클래스 적용 여부 + 캔버스 픽셀의 **색 계열 판정**(예: B>200 && R<80)으로 검증. 스크린샷 시각 확인 병행.
+- **만료**: 2026-08-02
+
+## 2026-07-03 | 구현자 | createDoc/서버 serverTimestamp로 저장된 createdAt을 new Date()로 파싱하면 Invalid Date
+- **패턴**: 타입은 `createdAt?: string`인데 실제 저장은 Firestore Timestamp 객체(lib/firestore.ts createDoc이 ISO 문자열을 serverTimestamp로 덮어씀) → 어드민 문의·피드백 목록 전부 Invalid Date, JSX에 객체 직접 렌더 시 크래시 위험.
+- **차단 방법**: 날짜 표시는 항상 `formatDateTime()`(lib/utils.ts — Timestamp·ISO·number 모두 처리) 사용. 저장 포맷 변경은 기존 문서와 orderBy 타입 혼합 문제로 금지.
+- **만료**: 2026-08-02
+
+## 2026-07-03 | 테스터 | 라이브 메일 기능은 SMTP 자격증명 미설정 상태 — 코드가 아니라 설정이 원인
+- **패턴**: 문의 알림·답변 메일이 `SMTP 계정·비밀번호가 설정되지 않았습니다`로 실패. siteSettings/integrations엔 Google Sheets 키만 존재.
+- **차단 방법**: 메일 관련 작업 전 integrations 문서에 smtpUser/smtpAppPassword 존재 확인(Firestore REST). 설정은 사용자만 가능(Gmail 앱 비밀번호 발급 필요).
+- **만료**: 2026-08-02
+
 ## 2026-06-15 | 배포자 | 커스텀 도메인 검증 전부 ACTIVE인데 "Site Not Found" → `firebase deploy --only hosting` 재배포
 - **패턴**: customDomain이 ownership/host/cert 모두 ACTIVE인데도 실제 접속 시 Firebase "Site Not Found"(404). web.app는 정상. 엣지 전파 지연으로 오판하기 쉬우나 30분+ 지속.
 - **원인/차단**: Firebase Hosting이 새 커스텀 도메인에 현재 release를 바인딩하지 않은 상태. `firebase deploy --only hosting`로 release를 다시 내면 모든 연결 도메인에 즉시 적용되어 해결(이 프로젝트는 rewrites만 있는 hosting이라 비파괴적). 사용자 브라우저엔 이전 404가 캐시될 수 있으니 강력 새로고침 안내.

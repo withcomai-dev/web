@@ -12,6 +12,7 @@ import {
 import { AI_TOOL_CATEGORY_LABELS } from "@/lib/constants";
 import type { AiToolDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
+import { trackContentView } from "@/lib/track";
 
 /** AI TOOL 소개 게시글 상세 (?slug= 쿼리) */
 export default function AiToolViewPage() {
@@ -39,6 +40,9 @@ export default function AiToolViewPage() {
         found = docs[0] ?? null;
       } catch {
         found = null;
+      }
+      if (found && found.status === "published" && found.id) {
+        trackContentView(COLLECTIONS.AI_TOOLS, found.id);
       }
       if (alive) {
         setItem(found && found.status === "published" ? found : null);

@@ -7,6 +7,7 @@ import { COLLECTIONS, getDocById } from "@/lib/firestore";
 import { SME_CATEGORY_LABELS } from "@/lib/constants";
 import type { SmeSupportDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
+import { trackContentView } from "@/lib/track";
 import { useAuth } from "@/contexts/AuthContext";
 import { canViewContent } from "@/lib/grades";
 import AccessDenied from "@/components/sections/AccessDenied";
@@ -34,6 +35,9 @@ export default function SmeSupportViewPage() {
         found = await getDocById<SmeSupportDoc>(COLLECTIONS.SME_SUPPORT, id);
       } catch {
         found = null;
+      }
+      if (found && found.status === "published") {
+        trackContentView(COLLECTIONS.SME_SUPPORT, id);
       }
       if (alive) {
         // 게시 상태만 공개

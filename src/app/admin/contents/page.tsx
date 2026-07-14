@@ -79,6 +79,8 @@ export default function AdminContentsPage() {
     (Object.keys(payload) as (keyof ContentDoc)[]).forEach((k) => {
       if (payload[k] === undefined) delete payload[k];
     });
+    // 조회수는 서버(/api/track)가 실시간 증가시키는 값 — 어드민 저장이 stale 값으로 덮어쓰지 않도록 제외
+    delete payload.viewCount;
     if (doc.id) {
       await upsertDoc(COLLECTIONS.CONTENTS, doc.id, payload);
     } else {
@@ -112,6 +114,7 @@ export default function AdminContentsPage() {
                 <th className="px-4 py-3 text-left">카테고리</th>
                 <th className="px-4 py-3 text-left">상태</th>
                 <th className="px-4 py-3 text-left">발행일</th>
+                <th className="px-4 py-3 text-right">조회수</th>
                 <th className="px-4 py-3 w-32"></th>
               </tr>
             </thead>
@@ -143,6 +146,9 @@ export default function AdminContentsPage() {
                   </td>
                   <td className="px-4 py-3 text-gray-500">
                     {it.publishedAt ? formatDate(it.publishedAt) : "—"}
+                  </td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-700">
+                    {(it.viewCount ?? 0).toLocaleString()}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button

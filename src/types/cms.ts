@@ -323,8 +323,24 @@ export interface SmeSupportDoc {
   thumbnail?: string;
   sortOrder?: number; // 정렬 순서 (작을수록 먼저)
   status: ContentStatus; // 노출 여부 (published=노출, draft=숨김)
+  viewCount?: number; // 상세 조회수 (서버 /api/track 이 증가)
   /** 열람 허용 회원 등급 id 목록 (비어있으면 전체 공개) — 요청 20260701 권한확장 */
   allowedGrades?: string[];
+}
+
+// ── 홈페이지 방문 집계 (자체 집계 — 일자별 1문서, 문서 id = KST YYYY-MM-DD) ──
+// 서버 /api/track 만 기록(admin SDK). 클라 write 금지(firestore.rules).
+export interface SiteVisitDoc {
+  id?: string; // = date (YYYY-MM-DD, KST)
+  date: string;
+  /** 총 페이지뷰 */
+  pageviews?: number;
+  /** 일 순방문(방문자 로컬 기준 하루 1회, 근사) */
+  uniques?: number;
+  /** 경로별 페이지뷰 — 인기 페이지 산출용 (map key = 안전키[영숫자·_·-]) */
+  paths?: Record<string, number>;
+  /** 안전키 → 원본 pathname (인기 페이지 표시용) */
+  pathLabels?: Record<string, string>;
 }
 
 // ── 도움말 ──

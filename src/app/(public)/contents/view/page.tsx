@@ -11,6 +11,7 @@ import {
 } from "@/lib/firestore";
 import type { ContentDoc } from "@/types/cms";
 import { formatDate } from "@/lib/utils";
+import { trackContentView } from "@/lib/track";
 
 export default function ContentViewPage() {
   const [item, setItem] = useState<ContentDoc | null>(null);
@@ -37,6 +38,9 @@ export default function ContentViewPage() {
         found = docs[0] ?? null;
       } catch {
         found = null;
+      }
+      if (found && found.status === "published" && found.id) {
+        trackContentView(COLLECTIONS.CONTENTS, found.id);
       }
       if (alive) {
         setItem(found && found.status === "published" ? found : null);

@@ -2,6 +2,24 @@
 
 > Append-only. 최신 블록이 위에 오도록 추가.
 
+## [2026-07-14] 관리자 방문 대시보드 + 콘텐츠 조회수 (자체 집계)
+
+### 요청
+- 관리자페이지에 홈페이지 방문 대시보드 + 콘텐츠 조회수(요청: /loop, "가능하면 부탁드립니다")
+- 결정(사용자 컨펌): 자체 집계(Firestore) · 표준 지표(PV+순방문+인기페이지+인기콘텐츠)
+
+### 구현 (11 파일)
+- **신규**: `lib/track.ts`(쿠키리스 beacon·localhost 제외), `components/VisitTracker.tsx`(공개레이아웃 마운트), `api/track/route.ts`(admin SDK 집계·봇필터·항상 204)
+- **집계 모델**: `siteVisits/{KST YYYY-MM-DD}` = pageviews·uniques·paths(안전키)·pathLabels(원본경로). 콘텐츠 조회는 문서 viewCount 증가(contents·aiTools·smeSupport)
+- **대시보드**: "홈페이지 방문" 섹션(오늘/30일 PV·순방문 + 30일 추이) + 인기 페이지 TOP + 인기 콘텐츠 TOP5. 어드민 콘텐츠 목록에 조회수 컬럼
+- **안전장치**: Firestore 맵 키 슬래시 → 영숫자 안전키+라벨 분리(조용한 집계실패 차단) · 어드민 콘텐츠 저장 시 viewCount 덮어쓰기 방지 · `firestore.rules` siteVisits read=admin·write=false
+- 타입 `SiteVisitDoc` 추가, `SmeSupportDoc.viewCount` 추가, `COLLECTIONS.SITE_VISITS`
+
+### 검증
+- typecheck·build 통과, `/api/track` 라우트 스모크(204/405) 통과
+- 룰 배포 완료. 앱 배포·web.app 실동작 검증은 아래 배포 기록 참조
+- ⚠️ localhost는 집계 제외(dev→prod 오염 방지) → 실집계는 web.app에서만. 소급 데이터 없음(배포 시점부터)
+
 ## [2026-07-03] 수정요청 20260702(노션) 반영 — 배포·검증 완료
 
 ### 완료 (커밋 f71c3eb, 롤아웃 rollout-2026-07-03-001 SUCCEEDED)

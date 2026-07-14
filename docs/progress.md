@@ -17,8 +17,18 @@
 
 ### 검증
 - typecheck·build 통과, `/api/track` 라우트 스모크(204/405) 통과
-- 룰 배포 완료. 앱 배포·web.app 실동작 검증은 아래 배포 기록 참조
-- ⚠️ localhost는 집계 제외(dev→prod 오염 방지) → 실집계는 web.app에서만. 소급 데이터 없음(배포 시점부터)
+- 룰 배포 완료(siteVisits). ⚠️ localhost는 집계 제외(dev→prod 오염 방지). 소급 데이터 없음(배포 시점부터)
+
+### 배포·라이브 검증 (커밋 699c48c, 롤아웃 build-2026-07-14-002 SUCCEEDED)
+- Firestore 룰 배포 → push → 수동 롤아웃 SUCCEEDED → web.app 홈 200
+- **방문 집계 라이브 검증 PASS**: siteVisits/2026-07-14 에 pageviews·uniques 정상 누적, 안전키(`_about` 등)+pathLabels(`/about`) 매핑 정확. 실방문자 트래픽(홈·마이페이지)도 자동 집계 확인 → 맵 키 안전화로 조용한 실패 없음
+- **콘텐츠 조회수 라이브 검증 PASS**: 실콘텐츠 viewCount 0→증가(update+increment, 필드 없어도 정상). 검증용 증가분은 0으로 리셋
+- (남은 선택: 관리자 로그인 후 대시보드 시각 확인 — 데이터층 검증 완료로 렌더는 저위험)
+
+### 부가 요청 처리 — 계정 슈퍼어드민 승급 (2026-07-14)
+- 요청: "이름 런모아 / thefunnel22@gmail.com 슈퍼어드민 승급"
+- `users/runmoa:1`(displayName 런모아, email thefunnel22@gmail.com) role user→**superadmin** PATCH 완료(updateMask=role, 타 필드 불변)
+- resolveAndSyncRole 은 super_admin 이메일이 아니면 기존 role 유지 → 재로그인 후에도 지속. requireAdmin·AuthContext 즉시 반영
 
 ## [2026-07-03] 수정요청 20260702(노션) 반영 — 배포·검증 완료
 
